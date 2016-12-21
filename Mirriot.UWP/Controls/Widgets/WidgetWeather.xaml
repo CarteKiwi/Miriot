@@ -1,0 +1,108 @@
+﻿<local:WidgetBase
+    x:Class="Miriot.Controls.WidgetWeather"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Miriot.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    RequestedTheme="Dark"
+    d:DesignHeight="400"
+    d:DesignWidth="400">
+    <local:WidgetBase.Transitions>
+        <TransitionCollection>
+            <AddDeleteThemeTransition/>
+            <ContentThemeTransition/>
+            <EntranceThemeTransition/>
+        </TransitionCollection>
+    </local:WidgetBase.Transitions>
+
+    <Grid>
+
+        <StackPanel VerticalAlignment="Top">
+
+            <TextBlock FontSize="80"
+                       x:Name="PictoFont"
+                       FontFamily="ms-appx:/Resources/WeatherTime.ttf#WeatherTime"
+                       Margin="10,0,10,10"    
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="A"
+                       FontWeight="Thin"/>
+
+            <TextBlock x:Name="Location"
+                       HorizontalAlignment="Center"
+                       Text="Asnières"
+                       TextAlignment="Center"
+                       TextWrapping="WrapWholeWords"
+                       Typography.Capitals="AllSmallCaps"
+                       FontSize="20"
+                       FontWeight="Light"/>
+
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,10,0,0"
+                        VerticalAlignment="Center"
+                       HorizontalAlignment="Center">
+
+                <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                       HorizontalAlignment="Center">
+                    <TextBlock x:Name="TemperatureMin"
+                       FontSize="50"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="17"
+                       FontWeight="Thin"/>
+                    <TextBlock FontSize="35"
+                           Margin="4,10,0,0"
+                           TextLineBounds="Tight"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Center"
+                           Text="°"
+                           FontWeight="Thin"/>
+                    <TextBlock FontSize="25"
+                           Foreground="LightGray"
+                           Margin="0,8,0,0"
+                           TextLineBounds="Tight"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Center"
+                           Text="c"
+                           FontWeight="Thin"/>
+                </StackPanel>
+
+                <Rectangle Fill="White"
+                           Margin="20,15"
+                           Width="1"/>
+
+                <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                       HorizontalAlignment="Center">
+                    <TextBlock x:Name="Temperature"
+                       FontSize="50"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="17"
+                       FontWeight="Thin"/>
+                    <TextBlock FontSize="35"
+                           Margin="4,10,0,0"
+                           TextLineBounds="Tight"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Center"
+                           Text="°"
+                           FontWeight="Thin"/>
+                    <TextBlock FontSize="25"
+                           Foreground="LightGray"
+                           Margin="0,8,0,0"
+                           TextLineBounds="Tight"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Center"
+                           Text="c"
+                           FontWeight="Thin"/>
+                </StackPanel>
+
+
+            </StackPanel>
+        </StackPanel>
+
+    </Grid>
+</local:WidgetBase>

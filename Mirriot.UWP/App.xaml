@@ -1,0 +1,30 @@
+﻿<Application
+    x:Class="Miriot.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:pcl="using:Miriot.Core"
+    RequestedTheme="Light">
+
+    <Application.Resources>
+        
+        <ResourceDictionary>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources\ApplicationStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <pcl:ViewModelLocator x:Key="Locator" />
+
+            <!-- Add your client id here. -->
+            <x:String x:Key="ida:ClientID">1a383460-c136-44e4-be92-aa8a379f3265</x:String>
+            <!--<x:String x:Key="ida:ClientID">d0becb7a-3f4f-418c-a6ca-d9d39400478a</x:String>-->
+            <x:String x:Key="ida:AADInstance">https://login.microsoftonline.com/</x:String>
+            <x:String x:Key="ida:RedirectUri">https://miriot.suismoi.fr/</x:String>
+            <!-- Add your developer tenant domain here. -->
+            <x:String x:Key="ida:Domain">cellenza.com</x:String>
+            
+        </ResourceDictionary>
+        
+    </Application.Resources>
+
+</Application>
