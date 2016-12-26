@@ -16,7 +16,7 @@
             <pcl:ViewModelLocator x:Key="Locator" />
 
             <!-- Add your client id here. -->
-            <x:String x:Key="ida:ClientID">1a383460-c136-44e4-be92-aa8a379f3265</x:String>
+            <x:String x:Key="ida:ClientID">ca026d51-8d86-4f85-a697-7be9c0a86453</x:String>
             <!--<x:String x:Key="ida:ClientID">d0becb7a-3f4f-418c-a6ca-d9d39400478a</x:String>-->
             <x:String x:Key="ida:AADInstance">https://login.microsoftonline.com/</x:String>
             <x:String x:Key="ida:RedirectUri">https://miriot.suismoi.fr/</x:String>

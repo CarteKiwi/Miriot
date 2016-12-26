@@ -167,7 +167,7 @@
                            FontSize="30"/>
 
                 <TextBlock FontWeight="Light"
-                           Text="{x:Bind Vm.User.FriendlyEmotion, Mode=OneWay}"
+                           Text="{Binding User.FriendlyEmotion, Mode=OneWay}"
                            HorizontalAlignment="Center"
                            TextWrapping="WrapWholeWords"
                            FontSize="20"
@@ -217,7 +217,7 @@
 
             <!--Create & Detect buttons-->
             <StackPanel Orientation="Horizontal">
-                <Button Margin="10" Click="Settings_Click">
+                <Button Margin="10" Command="{x:Bind Vm.ActionNavigateTo}" CommandParameter="Settings">
                     <TextBlock Text="&#xE115;" FontFamily="Segoe MDL2 Assets"/>
                 </Button>
                 <Button Margin="10" Click="Detect_Click">

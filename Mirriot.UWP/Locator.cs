@@ -1,8 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
+using Miriot.Common;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
 using Miriot.Views;
@@ -35,8 +35,8 @@ namespace Miriot
         private static INavigationService CreateNavigationService()
         {
             var navigationService = new NavigationService();
-            navigationService.Configure("Main", typeof(MainPage));
-            navigationService.Configure("Settings", typeof(SettingsPage));
+            navigationService.Configure(PageKeys.Main, typeof(MainPage));
+            navigationService.Configure(PageKeys.Settings, typeof(SettingsPage));
 
             return navigationService;
         }

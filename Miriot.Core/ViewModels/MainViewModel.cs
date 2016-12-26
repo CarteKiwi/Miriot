@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 using Windows.System.Profile;
+using GalaSoft.MvvmLight.Views;
 
 namespace Miriot.Core.ViewModels
 {
@@ -18,6 +19,7 @@ namespace Miriot.Core.ViewModels
         private readonly IFileService _fileService;
         private readonly IPlatformService _platformService;
         private readonly IDispatcherService _dispatcherService;
+        private readonly INavigationService _navigationService;
         private readonly FaceHelper _faceHelper;
         private User _user;
         private ObservableCollection<IWidgetBase> _widgets;
@@ -29,6 +31,7 @@ namespace Miriot.Core.ViewModels
         #region Commands
         public RelayCommand ActionTurnOnTv { get; set; }
         public RelayCommand ActionTurnOnRadio { get; set; }
+        public RelayCommand<string> ActionNavigateTo { get; set; }
         #endregion
 
         public User User
@@ -80,11 +83,13 @@ namespace Miriot.Core.ViewModels
         public MainViewModel(
             IFileService fileService,
             IPlatformService platformService,
-            IDispatcherService dispatcherService)
+            IDispatcherService dispatcherService,
+            INavigationService navigationService)
         {
             _fileService = fileService;
             _platformService = platformService;
             _dispatcherService = dispatcherService;
+            _navigationService = navigationService;
             _faceHelper = new FaceHelper(fileService);
 
             SetCommands();
@@ -104,8 +109,14 @@ namespace Miriot.Core.ViewModels
 
         private void SetCommands()
         {
+            ActionNavigateTo = new RelayCommand<string>(OnNavigateTo);
             ActionTurnOnRadio = new RelayCommand(OnRadio);
             ActionTurnOnTv = new RelayCommand(OnTv);
+        }
+
+        private void OnNavigateTo(string pageKey)
+        {
+            _navigationService.NavigateTo(pageKey);
         }
 
         private void OnTv()
@@ -149,6 +160,24 @@ namespace Miriot.Core.ViewModels
             }
 
             return null;
+        }
+
+        public async Task<UserEmotion> GetEmotionAsync(string uri, int top, int left)
+        {
+            if (string.IsNullOrEmpty(uri)) return UserEmotion.Uknown;
+
+            try
+            {
+                var emotion = await _faceHelper.GetEmotion(uri, top, left);
+
+                return emotion;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetEmotionAsync: {ex.Message}");
+            }
+
+            return UserEmotion.Uknown;
         }
 
         public override void Cleanup()

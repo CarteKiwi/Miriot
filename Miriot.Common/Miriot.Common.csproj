@@ -55,6 +55,7 @@
     <Compile Include="Model\Widgets\WidgetInfo.cs" />
     <Compile Include="Model\ErrorType.cs" />
     <Compile Include="Model\WidgetType.cs" />
+    <Compile Include="PageKeys.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LuisResponse.cs" />
     <Compile Include="ServiceResponse.cs" />

@@ -30,7 +30,6 @@ namespace Miriot
     {
         private bool _isProcessing;
         private string _currentPicturePath;
-        private User _user;
         private CoreDispatcher _dispatcher;
         private DispatcherTimer _timer;
         private DispatcherTimer _sensorTimer;
@@ -62,7 +61,7 @@ namespace Miriot
 
             _dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
-            UpdateVisualState(States.Inactive);
+            //UpdateVisualState(States.Inactive);
 
             Task.Run(async () => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await InitSensorAsync().ConfigureAwait(true)));
 
@@ -97,22 +96,6 @@ namespace Miriot
             var finalBounds = Window.Current.Bounds;  // maps to the bounds of the current window
 
             _transition.Start(Colors.Black, initialBounds, finalBounds);
-
-        }
-
-        private void ReverseBloomer()
-        {
-            var initialBounds = new Windows.Foundation.Rect()  // maps to a rectangle the size of the header
-            {
-                Width = 110,
-                Height = 110,
-                X = 0,
-                Y = 0
-            };
-
-            var finalBounds = Window.Current.Bounds;  // maps to the bounds of the current window
-
-            _transition.Start(Windows.UI.Color.FromArgb(255, 26, 46, 69), finalBounds, initialBounds);
 
         }
 
@@ -199,11 +182,6 @@ namespace Miriot
             Vm.CurrentState = state;
         }
 
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPage));
-        }
-
         /// <summary>
         /// Proceder au traitement
         /// </summary>
@@ -215,8 +193,12 @@ namespace Miriot
             CleanUI();
             Vm.IsLoading = true;
 
+            Debug.WriteLine("Take photo started");
+
             // Take a photo and get its path
             var uri = await Camera.TakePhotoAsync();
+
+            Debug.WriteLine("Take photo ended");
 
             //MOCKED
             //var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
@@ -226,32 +208,32 @@ namespace Miriot
             // Compare faces & return identified user
             ServiceResponse response = await Vm.GetUserAsync(uri);
 
-            _user = response?.User;
+            Vm.User = response?.User;
 
             // Use to create the profil directly from Speech
             if (!string.IsNullOrEmpty(uri))
                 _currentPicturePath = uri;
 
             // User has been identified
-            if (_user != null)
+            if (Vm.User != null)
             {
-                Vm.User = _user;
-
-                if (_user.UserData.Widgets != null)
+                if (Vm.User.UserData.Widgets != null)
                 {
-                    await LoadWidgetsAsync(_user.UserData.Widgets);
+                    await LoadWidgetsAsync(Vm.User.UserData.Widgets);
 
                     //SubtitleTxt.Text = !string.IsNullOrEmpty(_user.FriendlyEmotion) ? $"Vous avez l'air {_user.FriendlyEmotion} aujourd'hui" : string.Empty;
                 }
                 else
                 {
                     // In case of the user has no widgets
-                    _user.UserData.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
-                    await LoadWidgetsAsync(_user.UserData.Widgets);
+                    Vm.User.UserData.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
+                    await LoadWidgetsAsync(Vm.User.UserData.Widgets);
                     //SubtitleTxt.Text = !string.IsNullOrEmpty(_user.FriendlyEmotion) ? $"Vous avez l'air {_user.FriendlyEmotion} aujourd'hui" : string.Empty;
                 }
 
                 StartListening();
+
+                Vm.User.Emotion = await Vm.GetEmotionAsync(_currentPicturePath, Vm.User.FaceRectangleTop, Vm.User.FaceRectangleLeft);
             }
             else
             {
@@ -259,6 +241,7 @@ namespace Miriot
             }
 
             Vm.IsLoading = false;
+
         }
 
         private async Task ContinueProcess(ServiceResponse response)
@@ -326,9 +309,11 @@ namespace Miriot
             _speechRecognizer.ContinuousRecognitionSession.ResultGenerated += ContinuousRecognitionSession_ResultGenerated;
             _speechRecognizer.ContinuousRecognitionSession.Completed += ContinuousRecognitionSession_Completed;
 
-            _speechSynthesizer = new SpeechSynthesizer();
-            _speechSynthesizer.Voice = (from voiceInformation in SpeechSynthesizer.AllVoices
-                                        select voiceInformation).First(e => e.Language == "fr-FR");
+            _speechSynthesizer = new SpeechSynthesizer
+            {
+                Voice = (from voiceInformation in SpeechSynthesizer.AllVoices
+                    select voiceInformation).First(e => e.Language == "fr-FR")
+            };
         }
 
         #region Continuous Recognition
@@ -404,12 +389,12 @@ namespace Miriot
         private async Task CreateProfile()
         {
             //Create profile
-            var isSuccess = await Vm.CreateAsync(_user.Name, _currentPicturePath);
+            var isSuccess = await Vm.CreateAsync(Vm.User.Name, _currentPicturePath);
 
             if (isSuccess)
             {
-                await SetMessage($"Très bien. Ravi de faire votre connaissance {_user.Name}.", "Utilisez votre téléphone pour ajouter des widgets");
-                await Speak($"Très bien. Ravi de faire votre connaissance {_user.Name}.");
+                await SetMessage($"Très bien. Ravi de faire votre connaissance {Vm.User.Name}.", "Utilisez votre téléphone pour ajouter des widgets");
+                await Speak($"Très bien. Ravi de faire votre connaissance {Vm.User.Name}.");
             }
             else
             {
@@ -474,7 +459,7 @@ namespace Miriot
                         name = p.Value.OrderByDescending(e => e.Score).First().Entity;
                 }
 
-            _user = new User { Name = name };
+            Vm.User = new User { Name = name };
 
             await SetMessage($"Bonjour {name.ToUpperInvariant()}", "Aie-je bien entendu votre prénom ?");
             await Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
@@ -521,7 +506,7 @@ namespace Miriot
                 ((WidgetTv)w).TurnOn(intent);
             }
             else
-                WidgetZone.Children.Add(new WidgetTv(intent, _user.UserData.CachedTvUrls));
+                WidgetZone.Children.Add(new WidgetTv(intent, Vm.User.UserData.CachedTvUrls));
         }
 
         private async Task TurnOff()
@@ -606,7 +591,7 @@ namespace Miriot
             }
         }
 
-        private async void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
+        private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
         {
             if (args.Status != SpeechRecognitionResultStatus.Success)
             {
@@ -684,7 +669,7 @@ namespace Miriot
                 return;
             }
 
-            WelcomeTxt.Text = $"Bonjour {_user.Name}";
+            WelcomeTxt.Text = $"Bonjour {Vm.User.Name}";
         }
 
         private async Task SetMessage(string title, string subTitle)
@@ -700,9 +685,9 @@ namespace Miriot
         {
             Vm.Widgets = new ObservableCollection<IWidgetBase>();
 
-            foreach (var widget in _user.UserData.Widgets)
+            foreach (var widget in widgets)
             {
-                WidgetBase w = null;
+                WidgetBase w;
 
                 switch (widget.Type)
                 {
@@ -731,8 +716,6 @@ namespace Miriot
 
                 w.OriginalWidget = widget;
                 w.OnInfosChanged += WidgetInfosChanged;
-
-                if (w == null) continue;
 
                 // Set Widget's margin
                 w.Margin = new Thickness(20);

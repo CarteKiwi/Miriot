@@ -51,19 +51,22 @@ namespace Miriot.Core.Helpers
             var faceClient = new FaceServiceClient(OxfordFaceKey);
 
             List<Face> faces;
-
+            Debug.WriteLine("DetectAsync started");
             // Détection des visages sur la photo
             using (var stream = new MemoryStream(_fileService.GetBytes(uri)))
                 faces = (await faceClient.DetectAsync(stream)).ToList();
+            Debug.WriteLine("DetectAsync ended");
 
             // Récupération des identifiants Oxford
             var faceIds = faces.Select(o => o.FaceId).ToList();
 
             if (!faceIds.Any())
                 return new ServiceResponse(null, ErrorType.NoFaceDetected);
+            Debug.WriteLine("IdentityAsync started");
 
             // Identification des personnes à partir des visages
             var identifyResults = (await faceClient.IdentifyAsync(_miriotPersonGroupId, faces.Select(o => o.FaceId).ToArray())).ToList();
+            Debug.WriteLine("IdentityAsync ended");
 
             // Visage inconnu du groupe
             if (identifyResults.Count == 0 || !identifyResults.Any(o => o.Candidates.Any()))
@@ -71,14 +74,14 @@ namespace Miriot.Core.Helpers
 
             // Une fois les personnes identifiées, on ne garde que la mieux reconnue
             var moreConfidentPerson = identifyResults.SelectMany(p => p.Candidates).OrderByDescending(o => o.Confidence).First();
+            Debug.WriteLine("GetPerson started");
 
             var person = await faceClient.GetPersonAsync(_miriotPersonGroupId, moreConfidentPerson.PersonId);
+            Debug.WriteLine("GetPerson ended");
 
             var faceId = identifyResults.First(r => r.Candidates.Select(c => c.PersonId).Contains(moreConfidentPerson.PersonId)).FaceId;
             var face = faces.Single(o => o.FaceId == faceId);
-
-            var emotion = await GetEmotion(uri, face);
-
+   
             var data = JsonConvert.DeserializeObject<UserData>(person.UserData);
 
             var user = new User
@@ -86,14 +89,15 @@ namespace Miriot.Core.Helpers
                 Id = person.PersonId,
                 Name = person.Name,
                 UserData = data,
-                Emotion = emotion,
+                FaceRectangleTop = face.FaceRectangle.Top,
+                FaceRectangleLeft = face.FaceRectangle.Left,
                 PictureLocalPath = uri
             };
 
             return new ServiceResponse(user, null);
         }
 
-        public async Task<UserEmotion> GetEmotion(string uri, Face face)
+        public async Task<UserEmotion> GetEmotion(string uri, int top, int left)
         {
             try
             {
@@ -104,7 +108,7 @@ namespace Miriot.Core.Helpers
                     emotions = (await emotionClient.RecognizeAsync(stream)).ToList();
 
 
-                var selectedEmotion = emotions.SingleOrDefault(o => o.FaceRectangle.Top == face.FaceRectangle.Top && o.FaceRectangle.Left == face.FaceRectangle.Left);
+                var selectedEmotion = emotions.SingleOrDefault(o => o.FaceRectangle.Top == top && o.FaceRectangle.Left == left);
 
                 if (selectedEmotion != null)
                 {
