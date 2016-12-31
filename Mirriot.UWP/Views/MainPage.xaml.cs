@@ -5,7 +5,6 @@ using Miriot.Controls;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
 using Miriot.Utils;
-using Miriot.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,6 +22,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Window = Windows.UI.Xaml.Window;
 
 namespace Miriot
 {
@@ -39,6 +39,10 @@ namespace Miriot
         private bool _isListeningYesNo;
         private ColorBloomTransitionHelper _transition;
 
+        //private readonly FrameGrabber<LiveCameraResult> _grabber = null;
+        private readonly FrameAnalyzer _frameAnalyzer = new FrameAnalyzer();
+
+
         public MainViewModel Vm => ServiceLocator.Current.GetInstance<MainViewModel>();
 
         #region Ctor
@@ -47,7 +51,7 @@ namespace Miriot
             InitializeComponent();
             InitializeTransitionHelper();
 
-            if (Vm.IsMobile)
+            //if (Vm.IsMobile)
                 Camera.ShowPreview = true;
 
             Loaded += MainPage_Loaded;
@@ -63,7 +67,9 @@ namespace Miriot
 
             //UpdateVisualState(States.Inactive);
 
-            Task.Run(async () => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await InitSensorAsync().ConfigureAwait(true)));
+            Task.Run(async () => await _frameAnalyzer.AttachAsync(Camera));
+            
+            //Task.Run(async () => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await InitSensorAsync().ConfigureAwait(true)));
 
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 0, 30);
@@ -99,6 +105,7 @@ namespace Miriot
 
         }
 
+    
         /// <summary>
         /// Initialize ultrasonic sensor
         /// </summary>

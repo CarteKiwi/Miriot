@@ -8,6 +8,7 @@ using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
+using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
@@ -342,6 +343,36 @@ namespace Miriot.Controls
 
                 return file.Path;
             }
+        }
+
+        public async Task<VideoFrame> GetLatestFrame()
+        {
+            if (!_isInitialized)
+            {
+                Debug.WriteLine("Can't get frame: camera not yet initialized.");
+                return null;
+            }
+
+            if (!_isPreviewing)
+            {
+                Debug.WriteLine("Can't get frame: camera not yet previewing.");
+                return null;
+            }
+
+            // Get information about the preview
+            var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
+
+            // Create a video frame in the desired format for the preview frame
+            VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
+
+            VideoFrame previewFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
+
+            return previewFrame;
+        }
+
+        public void CleanFrames()
+        {
+            
         }
         #endregion Methods
     }

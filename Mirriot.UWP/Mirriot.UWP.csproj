@@ -149,6 +149,7 @@
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Utils\ColorBloomTransitionHelper.cs" />
+    <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />
     <Compile Include="Utils\Graph\GraphHelper.cs" />
     <Compile Include="Utils\ImageLoader\ImageLoader.cs" />
