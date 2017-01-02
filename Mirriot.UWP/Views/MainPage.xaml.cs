@@ -32,15 +32,13 @@ namespace Miriot
         private string _currentPicturePath;
         private CoreDispatcher _dispatcher;
         private DispatcherTimer _timer;
-        private DispatcherTimer _sensorTimer;
         private SpeechRecognizer _speechRecognizer;
         private SpeechSynthesizer _speechSynthesizer;
         private bool _isListeningFirstName;
         private bool _isListeningYesNo;
         private ColorBloomTransitionHelper _transition;
 
-        //private readonly FrameGrabber<LiveCameraResult> _grabber = null;
-        private readonly FrameAnalyzer _frameAnalyzer = new FrameAnalyzer();
+        private readonly FrameAnalyzer<ServiceResponse> _frameAnalyzer = new FrameAnalyzer<ServiceResponse>();
 
 
         public MainViewModel Vm => ServiceLocator.Current.GetInstance<MainViewModel>();
@@ -69,8 +67,6 @@ namespace Miriot
 
             Task.Run(async () => await _frameAnalyzer.AttachAsync(Camera));
             
-            //Task.Run(async () => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await InitSensorAsync().ConfigureAwait(true)));
-
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 0, 30);
             _timer.Tick += Timer_Tick;
@@ -102,63 +98,6 @@ namespace Miriot
             var finalBounds = Window.Current.Bounds;  // maps to the bounds of the current window
 
             _transition.Start(Colors.Black, initialBounds, finalBounds);
-
-        }
-
-    
-        /// <summary>
-        /// Initialize ultrasonic sensor
-        /// </summary>
-        /// <returns>nothing</returns>
-        private async Task InitSensorAsync()
-        {
-            // Instanciate sensor trig is pin 23 & echo is pin 24
-            var ultrasonicDistanceSensor = new UltrasonicDistanceSensor(23, 24);
-
-            try
-            {
-                // Initialize sensor
-                await ultrasonicDistanceSensor.InitAsync();
-
-                // Timer 400ms
-                _sensorTimer = new DispatcherTimer();
-                _sensorTimer.Interval = TimeSpan.FromMilliseconds(1000);
-                _sensorTimer.Tick += async (a, b) =>
-                {
-                    // Retrieve distance in cm
-                    var d = await ultrasonicDistanceSensor.GetDistanceAsync();
-
-                    // Log
-                    WriteData(Math.Round(d));
-
-                    // Use to force process
-                    if (d < 30)
-                    {
-                        if (Vm.CurrentState == States.Active)
-                        {
-                            CleanUI();
-                            _isProcessing = false;
-                            UpdateVisualState(States.Inactive);
-                        }
-                        else
-                        {
-                            // Ignore distance if processing
-                            if (_isProcessing) return;
-
-                            _isProcessing = true;
-                            await ProceedAsync();
-                            _isProcessing = false;
-                        }
-                    }
-                };
-
-                _sensorTimer.Start();
-            }
-            catch (Exception)
-            {
-                Vm.HasSensor = false;
-                UpdateVisualState(States.Active);
-            }
         }
 
         private void Timer_Tick(object sender, object e)
@@ -166,18 +105,13 @@ namespace Miriot
             _timer.Stop();
 
             // Don't clean UI for Mobile apps
-            if (Vm.IsMobile || !Vm.HasSensor)
+            if (Vm.IsMobile)
                 return;
 
             if (Vm.CurrentState == States.Active)
                 UpdateVisualState(States.Passive);
 
             CleanUI();
-        }
-
-        private void WriteData(double distance)
-        {
-            Debug.WriteLine($"{distance} cm");
         }
 
         private void UpdateVisualState(States state)
@@ -213,9 +147,9 @@ namespace Miriot
 
             // Post photo to Azure 
             // Compare faces & return identified user
-            ServiceResponse response = await Vm.GetUserAsync(uri);
+            ServiceResponse response = await Vm.GetUsersAsync(uri);
 
-            Vm.User = response?.User;
+            Vm.User = response?.Users.First();
 
             // Use to create the profil directly from Speech
             if (!string.IsNullOrEmpty(uri))
@@ -227,15 +161,12 @@ namespace Miriot
                 if (Vm.User.UserData.Widgets != null)
                 {
                     await LoadWidgetsAsync(Vm.User.UserData.Widgets);
-
-                    //SubtitleTxt.Text = !string.IsNullOrEmpty(_user.FriendlyEmotion) ? $"Vous avez l'air {_user.FriendlyEmotion} aujourd'hui" : string.Empty;
                 }
                 else
                 {
                     // In case of the user has no widgets
                     Vm.User.UserData.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
                     await LoadWidgetsAsync(Vm.User.UserData.Widgets);
-                    //SubtitleTxt.Text = !string.IsNullOrEmpty(_user.FriendlyEmotion) ? $"Vous avez l'air {_user.FriendlyEmotion} aujourd'hui" : string.Empty;
                 }
 
                 StartListening();

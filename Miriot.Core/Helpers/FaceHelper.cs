@@ -46,7 +46,7 @@ namespace Miriot.Core.Helpers
             }
         }
 
-        public async Task<ServiceResponse> GetUser(string uri)
+        public async Task<ServiceResponse> GetUsers(string uri)
         {
             var faceClient = new FaceServiceClient(OxfordFaceKey);
 
@@ -72,29 +72,35 @@ namespace Miriot.Core.Helpers
             if (identifyResults.Count == 0 || !identifyResults.Any(o => o.Candidates.Any()))
                 return new ServiceResponse(null, ErrorType.UnknownFace);
 
-            // Une fois les personnes identifiées, on ne garde que la mieux reconnue
-            var moreConfidentPerson = identifyResults.SelectMany(p => p.Candidates).OrderByDescending(o => o.Confidence).First();
+            // Une fois les personnes identifiées, on ne garde que les 2 mieux reconnues
+            var mostConfidentPersons = identifyResults.SelectMany(p => p.Candidates).OrderByDescending(o => o.Confidence).Take(2);
             Debug.WriteLine("GetPerson started");
 
-            var person = await faceClient.GetPersonAsync(_miriotPersonGroupId, moreConfidentPerson.PersonId);
-            Debug.WriteLine("GetPerson ended");
-
-            var faceId = identifyResults.First(r => r.Candidates.Select(c => c.PersonId).Contains(moreConfidentPerson.PersonId)).FaceId;
-            var face = faces.Single(o => o.FaceId == faceId);
-   
-            var data = JsonConvert.DeserializeObject<UserData>(person.UserData);
-
-            var user = new User
+            var users = new List<User>();
+            foreach (var mostConfidentPerson in mostConfidentPersons)
             {
-                Id = person.PersonId,
-                Name = person.Name,
-                UserData = data,
-                FaceRectangleTop = face.FaceRectangle.Top,
-                FaceRectangleLeft = face.FaceRectangle.Left,
-                PictureLocalPath = uri
-            };
+                var person = await faceClient.GetPersonAsync(_miriotPersonGroupId, mostConfidentPerson.PersonId);
+                Debug.WriteLine("GetPerson ended");
 
-            return new ServiceResponse(user, null);
+                var faceId = identifyResults.First(r => r.Candidates.Select(c => c.PersonId).Contains(mostConfidentPerson.PersonId)).FaceId;
+                var face = faces.Single(o => o.FaceId == faceId);
+
+                var data = JsonConvert.DeserializeObject<UserData>(person.UserData);
+
+                var user = new User
+                {
+                    Id = person.PersonId,
+                    Name = person.Name,
+                    UserData = data,
+                    FaceRectangleTop = face.FaceRectangle.Top,
+                    FaceRectangleLeft = face.FaceRectangle.Left,
+                    PictureLocalPath = uri
+                };
+
+                users.Add(user);
+            }
+
+            return new ServiceResponse(users.ToArray(), null);
         }
 
         public async Task<UserEmotion> GetEmotion(string uri, int top, int left)

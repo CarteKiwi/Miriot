@@ -6,11 +6,11 @@ namespace Miriot.Common
     {
         public ErrorType? Error { get; set; }
 
-        public User User { get; set; }
+        public User[] Users { get; set; }
 
-        public ServiceResponse(User user, ErrorType? error)
+        public ServiceResponse(User[] users, ErrorType? error)
         {
-            User = user;
+            Users = users;
             Error = error;
         }
     }

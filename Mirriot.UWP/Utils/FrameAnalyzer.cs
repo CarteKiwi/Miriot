@@ -12,12 +12,13 @@ using Miriot.Controls;
 
 namespace Miriot.Utils
 {
-    public class FrameAnalyzer
+    public class FrameAnalyzer<TAnalysisResultType>
     {
         private FaceTracker _faceTracker;
         private ThreadPoolTimer _frameProcessingTimer;
         private readonly SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         private CameraControl _camera;
+        public Func<VideoFrame, Task<TAnalysisResultType>> AnalysisFunction { get; set; } = null;
 
         public async Task AttachAsync(CameraControl camera)
         {

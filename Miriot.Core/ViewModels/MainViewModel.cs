@@ -60,20 +60,13 @@ namespace Miriot.Core.ViewModels
 
         public bool IsMobile => AnalyticsInfo.VersionInfo.DeviceFamily.Contains("Mobile");
 
-        public bool HasSensor
-        {
-            get { return _hasSensor; }
-            set { Set(ref _hasSensor, value); }
-        }
-
-
         public States CurrentState
         {
             get { return _currentState; }
             set
             {
                 // Force Active state for Mobile apps
-                if (IsMobile || !HasSensor)
+                if (IsMobile)
                     value = States.Active;
 
                 Set(ref _currentState, value);
@@ -144,15 +137,15 @@ namespace Miriot.Core.ViewModels
         /// </summary>
         /// <param name="uri">Uri locale de la photo</param>
         /// <returns>Réponse du service de type User (null si échec)</returns>
-        public async Task<ServiceResponse> GetUserAsync(string uri)
+        public async Task<ServiceResponse> GetUsersAsync(string uri)
         {
             if (string.IsNullOrEmpty(uri)) return null;
 
             try
             {
-                var user = await _faceHelper.GetUser(uri);
+                var users = await _faceHelper.GetUsers(uri);
 
-                return user;
+                return users;
             }
             catch (Exception ex)
             {
