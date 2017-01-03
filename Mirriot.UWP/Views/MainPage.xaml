@@ -148,7 +148,7 @@
                     Margin="20"
                     HorizontalAlignment="Left"
                     Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
-            <Ellipse Height="80" Width="80"
+            <Ellipse Height="70" Width="70"
                      Stroke="{StaticResource AccentBrush}"
                      StrokeThickness="2">
                 <Ellipse.Fill>
@@ -173,14 +173,6 @@
                            Typography.Capitals="AllSmallCaps"/>
             </StackPanel>
         </StackPanel>
-
-
-        <!--Log for sensor-->
-        <TextBlock x:Name="Log"
-                   Margin="0,0,0,0"
-                   FontSize="12"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"/>
 
         <!--Loader-->
         <ctrl:IotLoader VerticalAlignment="Bottom"

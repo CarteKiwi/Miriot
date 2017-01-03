@@ -1,11 +1,9 @@
 ﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Miriot.Controls
 {
-    public sealed partial class IotLoader : UserControl
+    public sealed partial class IotLoader
     {
-
         public double Radius
         {
             get { return (double)GetValue(RadiusProperty); }
@@ -15,7 +13,6 @@ namespace Miriot.Controls
         public static readonly DependencyProperty RadiusProperty =
             DependencyProperty.Register("Radius", typeof(double), typeof(IotLoader), new PropertyMetadata(30.0));
 
-
         public double InnerRadius
         {
             get { return (double)GetValue(InnerRadiusProperty); }
@@ -23,13 +20,11 @@ namespace Miriot.Controls
         }
 
         public static readonly DependencyProperty InnerRadiusProperty =
-            DependencyProperty.Register("InnerRadius", typeof(double), typeof(IotLoader), new PropertyMetadata(29.0));
-
-
+            DependencyProperty.Register("InnerRadius", typeof(double), typeof(IotLoader), new PropertyMetadata(28.0));
 
         public IotLoader()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             RotateSb.Begin();
         }
