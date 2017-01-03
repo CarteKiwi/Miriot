@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.Media;
 using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
 using Windows.UI;
@@ -26,7 +27,7 @@ using Window = Windows.UI.Xaml.Window;
 
 namespace Miriot
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage
     {
         private bool _isProcessing;
         private string _currentPicturePath;
@@ -37,9 +38,7 @@ namespace Miriot
         private bool _isListeningFirstName;
         private bool _isListeningYesNo;
         private ColorBloomTransitionHelper _transition;
-
         private readonly FrameAnalyzer<ServiceResponse> _frameAnalyzer = new FrameAnalyzer<ServiceResponse>();
-
 
         public MainViewModel Vm => ServiceLocator.Current.GetInstance<MainViewModel>();
 
@@ -49,27 +48,85 @@ namespace Miriot
             InitializeComponent();
             InitializeTransitionHelper();
 
-            //if (Vm.IsMobile)
-                Camera.ShowPreview = true;
-
             Loaded += MainPage_Loaded;
         }
 
         #endregion
 
-        private void MainPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             Bloomer();
 
             _dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
-            //UpdateVisualState(States.Inactive);
-
             Task.Run(async () => await _frameAnalyzer.AttachAsync(Camera));
-            
-            _timer = new DispatcherTimer();
-            _timer.Interval = new TimeSpan(0, 0, 30);
+            _frameAnalyzer.AnalysisFunction = IdentifyFaces;
+            _frameAnalyzer.UsersIdentified += OnUsersIdentified;
+            _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
+
+            _timer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 30)};
             _timer.Tick += Timer_Tick;
+        }
+
+        private async void OnNoFaceDetected(object sender, EventArgs e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                // Some UI things
+                UpdateVisualState(States.Inactive);
+                CleanUI();
+                Vm.IsLoading = false;
+            });
+        }
+
+        private async Task<ServiceResponse> IdentifyFaces(VideoFrame frame)
+        {
+            // Some UI things
+            UpdateVisualState(States.Active);
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                CleanUI();
+                Vm.IsLoading = true;
+            });
+
+            Debug.WriteLine("Saving photo...");
+
+            // Save the frame bitmap to local file
+            var uri = await Camera.SaveSoftwareBitmapToFile(frame.SoftwareBitmap);
+
+            Debug.WriteLine("Photo saved");
+
+            // Use to create the profil directly from Speech
+            if (!string.IsNullOrEmpty(uri))
+                _currentPicturePath = uri;
+
+            //MOCKED
+            //var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
+            //uri = p.Path + "/untitled.png";
+
+            // Post photo to Azure 
+            // Compare faces & return identified user
+            return await Vm.GetUsersAsync(_currentPicturePath);
+        }
+
+        private async void OnUsersIdentified(object sender, ServiceResponse response)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                Vm.User = response?.Users?.FirstOrDefault();
+                // User has been identified
+                if (Vm.User != null)
+                {
+                    await LoadUsers();
+                }
+                else
+                {
+                    await ContinueProcess(response);
+                }
+
+                Vm.IsLoading = false;
+            });
         }
 
         /// <summary>
@@ -127,64 +184,27 @@ namespace Miriot
         /// Proceder au traitement
         /// </summary>
         /// <returns>nothing</returns>
-        private async Task ProceedAsync()
+        private async Task LoadUsers()
         {
-            // Some UI things
-            UpdateVisualState(States.Active);
-            CleanUI();
-            Vm.IsLoading = true;
-
-            Debug.WriteLine("Take photo started");
-
-            // Take a photo and get its path
-            var uri = await Camera.TakePhotoAsync();
-
-            Debug.WriteLine("Take photo ended");
-
-            //MOCKED
-            //var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
-            //uri = p.Path + "/untitled.png";
-
-            // Post photo to Azure 
-            // Compare faces & return identified user
-            ServiceResponse response = await Vm.GetUsersAsync(uri);
-
-            Vm.User = response?.Users.First();
-
-            // Use to create the profil directly from Speech
-            if (!string.IsNullOrEmpty(uri))
-                _currentPicturePath = uri;
-
-            // User has been identified
-            if (Vm.User != null)
+            if (Vm.User.UserData.Widgets != null)
             {
-                if (Vm.User.UserData.Widgets != null)
-                {
-                    await LoadWidgetsAsync(Vm.User.UserData.Widgets);
-                }
-                else
-                {
-                    // In case of the user has no widgets
-                    Vm.User.UserData.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
-                    await LoadWidgetsAsync(Vm.User.UserData.Widgets);
-                }
-
-                StartListening();
-
-                Vm.User.Emotion = await Vm.GetEmotionAsync(_currentPicturePath, Vm.User.FaceRectangleTop, Vm.User.FaceRectangleLeft);
+                await LoadWidgetsAsync(Vm.User.UserData.Widgets);
             }
             else
             {
-                await ContinueProcess(response);
+                // In case of the user has no widgets
+                Vm.User.UserData.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
+                await LoadWidgetsAsync(Vm.User.UserData.Widgets);
             }
 
-            Vm.IsLoading = false;
+            StartListening();
 
+            Vm.User.Emotion = await Vm.GetEmotionAsync(_currentPicturePath, Vm.User.FaceRectangleTop, Vm.User.FaceRectangleLeft);
         }
 
         private async Task ContinueProcess(ServiceResponse response)
         {
-            if (response != null && response.Error.HasValue)
+            if (response?.Error != null)
             {
                 if (response.Error.Value == ErrorType.NoFaceDetected)
                 {
@@ -250,7 +270,7 @@ namespace Miriot
             _speechSynthesizer = new SpeechSynthesizer
             {
                 Voice = (from voiceInformation in SpeechSynthesizer.AllVoices
-                    select voiceInformation).First(e => e.Language == "fr-FR")
+                         select voiceInformation).First(e => e.Language == "fr-FR")
             };
         }
 
@@ -369,8 +389,7 @@ namespace Miriot
                     TurnOnRadio(intent);
                     break;
                 case "BlancheNeige":
-                    Speak("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
-                    //Speak("Non mais tu t'es cru où là ? Dans Blanche neige ou quoi ?");
+                    await Speak("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
                     break;
                 case "None":
                     if (_isListeningFirstName)
@@ -722,19 +741,11 @@ namespace Miriot
             _isListeningYesNo = false;
             Img.Source = null;
 
+            Vm.User = null;
             Stop();
         }
 
         #region Methods for debug mode
-        private void Detect_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_isProcessing)
-            {
-                _isProcessing = true;
-                Task.Run(async () => await RunOnUiThread(async () => await ProceedAsync()));
-                _isProcessing = false;
-            }
-        }
 
         private async void Speak_Click(object sender, RoutedEventArgs e)
         {
@@ -766,6 +777,7 @@ namespace Miriot
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            _frameAnalyzer.Cleanup();
             Camera.Cleanup();
             Stop();
             base.OnNavigatedFrom(e);

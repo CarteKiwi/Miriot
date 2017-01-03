@@ -2,7 +2,6 @@
     x:Class="Miriot.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Miriot"
     xmlns:ctrl="using:Miriot.Controls"
     RequestedTheme="Dark"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
@@ -82,7 +81,7 @@
         <Rectangle x:Name="HostForVisual" Fill="Transparent"/>
 
         <!--Camera control-->
-        <ctrl:CameraControl x:Name="Camera" ShowPreview="False"/>
+        <ctrl:CameraControl x:Name="Camera" ShowPreview="{x:Bind Vm.IsMobile, Mode=OneWay}"/>
 
         <!--Widget zone for mobile apps-->
         <Grid x:Name="WidgetMobileZone" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
@@ -220,11 +219,6 @@
                 <Button Margin="10" Command="{x:Bind Vm.ActionNavigateTo}" CommandParameter="Settings">
                     <TextBlock Text="&#xE115;" FontFamily="Segoe MDL2 Assets"/>
                 </Button>
-                <Button Margin="10" Click="Detect_Click">
-                    <TextBlock Text="&#xE8D4;" FontFamily="Segoe MDL2 Assets"/>
-                </Button>
-                <Button Margin="10" Click="Shoot_Click" Content="Take photo" Visibility="Collapsed"/>
-                <Button Margin="10" Click="Speak_Click" Content="Tv" Visibility="Collapsed"/>
             </StackPanel>
 
         </StackPanel>

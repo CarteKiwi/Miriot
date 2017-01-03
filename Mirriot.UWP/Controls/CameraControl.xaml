@@ -7,5 +7,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <CaptureElement Name="PreviewControl" Stretch="UniformToFill"/>
+    <CaptureElement Name="PreviewControl" Stretch="UniformToFill" Visibility="Collapsed"/>
 </UserControl>

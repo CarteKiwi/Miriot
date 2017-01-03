@@ -109,7 +109,8 @@ namespace Miriot.Core.ViewModels
 
         private void OnNavigateTo(string pageKey)
         {
-            _navigationService.NavigateTo(pageKey);
+            var user = User;
+            _navigationService.NavigateTo(pageKey, user);
         }
 
         private void OnTv()

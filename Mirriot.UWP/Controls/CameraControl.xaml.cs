@@ -16,11 +16,10 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Miriot.Controls
 {
-    public sealed partial class CameraControl : UserControl
+    public sealed partial class CameraControl
     {
         #region Variables
         private MediaCapture _mediaCapture;
@@ -32,7 +31,7 @@ namespace Miriot.Controls
         private string _cameraId;
 
         // Receive notifications about rotation of the device and UI and apply any necessary rotation to the preview stream and UI controls       
-        private DisplayInformation _displayInformation = DisplayInformation.GetForCurrentView();
+        private readonly DisplayInformation _displayInformation;
         private readonly SimpleOrientationSensor _orientationSensor = SimpleOrientationSensor.GetDefault();
         private SimpleOrientation _deviceOrientation = SimpleOrientation.NotRotated;
         private DisplayOrientations _displayOrientation = DisplayOrientations.Portrait;
@@ -50,17 +49,15 @@ namespace Miriot.Controls
 
         private static void OnPreviewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var ctrl = d as CameraControl;
-
-            ctrl.PreviewControl.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
+            ((CameraControl)d).PreviewControl.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
         }
         #endregion
 
         public CameraControl()
         {
             InitializeComponent();
-
-            Loaded += (a, b) => InitializeCameraAsync();
+            _displayInformation = DisplayInformation.GetForCurrentView();
+            Loaded += async (a, b) => await InitializeCameraAsync();
         }
 
         #region Methods
@@ -99,10 +96,9 @@ namespace Miriot.Controls
                         switch (device.EnclosureLocation.Panel)
                         {
                             default:
-                            case Windows.Devices.Enumeration.Panel.Front:
                                 _cameraId = device.Id;
                                 break;
-                            case Windows.Devices.Enumeration.Panel.Back:
+                            case Panel.Back:
                                 break;
                         }
                     }
@@ -117,11 +113,11 @@ namespace Miriot.Controls
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Exception when initializing MediaCapture with {0}: {1}", _cameraId, ex.ToString());
+                    Debug.WriteLine("Exception when initializing MediaCapture with {0}: {1}", _cameraId, ex);
                 }
 
                 // If initialization succeeded, start the preview
-                if (_isInitialized && ShowPreview)
+                if (_isInitialized)
                 {
                     // Only mirror the preview if the camera is on the front panel
                     _mirroringPreview = true;
@@ -345,6 +341,26 @@ namespace Miriot.Controls
             }
         }
 
+        public async Task<string> SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap)
+        {
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+
+            var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpg", CreationCollisionOption.GenerateUniqueName);
+
+            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                // Create an encoder with the desired format
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+                
+                // Set the software bitmap
+                encoder.SetSoftwareBitmap(bitmapBgra8);
+
+                await encoder.FlushAsync();
+            }
+
+            return file.Path;
+        }
+
         public async Task<VideoFrame> GetLatestFrame()
         {
             if (!_isInitialized)
@@ -368,11 +384,6 @@ namespace Miriot.Controls
             VideoFrame previewFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
 
             return previewFrame;
-        }
-
-        public void CleanFrames()
-        {
-            
         }
         #endregion Methods
     }
