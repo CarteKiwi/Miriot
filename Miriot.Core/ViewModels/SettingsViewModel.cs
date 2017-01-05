@@ -9,7 +9,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.UI.Popups;
 
 namespace Miriot.Core.ViewModels
 {
@@ -43,11 +42,13 @@ namespace Miriot.Core.ViewModels
         }
         #endregion
 
-        public SettingsViewModel(IDialogService dialogService, IFileService fileService, IDispatcherService dispatcher)
+        public SettingsViewModel(
+            IDialogService dialogService, 
+            IDispatcherService dispatcher)
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;
-            _faceHelper = new FaceHelper(fileService);
+            _faceHelper = new FaceHelper();
 
             ActionLoaded = new RelayCommand(OnLoaded);
             ActionSave = new RelayCommand(OnSave);

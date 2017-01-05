@@ -187,11 +187,55 @@
                 </Grid>
 
                 <Rectangle Fill="White" Height=".5"
-                   Grid.Row="1"
-                   VerticalAlignment="Top"/>
+                           VerticalAlignment="Top"/>
+
+                <!--Address-->
+                <Grid Margin="15,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Ellipse Fill="Transparent"
+                             Height="30"
+                             Width="30"
+                             Stroke="White"
+                             Margin="10,0,10,0"
+                             HorizontalAlignment="Center"
+                             StrokeThickness="1"/>
+
+                    <TextBlock Text="&#xEA8A;" 
+                               FontSize="15"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Margin="0,0,0,3"
+                               FontFamily="Segoe MDL2 Assets"/>
+
+                    <TextBlock Text="Votre adresse (utilisée pour le service Uber)"
+                               Grid.Column="1"
+                               FontWeight="Light"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"/>
+
+                    <TextBox Grid.Column="1"
+                             Grid.Row="1"
+                             Margin="0,0,0,0"
+                             HorizontalAlignment="Stretch"
+                             Background="#0c0d18"
+                             Text="{x:Bind Vm.User.Address, Mode=TwoWay}" 
+                             BorderThickness="0"/>
+
+                </Grid>
+
+                <Rectangle Fill="White" Height=".5"
+                           VerticalAlignment="Top"/>
 
                 <!--Widgets title-->
-                <Grid Grid.Row="1" Margin="15,12">
+                <Grid Margin="15,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>

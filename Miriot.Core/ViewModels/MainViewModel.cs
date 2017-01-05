@@ -56,6 +56,8 @@ namespace Miriot.Core.ViewModels
             private set { Set(ref _isInternetAvailable, value); }
         }
 
+        public byte[] LastFrameShot { get; set; }
+
         public bool IsConnected => User != null;
 
         public bool IsMobile => AnalyticsInfo.VersionInfo.DeviceFamily.Contains("Mobile");
@@ -83,7 +85,7 @@ namespace Miriot.Core.ViewModels
             _platformService = platformService;
             _dispatcherService = dispatcherService;
             _navigationService = navigationService;
-            _faceHelper = new FaceHelper(fileService);
+            _faceHelper = new FaceHelper();
 
             SetCommands();
 
@@ -125,12 +127,12 @@ namespace Miriot.Core.ViewModels
 
         public async Task<bool> UpdateUserAsync()
         {
-            return await _faceHelper.UpdatePerson(User, _fileService.GetBytes(User.PictureLocalPath));
+            return await _faceHelper.UpdatePerson(User, User.Picture);
         }
 
-        public async Task<bool> CreateAsync(string name, string filePath)
+        public async Task<bool> CreateAsync()
         {
-            return await _faceHelper.CreatePerson(filePath, name);
+            return await _faceHelper.CreatePerson(User.Picture, User.Name);
         }
 
         /// <summary>
@@ -138,13 +140,11 @@ namespace Miriot.Core.ViewModels
         /// </summary>
         /// <param name="uri">Uri locale de la photo</param>
         /// <returns>Réponse du service de type User (null si échec)</returns>
-        public async Task<ServiceResponse> GetUsersAsync(string uri)
+        public async Task<ServiceResponse> GetUsersAsync()
         {
-            if (string.IsNullOrEmpty(uri)) return null;
-
             try
             {
-                var users = await _faceHelper.GetUsers(uri);
+                var users = await _faceHelper.GetUsers(LastFrameShot);
 
                 return users;
             }
@@ -156,13 +156,11 @@ namespace Miriot.Core.ViewModels
             return null;
         }
 
-        public async Task<UserEmotion> GetEmotionAsync(string uri, int top, int left)
+        public async Task<UserEmotion> GetEmotionAsync(byte[] bitmap, int top, int left)
         {
-            if (string.IsNullOrEmpty(uri)) return UserEmotion.Uknown;
-
             try
             {
-                var emotion = await _faceHelper.GetEmotion(uri, top, left);
+                var emotion = await _faceHelper.GetEmotion(bitmap, top, left);
 
                 return emotion;
             }

@@ -30,7 +30,6 @@ namespace Miriot
     public sealed partial class MainPage
     {
         private bool _isProcessing;
-        private string _currentPicturePath;
         private CoreDispatcher _dispatcher;
         private DispatcherTimer _timer;
         private SpeechRecognizer _speechRecognizer;
@@ -64,7 +63,7 @@ namespace Miriot
             _frameAnalyzer.UsersIdentified += OnUsersIdentified;
             _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
 
-            _timer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 30)};
+            _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 30) };
             _timer.Tick += Timer_Tick;
         }
 
@@ -90,16 +89,7 @@ namespace Miriot
                 Vm.IsLoading = true;
             });
 
-            Debug.WriteLine("Saving photo...");
-
-            // Save the frame bitmap to local file
-            var uri = await Camera.SaveSoftwareBitmapToFile(frame.SoftwareBitmap);
-
-            Debug.WriteLine("Photo saved");
-
-            // Use to create the profil directly from Speech
-            if (!string.IsNullOrEmpty(uri))
-                _currentPicturePath = uri;
+            Vm.LastFrameShot = await ServiceLocator.Current.GetInstance<IFileService>().EncodedBytes(frame.SoftwareBitmap);
 
             //MOCKED
             //var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
@@ -107,7 +97,7 @@ namespace Miriot
 
             // Post photo to Azure 
             // Compare faces & return identified user
-            return await Vm.GetUsersAsync(_currentPicturePath);
+            return await Vm.GetUsersAsync();
         }
 
         private async void OnUsersIdentified(object sender, ServiceResponse response)
@@ -199,7 +189,7 @@ namespace Miriot
 
             StartListening();
 
-            Vm.User.Emotion = await Vm.GetEmotionAsync(_currentPicturePath, Vm.User.FaceRectangleTop, Vm.User.FaceRectangleLeft);
+            Vm.User.Emotion = await Vm.GetEmotionAsync(Vm.User.Picture, Vm.User.FaceRectangleTop, Vm.User.FaceRectangleLeft);
         }
 
         private async Task ContinueProcess(ServiceResponse response)
@@ -347,7 +337,7 @@ namespace Miriot
         private async Task CreateProfile()
         {
             //Create profile
-            var isSuccess = await Vm.CreateAsync(Vm.User.Name, _currentPicturePath);
+            var isSuccess = await Vm.CreateAsync();
 
             if (isSuccess)
             {
@@ -416,7 +406,7 @@ namespace Miriot
                         name = p.Value.OrderByDescending(e => e.Score).First().Entity;
                 }
 
-            Vm.User = new User { Name = name };
+            await RunOnUiThread(() => { Vm.User = new User { Name = name, Picture = Vm.LastFrameShot}; });
 
             await SetMessage($"Bonjour {name.ToUpperInvariant()}", "Aie-je bien entendu votre prénom ?");
             await Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
@@ -606,6 +596,7 @@ namespace Miriot
             {
                 var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(text);
                 MediaElementCtrl.SetSource(stream, stream.ContentType);
+                MediaElementCtrl.PlaybackRate = 0.6;
                 MediaElementCtrl.Play();
             });
         }
@@ -746,12 +737,6 @@ namespace Miriot
         }
 
         #region Methods for debug mode
-
-        private async void Speak_Click(object sender, RoutedEventArgs e)
-        {
-            await DoAction(new IntentResponse { Intent = "TurnOnTv", Score = 1, Actions = new List<Common.Action> { new Common.Action { Name = "TurnOnTv", Parameters = new List<Parameter>() { new Parameter { Name = "Channel", Value = new List<ParameterValue> { new ParameterValue { Entity = "france deux" } } } }, Triggered = true } } });
-        }
-
         private void Shoot_Click(object sender, RoutedEventArgs e)
         {
             if (!_isProcessing)

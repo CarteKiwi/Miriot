@@ -1,6 +1,7 @@
 ﻿using Miriot.Utils;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Devices.Enumeration;
@@ -10,6 +11,7 @@ using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.Capture;
+using Windows.Media.FaceAnalysis;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -218,7 +220,6 @@ namespace Miriot.Controls
             var props = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
             props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), rotationDegrees);
             await _mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
-
         }
 
         private async void MediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
@@ -345,13 +346,13 @@ namespace Miriot.Controls
         {
             SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
 
-            var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpg", CreationCollisionOption.GenerateUniqueName);
+            var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpg", CreationCollisionOption.ReplaceExisting);
 
             using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
                 // Create an encoder with the desired format
                 BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
-                
+
                 // Set the software bitmap
                 encoder.SetSoftwareBitmap(bitmapBgra8);
 
@@ -378,8 +379,11 @@ namespace Miriot.Controls
             // Get information about the preview
             var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
 
+            var supportedBitmapFormats = FaceDetector.GetSupportedBitmapPixelFormats();
+            var f = (supportedBitmapFormats.First());
+
             // Create a video frame in the desired format for the preview frame
-            VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
+            VideoFrame videoFrame = new VideoFrame(f, (int)previewProperties.Width, (int)previewProperties.Height);
 
             VideoFrame previewFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
 

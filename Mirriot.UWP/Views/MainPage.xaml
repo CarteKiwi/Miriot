@@ -163,7 +163,7 @@
                            FontWeight="Light"
                            HorizontalAlignment="Center"
                            TextWrapping="WrapWholeWords"
-                           FontSize="30"/>
+                           FontSize="25"/>
 
                 <TextBlock FontWeight="Light"
                            Text="{Binding User.FriendlyEmotion, Mode=OneWay}"

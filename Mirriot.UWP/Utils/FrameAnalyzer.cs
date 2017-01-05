@@ -1,6 +1,7 @@
 ﻿using Miriot.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
@@ -38,12 +39,14 @@ namespace Miriot.Utils
                 return;
             }
 
+            var b = FaceTracker.IsSupported;
+
             VideoFrame currentFrame = await _camera.GetLatestFrame();
 
             // Use FaceDetector.GetSupportedBitmapPixelFormats and IsBitmapPixelFormatSupported to dynamically
             // determine supported formats
             const BitmapPixelFormat faceDetectionPixelFormat = BitmapPixelFormat.Nv12;
-
+            
             if (currentFrame == null || currentFrame.SoftwareBitmap.BitmapPixelFormat != faceDetectionPixelFormat)
             {
                 _frameProcessingSemaphore.Release();
@@ -70,9 +73,10 @@ namespace Miriot.Utils
 
                 _detectedFacesInLastFrame = detectedFaces.Count;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Face tracking failed
+                Debug.WriteLine(ex);
             }
             finally
             {

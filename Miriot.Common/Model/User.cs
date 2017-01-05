@@ -10,7 +10,11 @@ namespace Miriot.Common.Model
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string Address { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
         public UserData UserData { get; set; }
+        public byte[] Picture { get; set; }
         public string PictureLocalPath { get; set; }
 
         private UserEmotion _emotion;

@@ -19,12 +19,11 @@ namespace Miriot.Core.Helpers
     {
         private const string OxfordFaceKey = "89b53f9d8db046ae9fca71ee98a72330";
         private const string OxfordEmotionKey = "5194871378f6446c91a6a247495cb6f5";
-        private string _miriotPersonGroupId;
-        private readonly IFileService _fileService;
 
-        public FaceHelper(IFileService fileService)
+        private string _miriotPersonGroupId;
+
+        public FaceHelper()
         {
-            _fileService = fileService;
             Task.Run(async () => await LoadGroup());
         }
 
@@ -35,7 +34,7 @@ namespace Miriot.Core.Helpers
                 var faceClient = new FaceServiceClient(OxfordFaceKey);
 
                 // Récupère les groupes
-                var groups = await faceClient.GetPersonGroupsAsync();
+                var groups = await faceClient.ListPersonGroupsAsync();
 
                 // Récupère l'id du premier groupe
                 _miriotPersonGroupId = groups.First().PersonGroupId;
@@ -46,14 +45,14 @@ namespace Miriot.Core.Helpers
             }
         }
 
-        public async Task<ServiceResponse> GetUsers(string uri)
+        public async Task<ServiceResponse> GetUsers(byte[] bitmap)
         {
             var faceClient = new FaceServiceClient(OxfordFaceKey);
 
             List<Face> faces;
             Debug.WriteLine("DetectAsync started");
             // Détection des visages sur la photo
-            using (var stream = new MemoryStream(_fileService.GetBytes(uri)))
+            using (var stream = new MemoryStream(bitmap))
                 faces = (await faceClient.DetectAsync(stream)).ToList();
             Debug.WriteLine("DetectAsync ended");
 
@@ -85,7 +84,7 @@ namespace Miriot.Core.Helpers
                 var faceId = identifyResults.First(r => r.Candidates.Select(c => c.PersonId).Contains(mostConfidentPerson.PersonId)).FaceId;
                 var face = faces.Single(o => o.FaceId == faceId);
 
-                var data = JsonConvert.DeserializeObject<UserData>(person.UserData);
+                var data = TryDeserialize(person.UserData);
 
                 var user = new User
                 {
@@ -94,7 +93,7 @@ namespace Miriot.Core.Helpers
                     UserData = data,
                     FaceRectangleTop = face.FaceRectangle.Top,
                     FaceRectangleLeft = face.FaceRectangle.Left,
-                    PictureLocalPath = uri
+                    Picture = bitmap
                 };
 
                 users.Add(user);
@@ -103,16 +102,29 @@ namespace Miriot.Core.Helpers
             return new ServiceResponse(users.ToArray(), null);
         }
 
-        public async Task<UserEmotion> GetEmotion(string uri, int top, int left)
+        private UserData TryDeserialize(string userData)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<UserData>(userData);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine("UserData:" + userData);
+                return null;
+            }
+        }
+
+        public async Task<UserEmotion> GetEmotion(byte[] bitmap, int top, int left)
         {
             try
             {
                 List<Emotion> emotions;
                 var emotionClient = new EmotionServiceClient(OxfordEmotionKey);
 
-                using (var stream = new MemoryStream(_fileService.GetBytes(uri)))
+                using (var stream = new MemoryStream(bitmap))
                     emotions = (await emotionClient.RecognizeAsync(stream)).ToList();
-
 
                 var selectedEmotion = emotions.SingleOrDefault(o => o.FaceRectangle.Top == top && o.FaceRectangle.Left == left);
 
@@ -156,7 +168,7 @@ namespace Miriot.Core.Helpers
             }
         }
 
-        public async Task<bool> CreatePerson(string uri, string name)
+        public async Task<bool> CreatePerson(byte[] bitmap, string name)
         {
             try
             {
@@ -166,7 +178,7 @@ namespace Miriot.Core.Helpers
                 var newPerson = await faceClient.CreatePersonAsync(_miriotPersonGroupId, name, JsonConvert.SerializeObject(new UserData()));
 
                 // Add FACE to PERSON
-                using (var stream = new MemoryStream(_fileService.GetBytes(uri)))
+                using (var stream = new MemoryStream(bitmap))
                     await faceClient.AddPersonFaceAsync(_miriotPersonGroupId, newPerson.PersonId, stream);
 
                 await faceClient.TrainPersonGroupAsync(_miriotPersonGroupId);
