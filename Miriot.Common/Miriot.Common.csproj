@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Model\MiriotNotification.cs" />
+    <Compile Include="Model\Scene.cs" />
     <Compile Include="Model\Widgets\OAuthWidgetInfo.cs" />
     <Compile Include="Model\Widgets\Sncf\SncfResponse.cs" />
     <Compile Include="Model\Widgets\SportWidgetInfo.cs" />

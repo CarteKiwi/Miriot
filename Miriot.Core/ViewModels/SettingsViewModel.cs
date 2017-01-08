@@ -2,13 +2,13 @@
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using Miriot.Common.Model;
-using Miriot.Core.Helpers;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Miriot.Core.Services;
 
 namespace Miriot.Core.ViewModels
 {
@@ -22,7 +22,7 @@ namespace Miriot.Core.ViewModels
 
         #region Variables
         private readonly IDialogService _dialogService;
-        private readonly FaceHelper _faceHelper;
+        private readonly FaceService _faceService;
         private readonly IDispatcherService _dispatcher;
         private User _user;
         private ObservableCollection<WidgetModel> _widgets;
@@ -48,7 +48,7 @@ namespace Miriot.Core.ViewModels
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;
-            _faceHelper = new FaceHelper();
+            _faceService = new FaceService();
 
             ActionLoaded = new RelayCommand(OnLoaded);
             ActionSave = new RelayCommand(OnSave);
@@ -57,7 +57,7 @@ namespace Miriot.Core.ViewModels
 
         private async Task OnDelete()
         {
-            var isSuccess = await _faceHelper.DeletePerson(User.Id);
+            var isSuccess = await _faceService.DeletePerson(User.Id);
 
             if (isSuccess)
                 _dispatcher.Invoke(async () => await _dialogService.ShowMessage("Utilisateur supprimé", "Information"));

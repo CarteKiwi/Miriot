@@ -116,11 +116,11 @@
                        TextWrapping="WrapWholeWords"
                        FontSize="40"/>
 
-            <TextBlock x:Name="SubtitleTxt" 
-                       FontWeight="Light"
+            <TextBlock x:Name="SubtitleTxt"  FontWeight="Light"
                        HorizontalAlignment="Center"
                        TextWrapping="WrapWholeWords"
                        FontSize="25"
+                       Text="{x:Bind Vm.SubTitle}"
                        Typography.Capitals="AllSmallCaps"/>
         </StackPanel>
 
@@ -152,7 +152,7 @@
                      Stroke="{StaticResource AccentBrush}"
                      StrokeThickness="2">
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="{x:Bind Vm.User.PictureLocalPath, Mode=OneWay}" Stretch="UniformToFill"/>
+                    <ImageBrush ImageSource="{x:Bind Vm.User.Picture, Mode=OneWay, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
                 </Ellipse.Fill>
             </Ellipse>
 

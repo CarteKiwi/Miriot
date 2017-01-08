@@ -9,13 +9,13 @@
     RequestedTheme="Dark"
     d:DesignHeight="400"
     d:DesignWidth="400">
-    <local:WidgetBase.Transitions>
+    <UserControl.Transitions>
         <TransitionCollection>
             <AddDeleteThemeTransition/>
             <ContentThemeTransition/>
             <EntranceThemeTransition/>
         </TransitionCollection>
-    </local:WidgetBase.Transitions>
+    </UserControl.Transitions>
 
     <Grid>
 

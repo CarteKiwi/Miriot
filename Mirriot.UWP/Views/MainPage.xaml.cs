@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -23,6 +24,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Messaging;
+using Miriot.Core.Messages;
 using Window = Windows.UI.Xaml.Window;
 
 namespace Miriot
@@ -59,64 +62,36 @@ namespace Miriot
             _dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             Task.Run(async () => await _frameAnalyzer.AttachAsync(Camera));
-            _frameAnalyzer.AnalysisFunction = IdentifyFaces;
+            _frameAnalyzer.AnalysisFunction = Vm.IdentifyFaces;
             _frameAnalyzer.UsersIdentified += OnUsersIdentified;
             _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
+            _frameAnalyzer.OnPreAnalysis += OnStartingIdentification;
 
             _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 30) };
             _timer.Tick += Timer_Tick;
+
+            Messenger.Default.Register<ListeningMessage>(this, OnListen);
+        }
+
+        private void OnListen(ListeningMessage msg)
+        {
+            StartListening();
+        }
+
+        private async void OnStartingIdentification(object sender, EventArgs eventArgs)
+        {
+            await RunOnUiThread(() => Vm.IsLoading = true);
         }
 
         private async void OnNoFaceDetected(object sender, EventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                // Some UI things
-                UpdateVisualState(States.Inactive);
-                CleanUI();
-                Vm.IsLoading = false;
-            });
-        }
-
-        private async Task<ServiceResponse> IdentifyFaces(VideoFrame frame)
-        {
-            // Some UI things
-            UpdateVisualState(States.Active);
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                CleanUI();
-                Vm.IsLoading = true;
-            });
-
-            Vm.LastFrameShot = await ServiceLocator.Current.GetInstance<IFileService>().EncodedBytes(frame.SoftwareBitmap);
-
-            //MOCKED
-            //var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
-            //uri = p.Path + "/untitled.png";
-
-            // Post photo to Azure 
-            // Compare faces & return identified user
-            return await Vm.GetUsersAsync();
+            await RunOnUiThread(() => { Vm.StateChangedCommand.Execute(States.Inactive); });
+            CleanUi();
         }
 
         private async void OnUsersIdentified(object sender, ServiceResponse response)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                Vm.User = response?.Users?.FirstOrDefault();
-                // User has been identified
-                if (Vm.User != null)
-                {
-                    await LoadUsers();
-                }
-                else
-                {
-                    await ContinueProcess(response);
-                }
-
-                Vm.IsLoading = false;
-            });
+            await RunOnUiThread(() => { Vm.UsersIdentifiedCommand.Execute(response); });
         }
 
         /// <summary>
@@ -150,46 +125,6 @@ namespace Miriot
         private void Timer_Tick(object sender, object e)
         {
             _timer.Stop();
-
-            // Don't clean UI for Mobile apps
-            if (Vm.IsMobile)
-                return;
-
-            if (Vm.CurrentState == States.Active)
-                UpdateVisualState(States.Passive);
-
-            CleanUI();
-        }
-
-        private void UpdateVisualState(States state)
-        {
-            // If state is already the current one
-            if (Vm.CurrentState == state) return;
-
-            // Set current state
-            Vm.CurrentState = state;
-        }
-
-        /// <summary>
-        /// Proceder au traitement
-        /// </summary>
-        /// <returns>nothing</returns>
-        private async Task LoadUsers()
-        {
-            if (Vm.User.UserData.Widgets != null)
-            {
-                await LoadWidgetsAsync(Vm.User.UserData.Widgets);
-            }
-            else
-            {
-                // In case of the user has no widgets
-                Vm.User.UserData.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
-                await LoadWidgetsAsync(Vm.User.UserData.Widgets);
-            }
-
-            StartListening();
-
-            Vm.User.Emotion = await Vm.GetEmotionAsync(Vm.User.Picture, Vm.User.FaceRectangleTop, Vm.User.FaceRectangleLeft);
         }
 
         private async Task ContinueProcess(ServiceResponse response)
@@ -359,7 +294,7 @@ namespace Miriot
                     await PlaySong(intent);
                     break;
                 case "TakePhoto":
-                    Shoot_Click(null, null);
+                    TakePhoto();
                     break;
                 case "TurnOnTv":
                     await TurnOff();
@@ -406,7 +341,7 @@ namespace Miriot
                         name = p.Value.OrderByDescending(e => e.Score).First().Entity;
                 }
 
-            await RunOnUiThread(() => { Vm.User = new User { Name = name, Picture = Vm.LastFrameShot}; });
+            await RunOnUiThread(() => { Vm.User = new User { Name = name, Picture = Vm.LastFrameShot }; });
 
             await SetMessage($"Bonjour {name.ToUpperInvariant()}", "Aie-je bien entendu votre prénom ?");
             await Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
@@ -419,7 +354,7 @@ namespace Miriot
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetTv);
             if (w != null)
             {
-                ((WidgetBase)w).IsFullscreen = isFullScreen;
+                ((IWidgetExclusive)w).IsFullscreen = isFullScreen;
 
                 if (isFullScreen)
                 {
@@ -629,71 +564,45 @@ namespace Miriot
             });
         }
 
-        private async Task LoadWidgetsAsync(List<Widget> widgets)
+        private void LoadWidget(Widget widget)
         {
-            Vm.Widgets = new ObservableCollection<IWidgetBase>();
+            WidgetBase w;
 
-            foreach (var widget in widgets)
+            switch (widget.Type)
             {
-                WidgetBase w;
-
-                switch (widget.Type)
-                {
-                    case WidgetType.Time:
-                        w = new WidgetTime();
-                        break;
-                    case WidgetType.Fitbit:
-                        w = new WidgetFitbit();
-                        break;
-                    case WidgetType.Calendar:
-                        w = new WidgetCalendar(widget);
-                        break;
-                    case WidgetType.Sncf:
-                        w = new WidgetSncf();
-                        break;
-                    case WidgetType.Weather:
-                        w = new WidgetWeather(widget);
-                        break;
-                    case WidgetType.Sport:
-                        var sport = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
-                        w = new WidgetSport(sport);
-                        break;
-                    default:
-                        continue;
-                }
-
-                w.OriginalWidget = widget;
-                w.OnInfosChanged += WidgetInfosChanged;
-
-                // Set Widget's margin
-                w.Margin = new Thickness(20);
-
-                if (Vm.IsMobile)
-                {
-                    // Set Widget's position in grid
-                    w.SetAlignment(widget.X, widget.Y);
-
-                    // Add widget to grid
-                    WidgetMobileZone.Children.Add(w);
-                }
-                else
-                {
-                    // Set Widget position in grid
-                    Grid.SetColumn(w, widget.X);
-                    Grid.SetRow(w, widget.Y);
-
-                    if (w is WidgetCalendar)
-                        Grid.SetRowSpan(w, 2);
-
-                    // Add widget to grid
-                    WidgetZone.Children.Add(w);
-                }
-
-                Vm.Widgets.Add(w);
-
-                // Wait 300ms to create a better transition effect
-                await Task.Delay(300);
+                case WidgetType.Time:
+                    w = new WidgetTime();
+                    break;
+                case WidgetType.Fitbit:
+                    w = new WidgetFitbit();
+                    break;
+                case WidgetType.Calendar:
+                    w = new WidgetCalendar(widget);
+                    break;
+                case WidgetType.Sncf:
+                    w = new WidgetSncf();
+                    break;
+                case WidgetType.Weather:
+                    w = new WidgetWeather(widget);
+                    break;
+                case WidgetType.Sport:
+                    var sport = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
+                    w = new WidgetSport(sport);
+                    break;
+                default:
+                    return;
             }
+
+            w.OriginalWidget = widget;
+
+            if (w is IWidgetListener)
+                ((IWidgetListener)w).OnInfosChanged += WidgetInfosChanged;
+
+            w.SetPosition(widget.X, widget.Y);
+
+            // Add widget to grid
+            WidgetZone.Children.Add(w);
+
         }
 
         private async void WidgetInfosChanged(object sender, EventArgs e)
@@ -710,34 +619,36 @@ namespace Miriot
                     w.OriginalWidget.Infos.Remove(entry);
             }
 
-            if (w.Token != null)
+            if (((IWidgetOAuth)w).Token != null)
             {
-                w.OriginalWidget.Infos.Add(JsonConvert.SerializeObject(new OAuthWidgetInfo { Token = w.Token }));
+                w.OriginalWidget.Infos.Add(JsonConvert.SerializeObject(new OAuthWidgetInfo { Token = ((IWidgetOAuth)w).Token }));
             }
 
             await Vm.UpdateUserAsync();
         }
 
-        private void CleanUI()
+        private async void CleanUi()
         {
-            // Force delete transition
-            WidgetMobileZone.Children.Clear();
-            WidgetZone.Children.Clear();
-            WelcomeTxt.Text = string.Empty;
-            SubtitleTxt.Text = string.Empty;
+            await RunOnUiThread(() =>
+            {
+                // Force delete transition
+                WidgetMobileZone.Children.Clear();
+                WidgetZone.Children.Clear();
+                WelcomeTxt.Text = string.Empty;
+                SubtitleTxt.Text = string.Empty;
 
-            InfoUnknownPanel.Opacity = 0;
-            _timer.Stop();
-            _isListeningFirstName = false;
-            _isListeningYesNo = false;
-            Img.Source = null;
+                InfoUnknownPanel.Opacity = 0;
+                _timer.Stop();
+                _isListeningFirstName = false;
+                _isListeningYesNo = false;
+                Img.Source = null;
 
-            Vm.User = null;
-            Stop();
+                Vm.User = null;
+                Stop();
+            });
         }
 
-        #region Methods for debug mode
-        private void Shoot_Click(object sender, RoutedEventArgs e)
+        private void TakePhoto()
         {
             if (!_isProcessing)
             {
@@ -752,7 +663,6 @@ namespace Miriot
                 _isProcessing = false;
             }
         }
-        #endregion
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

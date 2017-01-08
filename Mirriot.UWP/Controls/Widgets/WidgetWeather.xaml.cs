@@ -5,13 +5,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using Windows.UI.Xaml.Controls;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetWeather : WidgetBase
+    public sealed partial class WidgetWeather : IWidgetBase
     {
         private readonly string _key = "84bc189921c14c7a98fdea2a98aa11ba";
         private string _location = "paris";
+
+        public Widget OriginalWidget { get; set; }
 
         public WidgetWeather(Widget widget)
         {
@@ -102,6 +106,12 @@ namespace Miriot.Controls
                 ico = "A";
 
             PictoFont.Text = ico;
+        }
+
+        public void SetPosition(int x, int y)
+        {
+            Grid.SetColumn(this, x);
+            Grid.SetRow(this, y);
         }
     }
 }

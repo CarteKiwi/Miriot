@@ -11,16 +11,17 @@ using Windows.Foundation.Collections;
 using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Miriot.Core.Services.Interfaces;
+using Miriot.Common.Model;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetTv : WidgetBase
+    public sealed partial class WidgetTv
     {
         //private FFmpegInteropMSS FFmpegMSS;
         private string _urlHub;
         private string _currentChannelKey;
         private Dictionary<string, string> _cachedUrls;
-
 
         public WidgetTv(IntentResponse intent, Dictionary<string, string> cachedUrls)
         {

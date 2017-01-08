@@ -1,11 +1,10 @@
 ﻿using Miriot.Core.Services.Interfaces;
-using System.IO;
 using System;
+using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Miriot.Services
 {
@@ -16,8 +15,10 @@ namespace Miriot.Services
             return File.ReadAllBytes(filePath);
         }
 
-        public async Task<byte[]> EncodedBytes(SoftwareBitmap soft)
+        public async Task<byte[]> EncodedBytes(SoftwareBitmap softwareBitmap)
         {
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+            
             byte[] array = null;
 
             // First: Use an encoder to copy from SoftwareBitmap to an in-mem stream (FlushAsync)
@@ -26,7 +27,7 @@ namespace Miriot.Services
             using (var ms = new InMemoryRandomAccessStream())
             {
                 BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, ms);
-                encoder.SetSoftwareBitmap(soft);
+                encoder.SetSoftwareBitmap(bitmapBgra8);
 
                 try
                 {

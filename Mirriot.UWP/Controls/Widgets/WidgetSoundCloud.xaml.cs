@@ -8,11 +8,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Miriot.Common.Model;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetSoundCloud : WidgetBase
+    public sealed partial class WidgetSoundCloud : IWidgetExclusive
     {
         private Random _rnd = new Random();
 
@@ -112,6 +115,9 @@ namespace Miriot.Controls
             Title.Text = track.title;
             ArtworkImg.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
         }
+
+        public bool IsFullscreen { get; set; }
+        public bool IsExclusive { get; set; }
     }
 
     public class SoundCloudResponse

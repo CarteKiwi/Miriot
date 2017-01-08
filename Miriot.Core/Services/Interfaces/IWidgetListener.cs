@@ -7,9 +7,10 @@ using Miriot.Common.Model;
 
 namespace Miriot.Core.Services.Interfaces
 {
-    public interface IWidgetBase
+    public interface IWidgetListener
     {
-        void SetPosition(int x, int y);
-        Widget OriginalWidget { get; set; }
+        event EventHandler OnInfosChanged;
+
+        void RaiseOnChanged();
     }
 }

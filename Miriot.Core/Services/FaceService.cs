@@ -1,4 +1,10 @@
-﻿using Microsoft.ProjectOxford.Emotion;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
@@ -6,23 +12,17 @@ using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Miriot.Core.Helpers
+namespace Miriot.Core.Services
 {
-    public class FaceHelper
+    public class FaceService : IFaceService
     {
         private const string OxfordFaceKey = "89b53f9d8db046ae9fca71ee98a72330";
         private const string OxfordEmotionKey = "5194871378f6446c91a6a247495cb6f5";
 
         private string _miriotPersonGroupId;
 
-        public FaceHelper()
+        public FaceService()
         {
             Task.Run(async () => await LoadGroup());
         }

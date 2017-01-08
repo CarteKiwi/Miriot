@@ -5,12 +5,14 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetCalendar : WidgetBase
+    public sealed partial class WidgetCalendar : IWidgetOAuth, IWidgetListener
     {
-        private Widget _widget;
+        public string Token { get; set; }
 
         public WidgetCalendar()
         {
@@ -21,7 +23,7 @@ namespace Miriot.Controls
 
         public WidgetCalendar(Widget widget)
         {
-            _widget = widget;
+            OriginalWidget = widget;
 
             InitializeComponent();
 
@@ -31,8 +33,15 @@ namespace Miriot.Controls
         private void RetrieveData()
         {
             CalendarModel c = new CalendarModel();
-            c.LoadInfos(_widget.Infos);
+            c.LoadInfos(OriginalWidget.Infos);
             Token = c.Token;
+        }
+
+        public event EventHandler OnInfosChanged;
+
+        public void RaiseOnChanged()
+        {
+            OnInfosChanged?.Invoke(this, new EventArgs());
         }
 
         private void WidgetCalendar_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -92,7 +101,7 @@ namespace Miriot.Controls
                         e =>
                             new DisplayMessage(e.IsRead, e.Subject, e.ReceivedDateTime,
                                 e.From == null ? string.Empty : e.From.EmailAddress.Name, e.BodyPreview, e.Body.Content));
-                                    
+
 
                 var es = e2.Take(3);
 
@@ -146,6 +155,13 @@ namespace Miriot.Controls
                 RaiseOnChanged();
                 Debug.WriteLine(string.Format("ERROR retrieving messages: {0}", ex.InnerException.Message));
             }
+        }
+
+        public override void SetPosition(int x, int y)
+        {
+            Grid.SetColumn(this, x);
+            Grid.SetRow(this, y);
+            Grid.SetRowSpan(this, 2);
         }
     }
 

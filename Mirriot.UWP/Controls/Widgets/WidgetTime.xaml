@@ -13,12 +13,12 @@
     <Grid HorizontalAlignment="Center">
         <StackPanel>
             <TextBlock x:Name="TimeTb" Text="13 : 30"
-                       FontSize="53"
+                       FontSize="50"
                        HorizontalAlignment="Center"
                        FontWeight="Light"/>
 
             <TextBlock x:Name="DateTb" Text="Ven. 06 Mars"
-                       FontSize="25"
+                       FontSize="23"
                        HorizontalAlignment="Center"
                        TextLineBounds="TrimToCapHeight"
                        Typography.Capitals="AllSmallCaps"

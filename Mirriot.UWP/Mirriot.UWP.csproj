@@ -112,7 +112,6 @@
     <Compile Include="Controls\IotLoader.xaml.cs">
       <DependentUpon>IotLoader.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\WidgetBase.cs" />
     <Compile Include="Controls\Widgets\WidgetRadio.xaml.cs">
       <DependentUpon>WidgetRadio.xaml</DependentUpon>
     </Compile>
@@ -137,6 +136,7 @@
     <Compile Include="Controls\Widgets\WidgetSncf.xaml.cs">
       <DependentUpon>WidgetSncf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\ByteArrayToImageConverter.cs" />
     <Compile Include="Converters\BoolInvertConverter.cs" />
     <Compile Include="Converters\StateToBoolConverter.cs" />
     <Compile Include="Converters\BoolVisibilityConverter.cs" />
@@ -148,10 +148,13 @@
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\PlatformService.cs" />
+    <Compile Include="Services\SpeechService.cs" />
+    <Compile Include="Controls\WidgetBase.cs" />
     <Compile Include="Utils\ColorBloomTransitionHelper.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />
     <Compile Include="Utils\Graph\GraphHelper.cs" />
+    <Compile Include="Utils\ImageHelper.cs" />
     <Compile Include="Utils\ImageLoader\ImageLoader.cs" />
     <Compile Include="Utils\ImageLoader\ManagedSurface.cs" />
     <Compile Include="Utils\RotationHelper.cs" />

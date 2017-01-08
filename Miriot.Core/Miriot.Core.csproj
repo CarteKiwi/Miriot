@@ -40,8 +40,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Helpers\VisionHelper.cs" />
-    <Compile Include="Helpers\FaceHelper.cs" />
+    <Compile Include="Messages\LoadWidgetsLessage.cs" />
+    <Compile Include="Messages\ListeningMessage.cs" />
+    <Compile Include="Messages\SpeakMessage.cs" />
+    <Compile Include="Services\Interfaces\IFaceService.cs" />
+    <Compile Include="Services\Interfaces\ISpeechService.cs" />
+    <Compile Include="Services\Interfaces\IVisionService.cs" />
+    <Compile Include="Services\Interfaces\IWidgetExclusive.cs" />
+    <Compile Include="Services\Interfaces\IWidgetListener.cs" />
+    <Compile Include="Services\Interfaces\IWidgetOAuth.cs" />
+    <Compile Include="Services\VisionService.cs" />
+    <Compile Include="Services\FaceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Interfaces\IDispatcherService.cs" />
     <Compile Include="Services\Interfaces\IAuthentication.cs" />

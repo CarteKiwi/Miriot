@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using Miriot.Common;
+using Miriot.Controls;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
 using Miriot.Views;

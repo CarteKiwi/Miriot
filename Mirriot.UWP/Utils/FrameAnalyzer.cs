@@ -8,11 +8,13 @@ using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.FaceAnalysis;
 using Windows.System.Threading;
+using Windows.UI.Core;
 
 namespace Miriot.Utils
 {
     public class FrameAnalyzer<TAnalysisResultType>
     {
+        public event EventHandler OnPreAnalysis;
         public event EventHandler<TAnalysisResultType> UsersIdentified;
         public event EventHandler NoFaceDetected;
 
@@ -39,14 +41,12 @@ namespace Miriot.Utils
                 return;
             }
 
-            var b = FaceTracker.IsSupported;
-
             VideoFrame currentFrame = await _camera.GetLatestFrame();
 
             // Use FaceDetector.GetSupportedBitmapPixelFormats and IsBitmapPixelFormatSupported to dynamically
             // determine supported formats
             const BitmapPixelFormat faceDetectionPixelFormat = BitmapPixelFormat.Nv12;
-            
+
             if (currentFrame == null || currentFrame.SoftwareBitmap.BitmapPixelFormat != faceDetectionPixelFormat)
             {
                 _frameProcessingSemaphore.Release();
@@ -66,8 +66,10 @@ namespace Miriot.Utils
                     }
                     else
                     {
+                        OnPreAnalysis?.Invoke(this, null);
+
                         var output = await AnalysisFunction(currentFrame);
-                        UsersIdentified?.Invoke(this, output);
+                            UsersIdentified?.Invoke(this, output);
                     }
                 }
 

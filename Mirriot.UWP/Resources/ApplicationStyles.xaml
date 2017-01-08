@@ -9,6 +9,7 @@
     <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
     <conv:StringFormatConverter x:Key="StringFormat"/>
     <conv:StateToBoolConverter x:Key="StateToBoolConverter"/>
+    <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
 
     <FontFamily x:Key="WeatherFont">/Fonts/WeatherTime.ttf#WeatherTime</FontFamily>
     

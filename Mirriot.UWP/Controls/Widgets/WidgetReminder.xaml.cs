@@ -1,10 +1,13 @@
 ﻿using Miriot.Common;
 using System.Linq;
 using Windows.ApplicationModel.Appointments;
+using Windows.UI.Xaml.Controls;
+using Miriot.Common.Model;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetReminder : WidgetBase
+    public sealed partial class WidgetReminder
     {
         public WidgetReminder(IntentResponse intent)
         {

@@ -9,10 +9,12 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
+using Miriot.Common.Model;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetFitbit : WidgetBase
+    public sealed partial class WidgetFitbit : IWidgetBase
     {
         public OAuth2AccessToken AccessToken;
 
@@ -102,6 +104,14 @@ namespace Miriot.Controls
                 return w;
             }
         }
+
+        public void SetPosition(int x, int y)
+        {
+            Grid.SetColumn(this, x);
+            Grid.SetRow(this, y);
+        }
+
+        public Widget OriginalWidget { get; set; }
     }
 
     public class Weights

@@ -7,9 +7,9 @@ using Miriot.Common.Model;
 
 namespace Miriot.Core.Services.Interfaces
 {
-    public interface IWidgetBase
+    public interface IWidgetExclusive
     {
-        void SetPosition(int x, int y);
-        Widget OriginalWidget { get; set; }
+        bool IsFullscreen { get; set; }
+        bool IsExclusive { get; set; }
     }
 }

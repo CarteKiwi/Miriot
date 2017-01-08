@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Miriot.Common.Model;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetRadio : WidgetBase
+    public sealed partial class WidgetRadio : IWidgetExclusive
     {
         private readonly IntentResponse _intent;
 
@@ -85,5 +88,9 @@ namespace Miriot.Controls
 
             ChangeChannel(channelUri, channel);
         }
+
+        public bool IsFullscreen { get; set; }
+
+        public bool IsExclusive { get; set; }
     }
 }
