@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
+using Miriot.Common;
 using Miriot.Common.Model;
 
 namespace Miriot.Core.Messages
 {
-    public class LoadWidgetsMessage : MessageBase
+    public class ActionMessage : MessageBase
     {
-        public readonly List<Widget> Widgets;
+        public readonly IntentResponse Intent;
 
-        public LoadWidgetsMessage(List<Widget> widgets)
+        public ActionMessage(IntentResponse intent)
         {
-            Widgets = widgets;
+            Intent = intent;
         }
     }
 }

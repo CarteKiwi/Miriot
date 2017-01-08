@@ -1,20 +1,20 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Controls;
+using Miriot.Core.Messages;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
 using Miriot.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Windows.Media;
 using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
 using Windows.UI;
@@ -24,8 +24,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using GalaSoft.MvvmLight.Messaging;
-using Miriot.Core.Messages;
 using Window = Windows.UI.Xaml.Window;
 
 namespace Miriot
@@ -37,8 +35,6 @@ namespace Miriot
         private DispatcherTimer _timer;
         private SpeechRecognizer _speechRecognizer;
         private SpeechSynthesizer _speechSynthesizer;
-        private bool _isListeningFirstName;
-        private bool _isListeningYesNo;
         private ColorBloomTransitionHelper _transition;
         private readonly FrameAnalyzer<ServiceResponse> _frameAnalyzer = new FrameAnalyzer<ServiceResponse>();
 
@@ -71,6 +67,45 @@ namespace Miriot
             _timer.Tick += Timer_Tick;
 
             Messenger.Default.Register<ListeningMessage>(this, OnListen);
+            Messenger.Default.Register<SpeakMessage>(this, OnSpeak);
+            Messenger.Default.Register<ActionMessage>(this, OnAction);
+
+            Vm.PropertyChanged += VmOnPropertyChanged;
+        }
+
+        private async void OnAction(ActionMessage msg)
+        {
+            await DoAction(msg.Intent);
+        }
+
+        private async void OnSpeak(SpeakMessage msg)
+        {
+            await Speak(msg.Text);
+        }
+
+        private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Vm.Widgets))
+            {
+                if (Vm.Widgets != null)
+                {
+                    Vm.Widgets.CollectionChanged -= WidgetsChanged;
+                    Vm.Widgets.CollectionChanged += WidgetsChanged;
+                }
+            }
+        }
+
+        private void WidgetsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                WidgetZone.Children.Clear();
+            }
+            else
+
+            if (e.NewItems.Count > 0)
+                LoadWidget((Widget)e.NewItems[0]);
+
         }
 
         private void OnListen(ListeningMessage msg)
@@ -127,48 +162,6 @@ namespace Miriot
             _timer.Stop();
         }
 
-        private async Task ContinueProcess(ServiceResponse response)
-        {
-            if (response?.Error != null)
-            {
-                if (response.Error.Value == ErrorType.NoFaceDetected)
-                {
-                    WelcomeTxt.Text = "Je n'y vois pas très clair...";
-                    SubtitleTxt.Text = "Aucun visage n'a été identifé.";
-                }
-                else if (response.Error.Value == ErrorType.UnknownFace)
-                {
-                    await PromptForUnknownFace();
-                }
-                else
-                {
-                    SetWelcomeMessage(null);
-                }
-            }
-        }
-
-        private async Task PromptForUnknownFace()
-        {
-            await SetMessage("Bonjour. Je m'appelle MirioT.", "Quel est votre prénom ? (dites: je m'appelle...)");
-
-            await Speak("Bonjour. Je m'appelle Miriotte. Et vous ? Quel est votre prénom ?");
-
-            _isListeningFirstName = true;
-
-            StartListening();
-        }
-
-        private async Task RepeatPromptForUnknownFace()
-        {
-            await SetMessage("Je n'ai pas compris", "Quel est votre prénom ? (dites: je m'appelle...)");
-
-            await Speak("Je n'ai pas compris. Quel est votre prénom ?");
-
-            _isListeningFirstName = true;
-
-            StartListening();
-        }
-
         #region Speech
         private async void InitializeSpeech()
         {
@@ -201,88 +194,9 @@ namespace Miriot
 
         #region Continuous Recognition
 
-        private async void ContinuousRecognitionSession_ResultGenerated(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionResultGeneratedEventArgs args)
+        private void ContinuousRecognitionSession_ResultGenerated(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionResultGeneratedEventArgs args)
         {
-            var text = CleanForDemo(args.Result.Text);
-
-            await SetMessage("Un instant...", "je réfléchis...");
-
-            await RunOnUiThread(() => Vm.IsLoading = true);
-
-            if (_isListeningYesNo)
-            {
-                _isListeningYesNo = false;
-
-                if (text.Contains("oui"))
-                {
-                    _isListeningFirstName = false;
-
-                    await CreateProfile();
-                }
-                else if (text.Contains("non"))
-                {
-                    await RepeatPromptForUnknownFace();
-                }
-                else
-                {
-                    await SetMessage(string.Empty, "Répondez par oui ou par non");
-                }
-            }
-            else
-            {
-                // Appel au service LUIS
-                var res = await AskLuisAsync(text);
-
-                // Récupération de la première action (intent avec Score le plus élevé)
-                var intent = res?.Intents?.OrderByDescending(e => e.Score).FirstOrDefault();
-
-                if (_isListeningFirstName)
-                {
-                    if (intent != null && intent.Intent == "CreateProfile")
-                        await SetNewProfileMessage(intent);
-                    else
-                        await RepeatPromptForUnknownFace();
-                }
-                else
-                {
-                    if (intent != null)
-                    {
-                        await RunOnUiThread(async () => await DoAction(intent));
-                    }
-
-                    await SetMessage(string.Empty, string.Empty);
-                }
-            }
-
-            await RunOnUiThread(() => { Vm.IsLoading = false; });
-        }
-
-        private string CleanForDemo(string text)
-        {
-            if (text.Contains("cineaction"))
-                return text.Replace("cineaction", "synapson");
-            else if (text.Contains("cynapium"))
-                return text.Replace("cynapium", "synapson");
-            else if (text.Contains("synapse"))
-                return text.Replace("synapse", "synapson");
-
-            return text;
-        }
-
-        private async Task CreateProfile()
-        {
-            //Create profile
-            var isSuccess = await Vm.CreateAsync();
-
-            if (isSuccess)
-            {
-                await SetMessage($"Très bien. Ravi de faire votre connaissance {Vm.User.Name}.", "Utilisez votre téléphone pour ajouter des widgets");
-                await Speak($"Très bien. Ravi de faire votre connaissance {Vm.User.Name}.");
-            }
-            else
-            {
-                await SetMessage(null, "Impossible d'enregistrer le compte");
-            }
+            Vm.ProceedSpeechCommand.Execute(args.Result.Text);
         }
 
         private async Task DoAction(IntentResponse intent)
@@ -317,37 +231,13 @@ namespace Miriot
                     await Speak("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
                     break;
                 case "None":
-                    if (_isListeningFirstName)
-                        await Repeat();
+                    if (Vm.IsListeningFirstName)
+                        Vm.Repeat();
                     break;
             }
         }
 
-        private async Task Repeat()
-        {
-            await RepeatPromptForUnknownFace();
-        }
-
-        private async Task SetNewProfileMessage(IntentResponse intent)
-        {
-            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
-
-            string name = string.Empty;
-
-            if (action.Parameters != null && action.Parameters.Any())
-                foreach (var p in action.Parameters)
-                {
-                    if (p.Value != null && p.Name == "Firstname")
-                        name = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                }
-
-            await RunOnUiThread(() => { Vm.User = new User { Name = name, Picture = Vm.LastFrameShot }; });
-
-            await SetMessage($"Bonjour {name.ToUpperInvariant()}", "Aie-je bien entendu votre prénom ?");
-            await Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
-
-            _isListeningYesNo = true;
-        }
+    
 
         private void SetTvScreenSize(bool isFullScreen)
         {
@@ -454,25 +344,7 @@ namespace Miriot
             await ((WidgetDeezer)w).FindTrackAsync(search);
         }
 
-        private async Task<LuisResponse> AskLuisAsync(string words)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://api.projectoxford.ai/luis/v1/");
-                    var res = await client.GetAsync($"application?id=e2fa615c-2c3a-4f2d-a82b-5151223d4cca&subscription-key=48511b6fad9a4cb7acf6e3e583d95efd&q={words}");
-                    var c = await res.Content.ReadAsStringAsync();
-
-                    return JsonConvert.DeserializeObject<LuisResponse>(c);
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
+       
         private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
         {
             if (args.Status != SpeechRecognitionResultStatus.Success)
@@ -543,27 +415,6 @@ namespace Miriot
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, action);
         }
 
-        private void SetWelcomeMessage(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                WelcomeTxt.Text = string.Empty;
-                SubtitleTxt.Text = "Vérifiez votre connexion internet";
-                return;
-            }
-
-            WelcomeTxt.Text = $"Bonjour {Vm.User.Name}";
-        }
-
-        private async Task SetMessage(string title, string subTitle)
-        {
-            await _dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-            {
-                WelcomeTxt.Text = title;
-                SubtitleTxt.Text = subTitle;
-            });
-        }
-
         private void LoadWidget(Widget widget)
         {
             WidgetBase w;
@@ -629,21 +480,16 @@ namespace Miriot
 
         private async void CleanUi()
         {
+            Vm.ResetCommand.Execute(null);
+
             await RunOnUiThread(() =>
             {
                 // Force delete transition
-                WidgetMobileZone.Children.Clear();
                 WidgetZone.Children.Clear();
-                WelcomeTxt.Text = string.Empty;
-                SubtitleTxt.Text = string.Empty;
-
                 InfoUnknownPanel.Opacity = 0;
                 _timer.Stop();
-                _isListeningFirstName = false;
-                _isListeningYesNo = false;
                 Img.Source = null;
-
-                Vm.User = null;
+                
                 Stop();
             });
         }
@@ -675,6 +521,8 @@ namespace Miriot
             _frameAnalyzer.Cleanup();
             Camera.Cleanup();
             Stop();
+            Messenger.Default.Unregister(this);
+
             base.OnNavigatedFrom(e);
         }
 

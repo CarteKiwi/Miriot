@@ -83,9 +83,6 @@
         <!--Camera control-->
         <ctrl:CameraControl x:Name="Camera" ShowPreview="{x:Bind Vm.IsMobile, Mode=OneWay}"/>
 
-        <!--Widget zone for mobile apps-->
-        <Grid x:Name="WidgetMobileZone" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
         <!--Widget zone-->
         <Grid x:Name="WidgetZone" 
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -114,13 +111,14 @@
                        FontWeight="Light"
                        HorizontalAlignment="Center"
                        TextWrapping="WrapWholeWords"
+                       Text="{x:Bind Vm.Title, Mode=OneWay}"
                        FontSize="40"/>
 
             <TextBlock x:Name="SubtitleTxt"  FontWeight="Light"
                        HorizontalAlignment="Center"
                        TextWrapping="WrapWholeWords"
                        FontSize="25"
-                       Text="{x:Bind Vm.SubTitle}"
+                       Text="{x:Bind Vm.SubTitle, Mode=OneWay}"
                        Typography.Capitals="AllSmallCaps"/>
         </StackPanel>
 
