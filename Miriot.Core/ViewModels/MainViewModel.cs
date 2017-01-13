@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Networking.Connectivity;
 using Windows.System.Profile;
@@ -458,9 +459,9 @@ namespace Miriot.Core.ViewModels
             return null;
         }
 
-        public async Task<ServiceResponse> IdentifyFaces(VideoFrame frame)
+        public async Task<ServiceResponse> IdentifyFaces(SoftwareBitmap bitmap)
         {
-            _lastFrameShot = await _fileService.EncodedBytes(frame.SoftwareBitmap);
+            _lastFrameShot = await _fileService.EncodedBytes(bitmap);
            
             // Post photo to Azure 
             // Compare faces & return identified user

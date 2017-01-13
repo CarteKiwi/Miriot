@@ -150,7 +150,7 @@
     <Compile Include="Services\Authentication.cs" />
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
-    <Compile Include="Services\Mock\FileService.cs" />
+    <Compile Include="Services\Mock\FrameAnalyser.cs" />
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\SpeechService.cs" />
     <Compile Include="Controls\WidgetBase.cs" />

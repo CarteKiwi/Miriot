@@ -1,7 +1,7 @@
-﻿using Miriot.Utils;
+﻿using Miriot.Core.Services.Interfaces;
+using Miriot.Utils;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Devices.Enumeration;
@@ -11,14 +11,12 @@ using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.Capture;
-using Windows.Media.FaceAnalysis;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
@@ -341,26 +339,6 @@ namespace Miriot.Controls
 
                 return file.Path;
             }
-        }
-
-        public async Task<string> SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap)
-        {
-            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-
-            var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpg", CreationCollisionOption.ReplaceExisting);
-
-            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-            {
-                // Create an encoder with the desired format
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
-
-                // Set the software bitmap
-                encoder.SetSoftwareBitmap(bitmapBgra8);
-
-                await encoder.FlushAsync();
-            }
-
-            return file.Path;
         }
 
         public async Task<VideoFrame> GetLatestFrame()

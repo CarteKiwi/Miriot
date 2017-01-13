@@ -2,6 +2,8 @@
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media.Imaging;
@@ -72,7 +74,7 @@ namespace Miriot.Utils
         public static async Task<byte[]> ToBytes(this StorageFile image)
         {
             IRandomAccessStream fileStream = await image.OpenAsync(FileAccessMode.Read);
-            var reader = new Windows.Storage.Streams.DataReader(fileStream.GetInputStreamAt(0));
+            var reader = new DataReader(fileStream.GetInputStreamAt(0));
             await reader.LoadAsync((uint)fileStream.Size);
 
             byte[] pixels = new byte[fileStream.Size];
@@ -80,6 +82,33 @@ namespace Miriot.Utils
             reader.ReadBytes(pixels);
 
             return pixels;
+        }
+
+        public static async Task<string> ToFile(this SoftwareBitmap softwareBitmap)
+        {
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+
+            var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpg", CreationCollisionOption.ReplaceExisting);
+
+            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                // Create an encoder with the desired format
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+
+                // Set the software bitmap
+                encoder.SetSoftwareBitmap(bitmapBgra8);
+
+                await encoder.FlushAsync();
+            }
+
+            return file.Path;
+        }
+
+        public static async Task<SoftwareBitmap> ToSoftwareBitmap(this byte[] bytes)
+        {
+            var stream = bytes.AsBuffer().AsStream();
+            var decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.JpegDecoderId, stream.AsRandomAccessStream());
+            return await decoder.GetSoftwareBitmapAsync();
         }
     }
 }

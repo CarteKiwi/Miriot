@@ -6,6 +6,7 @@ using Miriot.Common;
 using Miriot.Controls;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
+using Miriot.Services.Mock;
 using Miriot.Views;
 
 namespace Miriot
@@ -27,8 +28,9 @@ namespace Miriot
                 SimpleIoc.Default.Register<INavigationService>(() => navigationService);
                 SimpleIoc.Default.Register<IAuthentication, Authentication>();
                 SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
-                SimpleIoc.Default.Register<IFileService, Services.Mock.FileService>();
-                //SimpleIoc.Default.Register<IFileService, FileService>();
+                SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
+                //SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, FrameAnalyser<ServiceResponse>>();
+                SimpleIoc.Default.Register<IFileService, FileService>();
                 SimpleIoc.Default.Register<IDialogService, DialogService>();
                 SimpleIoc.Default.Register<IPlatformService, PlatformService>();
             }

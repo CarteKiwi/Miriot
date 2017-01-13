@@ -35,7 +35,7 @@ namespace Miriot
         private SpeechRecognizer _speechRecognizer;
         private SpeechSynthesizer _speechSynthesizer;
         private ColorBloomTransitionHelper _transition;
-        private readonly FrameAnalyzer<ServiceResponse> _frameAnalyzer = new FrameAnalyzer<ServiceResponse>();
+        private readonly IFrameAnalyzer<ServiceResponse> _frameAnalyzer;
         private int _noFaceDetectedCount;
 
         public MainViewModel Vm => ServiceLocator.Current.GetInstance<MainViewModel>();
@@ -47,6 +47,7 @@ namespace Miriot
             InitializeTransitionHelper();
 
             Loaded += MainPage_Loaded;
+            _frameAnalyzer = ServiceLocator.Current.GetInstance<IFrameAnalyzer<ServiceResponse>>();
         }
 
         #endregion
@@ -62,7 +63,7 @@ namespace Miriot
             _frameAnalyzer.UsersIdentified += OnUsersIdentified;
             _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
             _frameAnalyzer.OnPreAnalysis += OnStartingIdentification;
-            
+
             _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 30) };
             _timer.Tick += Timer_Tick;
 

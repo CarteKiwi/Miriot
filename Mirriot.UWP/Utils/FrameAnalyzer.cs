@@ -1,5 +1,4 @@
-﻿using Miriot.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -8,15 +7,14 @@ using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.FaceAnalysis;
 using Windows.System.Threading;
-using Windows.UI.Core;
 using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Utils
 {
-    public class FrameAnalyzer<TAnalysisResultType>
+    public class FrameAnalyzer<T> : IFrameAnalyzer<T>
     {
         public event EventHandler OnPreAnalysis;
-        public event EventHandler<TAnalysisResultType> UsersIdentified;
+        public event EventHandler<T> UsersIdentified;
         public event EventHandler NoFaceDetected;
 
         private FaceTracker _faceTracker;
@@ -25,7 +23,7 @@ namespace Miriot.Utils
         private ICameraService _camera;
         private int _detectedFacesInLastFrame;
 
-        public Func<VideoFrame, Task<TAnalysisResultType>> AnalysisFunction { private get; set; }
+        public Func<SoftwareBitmap, Task<T>> AnalysisFunction { get; set; }
 
         public async Task AttachAsync(ICameraService camera)
         {
@@ -35,7 +33,7 @@ namespace Miriot.Utils
             _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
         }
 
-        private async void ProcessCurrentVideoFrame(ThreadPoolTimer timer)
+        public async void ProcessCurrentVideoFrame(ThreadPoolTimer timer)
         {
             if (!_frameProcessingSemaphore.Wait(0))
             {
@@ -69,8 +67,8 @@ namespace Miriot.Utils
                     {
                         OnPreAnalysis?.Invoke(this, null);
 
-                        var output = await AnalysisFunction(currentFrame);
-                            UsersIdentified?.Invoke(this, output);
+                        var output = await AnalysisFunction(currentFrame.SoftwareBitmap);
+                        UsersIdentified?.Invoke(this, output);
                     }
                 }
 
