@@ -9,6 +9,7 @@ using Windows.Media;
 using Windows.Media.FaceAnalysis;
 using Windows.System.Threading;
 using Windows.UI.Core;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Utils
 {
@@ -21,12 +22,12 @@ namespace Miriot.Utils
         private FaceTracker _faceTracker;
         private ThreadPoolTimer _frameProcessingTimer;
         private readonly SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
-        private CameraControl _camera;
+        private ICameraService _camera;
         private int _detectedFacesInLastFrame;
 
         public Func<VideoFrame, Task<TAnalysisResultType>> AnalysisFunction { private get; set; }
 
-        public async Task AttachAsync(CameraControl camera)
+        public async Task AttachAsync(ICameraService camera)
         {
             _camera = camera;
             _faceTracker = await FaceTracker.CreateAsync();

@@ -30,11 +30,15 @@ namespace Miriot.Core.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IFaceService _faceService;
         private readonly IVisionService _visionService;
+        private string _title;
+        private string _subTitle;
+        private bool _isListeningYesNo;
         private User _user;
         private ObservableCollection<Widget> _widgets;
         private bool _isInternetAvailable;
         private States _currentState;
-        private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationToken;
+        private byte[] _lastFrameShot;
         #endregion
 
         #region Commands
@@ -48,7 +52,7 @@ namespace Miriot.Core.ViewModels
         public User User
         {
             get { return _user; }
-            set
+            private set
             {
                 Set(() => User, ref _user, value);
                 RaisePropertyChanged(() => IsConnected);
@@ -58,7 +62,7 @@ namespace Miriot.Core.ViewModels
         public ObservableCollection<Widget> Widgets
         {
             get { return _widgets; }
-            set { Set(() => Widgets, ref _widgets, value); }
+            private set { Set(() => Widgets, ref _widgets, value); }
         }
 
         public bool IsInternetAvailable
@@ -66,8 +70,6 @@ namespace Miriot.Core.ViewModels
             get { return _isInternetAvailable; }
             private set { Set(ref _isInternetAvailable, value); }
         }
-
-        public byte[] LastFrameShot { get; set; }
 
         public bool IsConnected => User != null;
 
@@ -86,10 +88,7 @@ namespace Miriot.Core.ViewModels
             }
         }
 
-        private string _title;
-        private string _subTitle;
-        private bool _isListeningYesNo;
-        public bool IsListeningFirstName { get; set; }
+        public bool IsListeningFirstName { get; private set; }
 
         public string Title
         {
@@ -120,6 +119,7 @@ namespace Miriot.Core.ViewModels
 
             SetCommands();
 
+            _cancellationToken = new CancellationTokenSource();
             IsInternetAvailable = _platformService.IsInternetAvailable;
 
             NetworkInformation.NetworkStatusChanged += OnNetworkStatusChanged;
@@ -144,6 +144,10 @@ namespace Miriot.Core.ViewModels
 
         private void OnReset()
         {
+            _cancellationToken.Cancel();
+            _cancellationToken = new CancellationTokenSource();
+            Widgets?.Clear();
+            IsLoading = false;
 
             IsListeningFirstName = false;
             _isListeningYesNo = false;
@@ -273,7 +277,7 @@ namespace Miriot.Core.ViewModels
                         name = p.Value.OrderByDescending(e => e.Score).First().Entity;
                 }
 
-            User = new User { Name = name, Picture = LastFrameShot };
+            User = new User { Name = name, Picture = _lastFrameShot };
 
             SetMessage($"Bonjour {name.ToUpperInvariant()}", "Aie-je bien entendu votre prénom ?");
             Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
@@ -405,13 +409,10 @@ namespace Miriot.Core.ViewModels
         {
             if (state == States.Inactive)
             {
-                _cancellationToken.Cancel();
-
-                Widgets?.Clear();
+                OnReset();
             }
 
             CurrentState = state;
-            IsLoading = false;
         }
 
         private void OnNavigateTo(string pageKey)
@@ -438,7 +439,7 @@ namespace Miriot.Core.ViewModels
         {
             try
             {
-                var users = await _faceService.GetUsers(LastFrameShot);
+                var users = await _faceService.GetUsers(_lastFrameShot);
 
                 return users;
             }
@@ -459,19 +460,14 @@ namespace Miriot.Core.ViewModels
 
         public async Task<ServiceResponse> IdentifyFaces(VideoFrame frame)
         {
-            LastFrameShot = await _fileService.EncodedBytes(frame.SoftwareBitmap);
-
-            //MOCKED
-            //var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
-            //uri = p.Path + "/untitled.png";
-
+            _lastFrameShot = await _fileService.EncodedBytes(frame.SoftwareBitmap);
+           
             // Post photo to Azure 
             // Compare faces & return identified user
             return await GetUsersAsync();
         }
 
-
-        public async Task<UserEmotion> GetEmotionAsync(byte[] bitmap, int top, int left)
+        private async Task<UserEmotion> GetEmotionAsync(byte[] bitmap, int top, int left)
         {
             try
             {

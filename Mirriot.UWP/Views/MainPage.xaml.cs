@@ -20,7 +20,6 @@ using Windows.Media.SpeechSynthesis;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
@@ -37,6 +36,7 @@ namespace Miriot
         private SpeechSynthesizer _speechSynthesizer;
         private ColorBloomTransitionHelper _transition;
         private readonly FrameAnalyzer<ServiceResponse> _frameAnalyzer = new FrameAnalyzer<ServiceResponse>();
+        private int _noFaceDetectedCount;
 
         public MainViewModel Vm => ServiceLocator.Current.GetInstance<MainViewModel>();
 
@@ -62,7 +62,7 @@ namespace Miriot
             _frameAnalyzer.UsersIdentified += OnUsersIdentified;
             _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
             _frameAnalyzer.OnPreAnalysis += OnStartingIdentification;
-
+            
             _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 30) };
             _timer.Tick += Timer_Tick;
 
@@ -115,17 +115,27 @@ namespace Miriot
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
         {
-            await RunOnUiThread(() => Vm.IsLoading = true);
+            await RunOnUiThread(() =>
+            {
+                Vm.IsLoading = true;
+                Vm.StateChangedCommand.Execute(States.Active);
+            });
         }
 
         private async void OnNoFaceDetected(object sender, EventArgs e)
         {
+            _noFaceDetectedCount++;
+
+            //if (_noFaceDetectedCount < 5) return;
+
             await RunOnUiThread(() => { Vm.StateChangedCommand.Execute(States.Inactive); });
             CleanUi();
         }
 
         private async void OnUsersIdentified(object sender, ServiceResponse response)
         {
+            _noFaceDetectedCount = 0;
+            CleanUi();
             await RunOnUiThread(() => { Vm.UsersIdentifiedCommand.Execute(response); });
         }
 
@@ -194,9 +204,9 @@ namespace Miriot
 
         #region Continuous Recognition
 
-        private void ContinuousRecognitionSession_ResultGenerated(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionResultGeneratedEventArgs args)
+        private async void ContinuousRecognitionSession_ResultGenerated(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionResultGeneratedEventArgs args)
         {
-            Vm.ProceedSpeechCommand.Execute(args.Result.Text);
+            await RunOnUiThread(() => Vm.ProceedSpeechCommand.Execute(args.Result.Text));
         }
 
         private async Task DoAction(IntentResponse intent)
@@ -237,7 +247,7 @@ namespace Miriot
             }
         }
 
-    
+
 
         private void SetTvScreenSize(bool isFullScreen)
         {
@@ -246,16 +256,7 @@ namespace Miriot
             {
                 ((IWidgetExclusive)w).IsFullscreen = isFullScreen;
 
-                if (isFullScreen)
-                {
-                    Grid.SetColumnSpan((WidgetTv)w, 4);
-                    Grid.SetRowSpan((WidgetTv)w, 4);
-                }
-                else
-                {
-                    Grid.SetColumnSpan((WidgetTv)w, 1);
-                    Grid.SetRowSpan((WidgetTv)w, 1);
-                }
+
             }
         }
 
@@ -344,7 +345,7 @@ namespace Miriot
             await ((WidgetDeezer)w).FindTrackAsync(search);
         }
 
-       
+
         private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
         {
             if (args.Status != SpeechRecognitionResultStatus.Success)
@@ -402,8 +403,8 @@ namespace Miriot
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(text);
+                MediaElementCtrl.PlaybackRate = 1.5;
                 MediaElementCtrl.SetSource(stream, stream.ContentType);
-                MediaElementCtrl.PlaybackRate = 0.6;
                 MediaElementCtrl.Play();
             });
         }
@@ -480,16 +481,15 @@ namespace Miriot
 
         private async void CleanUi()
         {
-            Vm.ResetCommand.Execute(null);
-
             await RunOnUiThread(() =>
             {
+                Vm.ResetCommand.Execute(null);
                 // Force delete transition
                 WidgetZone.Children.Clear();
                 InfoUnknownPanel.Opacity = 0;
                 _timer.Stop();
                 Img.Source = null;
-                
+                MediaElementCtrl.Stop();
                 Stop();
             });
         }

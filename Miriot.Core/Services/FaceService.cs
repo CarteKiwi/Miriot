@@ -112,7 +112,7 @@ namespace Miriot.Core.Services
             {
                 Debug.WriteLine(ex.Message);
                 Debug.WriteLine("UserData:" + userData);
-                return null;
+                return new UserData();
             }
         }
 

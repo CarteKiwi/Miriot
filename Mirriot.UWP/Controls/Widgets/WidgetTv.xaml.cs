@@ -16,12 +16,36 @@ using Miriot.Common.Model;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetTv
+    public sealed partial class WidgetTv : IWidgetExclusive
     {
         //private FFmpegInteropMSS FFmpegMSS;
         private string _urlHub;
         private string _currentChannelKey;
         private Dictionary<string, string> _cachedUrls;
+        private bool _isFullscreen;
+
+        public bool IsFullscreen
+        {
+            get { return _isFullscreen; }
+
+            set
+            {
+                _isFullscreen = value;
+
+                if (value)
+                {
+                    Grid.SetColumnSpan(this, 4);
+                    Grid.SetRowSpan(this, 4);
+                }
+                else
+                {
+                    Grid.SetColumnSpan(this, 1);
+                    Grid.SetRowSpan(this, 1);
+                }
+            }
+        }
+
+        public bool IsExclusive { get; set; }
 
         public WidgetTv(IntentResponse intent, Dictionary<string, string> cachedUrls)
         {
@@ -76,7 +100,7 @@ namespace Miriot.Controls
             try
 
             {
-                
+
                 // Read toggle switches states and use them to setup FFmpeg MSS
 
                 //bool forceDecodeAudio = toggleSwitchAudioDecode.IsOn;

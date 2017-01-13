@@ -18,10 +18,11 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class CameraControl
+    public sealed partial class CameraControl : ICameraService
     {
         #region Variables
         private MediaCapture _mediaCapture;

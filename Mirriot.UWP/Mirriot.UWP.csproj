@@ -121,6 +121,9 @@
     <Compile Include="Controls\Widgets\WidgetReminder.xaml.cs">
       <DependentUpon>WidgetReminder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Widgets\WidgetTimer.xaml.cs">
+      <DependentUpon>WidgetTimer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Widgets\WidgetTv.xaml.cs">
       <DependentUpon>WidgetTv.xaml</DependentUpon>
     </Compile>
@@ -147,6 +150,7 @@
     <Compile Include="Services\Authentication.cs" />
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\Mock\FileService.cs" />
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\SpeechService.cs" />
     <Compile Include="Controls\WidgetBase.cs" />
@@ -249,6 +253,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Widgets\WidgetReminder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Widgets\WidgetTimer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,0 +1,28 @@
+﻿<local:WidgetBase
+    x:Class="Miriot.Controls.WidgetTimer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Miriot.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    RequestedTheme="Dark"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid HorizontalAlignment="Center">
+        <StackPanel>
+            <TextBlock x:Name="TimerTb" Text="00:00:00"
+                       FontSize="50"
+                       HorizontalAlignment="Center"
+                       FontWeight="Light"/>
+
+            <TextBlock x:Name="TitleTb" Text="Brossage de dents"
+                       FontSize="20"
+                       HorizontalAlignment="Center"
+                       TextLineBounds="TrimToCapHeight"
+                       Typography.Capitals="AllSmallCaps"
+                       FontWeight="Light"/>
+        </StackPanel>
+    </Grid>
+</local:WidgetBase>

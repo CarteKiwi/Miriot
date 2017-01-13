@@ -27,7 +27,8 @@ namespace Miriot
                 SimpleIoc.Default.Register<INavigationService>(() => navigationService);
                 SimpleIoc.Default.Register<IAuthentication, Authentication>();
                 SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
-                SimpleIoc.Default.Register<IFileService, FileService>();
+                SimpleIoc.Default.Register<IFileService, Services.Mock.FileService>();
+                //SimpleIoc.Default.Register<IFileService, FileService>();
                 SimpleIoc.Default.Register<IDialogService, DialogService>();
                 SimpleIoc.Default.Register<IPlatformService, PlatformService>();
             }

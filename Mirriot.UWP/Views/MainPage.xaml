@@ -146,19 +146,25 @@
                     Margin="20"
                     HorizontalAlignment="Left"
                     Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
-            <Ellipse Height="70" Width="70"
+            <Grid>
+                <Ellipse Height="90" Width="90"
                      Stroke="{StaticResource AccentBrush}"
-                     StrokeThickness="2">
-                <Ellipse.Fill>
-                    <ImageBrush ImageSource="{x:Bind Vm.User.Picture, Mode=OneWay, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
-                </Ellipse.Fill>
-            </Ellipse>
+                     StrokeThickness="1"/>
+                <Ellipse Height="70" Width="70">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{x:Bind Vm.User.Picture, Mode=OneWay, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </Grid>
 
             <StackPanel Margin="10,35"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom" >
+                
+                <Grid Width="Auto" Height="1" Background="White"/>
+                
                 <TextBlock Text="{x:Bind Vm.User.Name, Mode=OneWay}"
-                           FontWeight="Light"
+                           FontWeight="ExtraLight"
                            HorizontalAlignment="Center"
                            TextWrapping="WrapWholeWords"
                            FontSize="25"/>
