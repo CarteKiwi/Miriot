@@ -107,7 +107,7 @@ namespace Miriot.Utils
         public static async Task<SoftwareBitmap> ToSoftwareBitmap(this byte[] bytes)
         {
             var stream = bytes.AsBuffer().AsStream();
-            var decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.JpegDecoderId, stream.AsRandomAccessStream());
+            var decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.PngDecoderId, stream.AsRandomAccessStream());
             return await decoder.GetSoftwareBitmapAsync();
         }
     }

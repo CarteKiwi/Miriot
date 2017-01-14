@@ -6,7 +6,7 @@ using Miriot.Common;
 using Miriot.Controls;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
-using Miriot.Services.Mock;
+using Miriot.Utils;
 using Miriot.Views;
 
 namespace Miriot
@@ -17,23 +17,18 @@ namespace Miriot
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            // Services
-            if (ViewModelBase.IsInDesignModeStatic)
-            {
-                // No mock right now
-            }
-            else
-            {
-                var navigationService = CreateNavigationService();
-                SimpleIoc.Default.Register<INavigationService>(() => navigationService);
-                SimpleIoc.Default.Register<IAuthentication, Authentication>();
-                SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
-                SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
-                //SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, FrameAnalyser<ServiceResponse>>();
-                SimpleIoc.Default.Register<IFileService, FileService>();
-                SimpleIoc.Default.Register<IDialogService, DialogService>();
-                SimpleIoc.Default.Register<IPlatformService, PlatformService>();
-            }
+            var navigationService = CreateNavigationService();
+            SimpleIoc.Default.Register<INavigationService>(() => navigationService);
+            SimpleIoc.Default.Register<IAuthentication, Authentication>();
+            SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
+#if MOCK
+            SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
+#else
+            SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, FrameAnalyser<ServiceResponse>>();
+#endif
+            SimpleIoc.Default.Register<IFileService, FileService>();
+            SimpleIoc.Default.Register<IDialogService, DialogService>();
+            SimpleIoc.Default.Register<IPlatformService, PlatformService>();
         }
 
         private static INavigationService CreateNavigationService()

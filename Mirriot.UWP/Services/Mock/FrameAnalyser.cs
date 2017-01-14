@@ -20,7 +20,7 @@ namespace Miriot.Services.Mock
 
         public Task AttachAsync(ICameraService camera)
         {
-            var timerInterval = TimeSpan.FromMilliseconds(66); // 15 fps
+            var timerInterval = TimeSpan.FromMilliseconds(10000); // 15 fps
             _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
             return Task.FromResult(true);
         }

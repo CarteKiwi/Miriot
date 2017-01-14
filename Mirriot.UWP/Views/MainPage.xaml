@@ -160,9 +160,14 @@
             <StackPanel Margin="10,35"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom" >
-                
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <ContentThemeTransition/>
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
+
                 <Grid Width="Auto" Height="1" Background="White"/>
-                
+
                 <TextBlock Text="{x:Bind Vm.User.Name, Mode=OneWay}"
                            FontWeight="ExtraLight"
                            HorizontalAlignment="Center"

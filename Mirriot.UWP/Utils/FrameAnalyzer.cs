@@ -11,7 +11,7 @@ using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Utils
 {
-    public class FrameAnalyzer<T> : IFrameAnalyzer<T>
+    public class FrameAnalyser<T> : IFrameAnalyzer<T>
     {
         public event EventHandler OnPreAnalysis;
         public event EventHandler<T> UsersIdentified;
