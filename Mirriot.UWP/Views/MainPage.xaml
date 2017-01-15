@@ -25,6 +25,18 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:1" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Name="UserPictureSb">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="UserPicture">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" Storyboard.TargetName="UserPicture">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
 
     <Grid x:Name="MainGrid" Background="{StaticResource Accent2Brush}" SizeChanged="MainGrid_SizeChanged">
@@ -146,7 +158,16 @@
                     Margin="20"
                     HorizontalAlignment="Left"
                     Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
-            <Grid>
+            <Grid x:Name="UserPicture" RenderTransformOrigin="0.5,0.5">
+                <interactivity:Interaction.Behaviors>
+                    <core:DataTriggerBehavior Binding="{Binding IsConnected, Mode=OneWay}" Value="true">
+                        <media:ControlStoryboardAction Storyboard="{StaticResource UserPictureSb}"/>
+                    </core:DataTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+                <Grid.RenderTransform>
+                    <CompositeTransform/>
+                </Grid.RenderTransform>
+
                 <Ellipse Height="90" Width="90"
                      Stroke="{StaticResource AccentBrush}"
                      StrokeThickness="1"/>
@@ -158,10 +179,14 @@
             </Grid>
 
             <StackPanel Margin="10,35"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom" >
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom" >
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
+                        <PaneThemeTransition/>
+                        <EdgeUIThemeTransition/>
+                        <EntranceThemeTransition/>
+                        <AddDeleteThemeTransition/>
                         <ContentThemeTransition/>
                     </TransitionCollection>
                 </StackPanel.ChildrenTransitions>

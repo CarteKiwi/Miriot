@@ -16,7 +16,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
-using Windows.Media;
 using Windows.Networking.Connectivity;
 using Windows.System.Profile;
 
@@ -334,8 +333,8 @@ namespace Miriot.Core.ViewModels
             {
                 Widgets.Add(widget);
 
-                // Wait 300ms to create a better transition effect
-                await Task.Delay(300, _cancellationToken.Token);
+                // Wait 100ms to create a better transition effect
+                await Task.Delay(100, _cancellationToken.Token);
             }
 
             if (CurrentState == States.Inactive)
