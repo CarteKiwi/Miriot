@@ -29,7 +29,7 @@ namespace Miriot.Utils
         {
             _camera = camera;
             _faceTracker = await FaceTracker.CreateAsync();
-            var timerInterval = TimeSpan.FromMilliseconds(66); // 15 fps
+            var timerInterval = TimeSpan.FromMilliseconds(300);
             _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
         }
 
@@ -56,20 +56,16 @@ namespace Miriot.Utils
             {
                 IList<DetectedFace> detectedFaces = await _faceTracker.ProcessNextFrameAsync(currentFrame);
 
-                // If number of faces has changed
-                if (detectedFaces.Count != _detectedFacesInLastFrame)
+                if (detectedFaces.Count == 0)
                 {
-                    if (detectedFaces.Count == 0)
-                    {
-                        NoFaceDetected?.Invoke(this, null);
-                    }
-                    else
-                    {
-                        OnPreAnalysis?.Invoke(this, null);
+                    NoFaceDetected?.Invoke(this, null);
+                }
+                else if (detectedFaces.Count != _detectedFacesInLastFrame)
+                {
+                    OnPreAnalysis?.Invoke(this, null);
 
-                        var output = await AnalysisFunction(currentFrame.SoftwareBitmap);
-                        UsersIdentified?.Invoke(this, output);
-                    }
+                    var output = await AnalysisFunction(currentFrame.SoftwareBitmap);
+                    UsersIdentified?.Invoke(this, output);
                 }
 
                 _detectedFacesInLastFrame = detectedFaces.Count;

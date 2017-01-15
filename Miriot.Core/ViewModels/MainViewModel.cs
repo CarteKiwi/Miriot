@@ -186,6 +186,11 @@ namespace Miriot.Core.ViewModels
 
         private async void OnProceedSpeech(string text)
         {
+            //if (!_isListeningYesNo && !IsListeningFirstName && !text.Contains("miriot"))
+            //{
+            //    return;
+            //}
+
             text = CleanForDemo(text);
 
             SetMessage("Un instant...", "je réfléchis...");
@@ -461,7 +466,7 @@ namespace Miriot.Core.ViewModels
         public async Task<ServiceResponse> IdentifyFaces(SoftwareBitmap bitmap)
         {
             _lastFrameShot = await _fileService.EncodedBytes(bitmap);
-           
+
             // Post photo to Azure 
             // Compare faces & return identified user
             return await GetUsersAsync();

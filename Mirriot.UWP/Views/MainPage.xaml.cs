@@ -116,6 +116,11 @@ namespace Miriot
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
         {
+            if (Vm.CurrentState == States.Active)
+            {
+                return;
+            }
+
             await RunOnUiThread(() =>
             {
                 Vm.IsLoading = true;
@@ -127,7 +132,7 @@ namespace Miriot
         {
             _noFaceDetectedCount++;
 
-            //if (_noFaceDetectedCount < 5) return;
+            if (_noFaceDetectedCount < 50) return;
 
             await RunOnUiThread(() => { Vm.StateChangedCommand.Execute(States.Inactive); });
             CleanUi();
@@ -135,6 +140,11 @@ namespace Miriot
 
         private async void OnUsersIdentified(object sender, ServiceResponse response)
         {
+            if (Vm.User != null)
+            {
+                return;
+            }
+
             _noFaceDetectedCount = 0;
             CleanUi();
             await RunOnUiThread(() => { Vm.UsersIdentifiedCommand.Execute(response); });
