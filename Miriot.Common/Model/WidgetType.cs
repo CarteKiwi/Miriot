@@ -8,6 +8,7 @@
         Fitbit,
         Sncf,
         Image,
-        Calendar
+        Calendar,
+        Horoscope
     }
 }

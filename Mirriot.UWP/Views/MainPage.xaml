@@ -37,6 +37,18 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Name="ToothbrushungSb">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="UserPicture">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" Storyboard.TargetName="UserPicture">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
 
     <Grid x:Name="MainGrid" Background="{StaticResource Accent2Brush}" SizeChanged="MainGrid_SizeChanged">
@@ -104,32 +116,39 @@
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="1.5*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
+
+            <!--<ctrl:WidgetDeezer Grid.Column="0"></ctrl:WidgetDeezer>
+            <ctrl:WidgetCalendar Grid.Column="0"
+                                 Grid.RowSpan="2"
+                                 Grid.Row="1"></ctrl:WidgetCalendar>
+            <ctrl:WidgetSncf Grid.Column="2" Grid.Row="1"></ctrl:WidgetSncf>
+            <ctrl:WidgetTime Grid.Column="2"></ctrl:WidgetTime>
+            <ctrl:WidgetWeather Grid.Column="2" Grid.Row="2"></ctrl:WidgetWeather>-->
         </Grid>
 
         <!--Welcome text-->
-        <StackPanel Margin="0,35"
+        <StackPanel Margin="0,10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom" >
-            <TextBlock x:Name="WelcomeTxt" 
-                       FontWeight="Light"
+            <TextBlock FontWeight="Light"
                        HorizontalAlignment="Center"
                        TextWrapping="WrapWholeWords"
                        Text="{x:Bind Vm.Title, Mode=OneWay}"
-                       FontSize="40"/>
-
-            <TextBlock x:Name="SubtitleTxt"  FontWeight="Light"
+                       FontSize="35"/>
+            <TextBlock FontWeight="Light"
                        HorizontalAlignment="Center"
                        TextWrapping="WrapWholeWords"
-                       FontSize="25"
+                       FontSize="20"
                        Text="{x:Bind Vm.SubTitle, Mode=OneWay}"
                        Typography.Capitals="AllSmallCaps"/>
         </StackPanel>
@@ -153,89 +172,110 @@
                        FontSize="60"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Bottom"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!--Profile panel-->
+            <StackPanel VerticalAlignment="Bottom"
                     Orientation="Horizontal"
                     Margin="20"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
-            <Grid x:Name="UserPicture" RenderTransformOrigin="0.5,0.5">
-                <interactivity:Interaction.Behaviors>
-                    <core:DataTriggerBehavior Binding="{Binding IsConnected, Mode=OneWay}" Value="true">
-                        <media:ControlStoryboardAction Storyboard="{StaticResource UserPictureSb}"/>
-                    </core:DataTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-                <Grid.RenderTransform>
-                    <CompositeTransform/>
-                </Grid.RenderTransform>
+                <Grid x:Name="UserPicture" RenderTransformOrigin="0.5,0.5">
+                    <interactivity:Interaction.Behaviors>
+                        <core:DataTriggerBehavior Binding="{Binding IsConnected, Mode=OneWay}" Value="true">
+                            <media:ControlStoryboardAction Storyboard="{StaticResource UserPictureSb}"/>
+                        </core:DataTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                    <Grid.RenderTransform>
+                        <CompositeTransform/>
+                    </Grid.RenderTransform>
 
-                <Ellipse Height="90" Width="90"
+                    <Ellipse Height="90" Width="90"
                      Stroke="{StaticResource AccentBrush}"
                      StrokeThickness="1"/>
-                <Ellipse Height="70" Width="70">
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{x:Bind Vm.User.Picture, Mode=OneWay, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
-                    </Ellipse.Fill>
-                </Ellipse>
-            </Grid>
+                    <Ellipse Height="70" Width="70">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{x:Bind Vm.User.Picture, Mode=OneWay, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </Grid>
 
-            <StackPanel Margin="10,35"
-                        HorizontalAlignment="Center"
+                <StackPanel Margin="10,35"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Bottom" >
-                <StackPanel.ChildrenTransitions>
-                    <TransitionCollection>
-                        <PaneThemeTransition/>
-                        <EdgeUIThemeTransition/>
-                        <EntranceThemeTransition/>
-                        <AddDeleteThemeTransition/>
-                        <ContentThemeTransition/>
-                    </TransitionCollection>
-                </StackPanel.ChildrenTransitions>
+                    <StackPanel.ChildrenTransitions>
+                        <TransitionCollection>
+                            <PaneThemeTransition/>
+                            <EdgeUIThemeTransition/>
+                            <EntranceThemeTransition/>
+                            <AddDeleteThemeTransition/>
+                            <ContentThemeTransition/>
+                        </TransitionCollection>
+                    </StackPanel.ChildrenTransitions>
 
-                <Grid Width="Auto" Height="1" Background="White"/>
+                    <Grid Width="Auto" Height="1" Background="White"/>
 
-                <TextBlock Text="{x:Bind Vm.User.Name, Mode=OneWay}"
+                    <TextBlock Text="{x:Bind Vm.User.Name, Mode=OneWay}"
                            FontWeight="ExtraLight"
                            HorizontalAlignment="Center"
                            TextWrapping="WrapWholeWords"
                            FontSize="25"/>
 
-                <TextBlock FontWeight="Light"
+                    <TextBlock FontWeight="Light"
                            Text="{Binding User.FriendlyEmotion, Mode=OneWay}"
                            HorizontalAlignment="Center"
                            TextWrapping="WrapWholeWords"
                            FontSize="20"
                            Typography.Capitals="AllSmallCaps"/>
+
+                    <Grid x:Name="HoroscopeContainer" 
+                          MaxWidth="300"
+                          HorizontalAlignment="Left"/>
+
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
-        <!--Loader-->
-        <ctrl:IotLoader VerticalAlignment="Bottom"
-                      HorizontalAlignment="Center"
-                      Margin="50"
-                      Visibility="{x:Bind Vm.IsLoading, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}"/>
+            <ctrl:WidgetTimer Grid.Column="1"
+                              VerticalAlignment="Bottom"
+                              HorizontalAlignment="Center"
+                              IsRunning="{x:Bind Vm.IsToothbrushing, Mode=OneWay}"/>
 
-        <Image VerticalAlignment="Bottom"
-               HorizontalAlignment="Right"
-               Margin="10"
-               Source="../Assets/wifi.png"
-               Visibility="{x:Bind Vm.IsInternetAvailable, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=false}"   
-               Height="50"/>
-        <Ellipse x:Name="InternetIndicator" 
-                 VerticalAlignment="Bottom"
-                 HorizontalAlignment="Right"
-                 Margin="12"
-                 Fill="DarkRed"
-                 Stroke="Black"
-                 StrokeThickness="2"
-                 Visibility="{x:Bind Vm.IsInternetAvailable, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=false}"   
-                 Height="20"
-                 Width="20">
-            <interactivity:Interaction.Behaviors>
-                <core:DataTriggerBehavior Binding="{Binding Visibility, ElementName=InternetIndicator}" Value="Visible">
-                    <media:ControlStoryboardAction Storyboard="{StaticResource InternetIndicatorFadeSb}" ControlStoryboardOption="Play" />
-                </core:DataTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
-        </Ellipse>
+            <!--Loader-->
+            <ctrl:IotLoader Grid.Column="1"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Center"
+                            Margin="80"
+                            Visibility="{x:Bind Vm.IsLoading, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}"/>
+
+            <Grid Grid.Column="2">
+                <Image VerticalAlignment="Bottom"
+                       HorizontalAlignment="Right"
+                       Margin="10"
+                       Source="../Assets/wifi.png"
+                       Visibility="{x:Bind Vm.IsInternetAvailable, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=false}"   
+                       Height="50"/>
+                <Ellipse x:Name="InternetIndicator" 
+                         VerticalAlignment="Bottom"
+                         HorizontalAlignment="Right"
+                         Margin="12"
+                         Fill="DarkRed"
+                         Stroke="Black"
+                         StrokeThickness="2"
+                         Visibility="{x:Bind Vm.IsInternetAvailable, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=false}"   
+                         Height="20"
+                         Width="20">
+                    <interactivity:Interaction.Behaviors>
+                        <core:DataTriggerBehavior Binding="{Binding Visibility, ElementName=InternetIndicator}" Value="Visible">
+                            <media:ControlStoryboardAction Storyboard="{StaticResource InternetIndicatorFadeSb}" ControlStoryboardOption="Play" />
+                        </core:DataTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </Ellipse>
+            </Grid>
+        </Grid>
 
         <!--Actions panel-->
         <StackPanel x:Name="ActionPanel" VerticalAlignment="Bottom">

@@ -74,6 +74,7 @@
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\Widgets\CalendarModel.cs" />
+    <Compile Include="ViewModels\Widgets\HoroscopeModel.cs" />
     <Compile Include="ViewModels\Widgets\WeatherModel.cs" />
     <Compile Include="ViewModels\Widgets\WidgetModel.cs" />
   </ItemGroup>

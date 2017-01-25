@@ -31,7 +31,6 @@ namespace Miriot
     {
         private bool _isProcessing;
         private CoreDispatcher _dispatcher;
-        private DispatcherTimer _timer;
         private SpeechRecognizer _speechRecognizer;
         private SpeechSynthesizer _speechSynthesizer;
         private ColorBloomTransitionHelper _transition;
@@ -63,9 +62,6 @@ namespace Miriot
             _frameAnalyzer.UsersIdentified += OnUsersIdentified;
             _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
             _frameAnalyzer.OnPreAnalysis += OnStartingIdentification;
-
-            _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 30) };
-            _timer.Tick += Timer_Tick;
 
             Messenger.Default.Register<ListeningMessage>(this, OnListen);
             Messenger.Default.Register<SpeakMessage>(this, OnSpeak);
@@ -132,7 +128,7 @@ namespace Miriot
         {
             _noFaceDetectedCount++;
 
-            if (_noFaceDetectedCount < 50) return;
+            if (_noFaceDetectedCount < 15) return;
 
             await RunOnUiThread(() => { Vm.StateChangedCommand.Execute(States.Inactive); });
             CleanUi();
@@ -140,12 +136,13 @@ namespace Miriot
 
         private async void OnUsersIdentified(object sender, ServiceResponse response)
         {
+            _noFaceDetectedCount = 0;
+
             if (Vm.User != null)
             {
                 return;
             }
 
-            _noFaceDetectedCount = 0;
             CleanUi();
             await RunOnUiThread(() => { Vm.UsersIdentifiedCommand.Execute(response); });
         }
@@ -176,11 +173,6 @@ namespace Miriot
             var finalBounds = Window.Current.Bounds;  // maps to the bounds of the current window
 
             _transition.Start(Colors.Black, initialBounds, finalBounds);
-        }
-
-        private void Timer_Tick(object sender, object e)
-        {
-            _timer.Stop();
         }
 
         #region Speech
@@ -258,16 +250,12 @@ namespace Miriot
             }
         }
 
-
-
         private void SetTvScreenSize(bool isFullScreen)
         {
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetTv);
             if (w != null)
             {
                 ((IWidgetExclusive)w).IsFullscreen = isFullScreen;
-
-
             }
         }
 
@@ -355,7 +343,6 @@ namespace Miriot
 
             await ((WidgetDeezer)w).FindTrackAsync(search);
         }
-
 
         private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
         {
@@ -448,6 +435,9 @@ namespace Miriot
                 case WidgetType.Weather:
                     w = new WidgetWeather(widget);
                     break;
+                case WidgetType.Horoscope:
+                    w = new WidgetHoroscope(widget);
+                    break;
                 case WidgetType.Sport:
                     var sport = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
                     w = new WidgetSport(sport);
@@ -461,11 +451,15 @@ namespace Miriot
             if (w is IWidgetListener)
                 ((IWidgetListener)w).OnInfosChanged += WidgetInfosChanged;
 
-            w.SetPosition(widget.X, widget.Y);
+            if (w is WidgetHoroscope)
+                HoroscopeContainer.Children.Add(w);
+            else
+            {
+                w.SetPosition(widget.X, widget.Y);
 
-            // Add widget to grid
-            WidgetZone.Children.Add(w);
-
+                // Add widget to grid
+                WidgetZone.Children.Add(w);
+            }
         }
 
         private async void WidgetInfosChanged(object sender, EventArgs e)
@@ -498,7 +492,6 @@ namespace Miriot
                 // Force delete transition
                 WidgetZone.Children.Clear();
                 InfoUnknownPanel.Opacity = 0;
-                _timer.Stop();
                 Img.Source = null;
                 MediaElementCtrl.Stop();
                 Stop();

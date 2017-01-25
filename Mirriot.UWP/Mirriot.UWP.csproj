@@ -100,6 +100,9 @@
     <Content Include="Assets\CircleOpacityMask.png" />
     <Content Include="Assets\cross.png" />
     <Content Include="Assets\wifi.png" />
+    <Content Include="Controls\Widgets\Templates\HoroscopeTemplate.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\WeatherTime.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +123,9 @@
     </Compile>
     <Compile Include="Controls\Widgets\WidgetReminder.xaml.cs">
       <DependentUpon>WidgetReminder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Widgets\WidgetHoroscope.xaml.cs">
+      <DependentUpon>WidgetHoroscope.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Widgets\WidgetTimer.xaml.cs">
       <DependentUpon>WidgetTimer.xaml</DependentUpon>
@@ -153,7 +159,7 @@
     <Compile Include="Services\Mock\FrameAnalyser.cs" />
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\SpeechService.cs" />
-    <Compile Include="Controls\WidgetBase.cs" />
+    <Compile Include="Controls\Widgets\WidgetBase.cs" />
     <Compile Include="Utils\ColorBloomTransitionHelper.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />
@@ -253,6 +259,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Widgets\WidgetReminder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Widgets\WidgetHoroscope.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

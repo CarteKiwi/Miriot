@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
+using Miriot.Common.Model.Widgets.Horoscope;
 
 namespace Miriot.Common.Model
 {
@@ -61,6 +62,8 @@ namespace Miriot.Common.Model
         public List<Widget> Widgets { get; set; }
 
         public bool IsVoiceActivated { get; set; }
+
+        public Signs HoroscopeSign { get; set; }
 
         public Dictionary<string, string> CachedTvUrls { get; set; }
     }

@@ -17,6 +17,7 @@ namespace Miriot
 {
     public class WidgetTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate HoroscopeTemplate { get; set; }
         public DataTemplate WeatherTemplate { get; set; }
         public DataTemplate DefaultTemplate { get; set; }
 
@@ -30,6 +31,14 @@ namespace Miriot
                 if (item is WeatherModel)
                 {
                     string xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/WeatherTemplate.xml");
+                    XDocument templateXml = XDocument.Load(xmlTemplatePath);
+                    DataTemplate template = (DataTemplate)XamlReader.Load(templateXml.ToString());
+
+                    return template; //Return the DataTemplateSelector for a disabled tile.
+                }
+                else if (item is HoroscopeModel)
+                {
+                    string xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/HoroscopeTemplate.xml");
                     XDocument templateXml = XDocument.Load(xmlTemplatePath);
                     DataTemplate template = (DataTemplate)XamlReader.Load(templateXml.ToString());
 

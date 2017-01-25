@@ -21,12 +21,12 @@ namespace Miriot
             SimpleIoc.Default.Register<INavigationService>(() => navigationService);
             SimpleIoc.Default.Register<IAuthentication, Authentication>();
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
+            SimpleIoc.Default.Register<IFileService, FileService>();
 #if MOCK
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
 #else
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, FrameAnalyser<ServiceResponse>>();
 #endif
-            SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<IPlatformService, PlatformService>();
         }

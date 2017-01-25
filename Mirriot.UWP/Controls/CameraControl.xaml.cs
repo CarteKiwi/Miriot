@@ -32,7 +32,7 @@ namespace Miriot.Controls
         private string _cameraId;
 
         // Receive notifications about rotation of the device and UI and apply any necessary rotation to the preview stream and UI controls       
-        private readonly DisplayInformation _displayInformation;
+        private DisplayInformation _displayInformation;
         private readonly SimpleOrientationSensor _orientationSensor = SimpleOrientationSensor.GetDefault();
         private SimpleOrientation _deviceOrientation = SimpleOrientation.NotRotated;
         private DisplayOrientations _displayOrientation = DisplayOrientations.Portrait;
@@ -57,8 +57,11 @@ namespace Miriot.Controls
         public CameraControl()
         {
             InitializeComponent();
-            _displayInformation = DisplayInformation.GetForCurrentView();
-            Loaded += async (a, b) => await InitializeCameraAsync();
+            
+            Loaded += async (a, b) =>
+            {
+                await InitializeCameraAsync();
+            };
         }
 
         #region Methods
@@ -68,6 +71,11 @@ namespace Miriot.Controls
         /// <returns></returns>
         private async Task InitializeCameraAsync()
         {
+            await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                _displayInformation = DisplayInformation.GetForCurrentView();
+            });
+
             Debug.WriteLine("InitializeCameraAsync");
 
             if (_mediaCapture == null)

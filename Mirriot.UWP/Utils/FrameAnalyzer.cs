@@ -13,6 +13,7 @@ namespace Miriot.Utils
 {
     public class FrameAnalyser<T> : IFrameAnalyzer<T>
     {
+        private readonly IFileService _fileService;
         public event EventHandler OnPreAnalysis;
         public event EventHandler<T> UsersIdentified;
         public event EventHandler NoFaceDetected;
@@ -24,6 +25,11 @@ namespace Miriot.Utils
         private int _detectedFacesInLastFrame;
 
         public Func<SoftwareBitmap, Task<T>> AnalysisFunction { get; set; }
+
+        public FrameAnalyser(IFileService fileService)
+        {
+            _fileService = fileService;
+        }
 
         public async Task AttachAsync(ICameraService camera)
         {
@@ -87,6 +93,12 @@ namespace Miriot.Utils
         {
             _frameProcessingTimer.Cancel();
             _frameProcessingTimer = null;
+        }
+
+        public async Task<byte[]> GetFrame()
+        {
+            var frame = await _camera.GetLatestFrame();
+            return await _fileService.EncodedBytes(frame.SoftwareBitmap);
         }
     }
 }

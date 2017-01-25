@@ -42,5 +42,15 @@ namespace Miriot.Services.Mock
         {
             
         }
+
+        public async Task<byte[]> GetFrame()
+        {
+            var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
+            var uri = p.Path + "/untitled.png";
+
+            var array = File.ReadAllBytes(uri);
+
+            return array;
+        }
     }
 }

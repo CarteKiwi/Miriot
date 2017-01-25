@@ -18,5 +18,7 @@ namespace Miriot.Core.Services.Interfaces
         void ProcessCurrentVideoFrame(ThreadPoolTimer timer);
 
         void Cleanup();
+
+        Task<byte[]> GetFrame();
     }
 }

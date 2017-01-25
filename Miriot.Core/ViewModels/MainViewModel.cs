@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Networking.Connectivity;
 using Windows.System.Profile;
+using Windows.UI.Xaml;
 
 namespace Miriot.Core.ViewModels
 {
@@ -28,6 +29,7 @@ namespace Miriot.Core.ViewModels
         private readonly IPlatformService _platformService;
         private readonly IDispatcherService _dispatcherService;
         private readonly INavigationService _navigationService;
+        private readonly IFrameAnalyzer<ServiceResponse> _frameService;
         private readonly IFaceService _faceService;
         private readonly IVisionService _visionService;
         private string _title;
@@ -39,6 +41,10 @@ namespace Miriot.Core.ViewModels
         private States _currentState;
         private CancellationTokenSource _cancellationToken;
         private byte[] _lastFrameShot;
+        private DispatcherTimer _toothbrushingLauncher;
+        private Stopwatch _toothbrushingTimer;
+        private SemaphoreSlim _toothbrushingSemaphore;
+        private bool _isToothbrushing;
         #endregion
 
         #region Commands
@@ -69,6 +75,12 @@ namespace Miriot.Core.ViewModels
         {
             get { return _isInternetAvailable; }
             private set { Set(ref _isInternetAvailable, value); }
+        }
+
+        public bool IsToothbrushing
+        {
+            get { return _isToothbrushing; }
+            private set { Set(ref _isToothbrushing, value); }
         }
 
         public bool IsConnected => User != null;
@@ -107,6 +119,7 @@ namespace Miriot.Core.ViewModels
             IPlatformService platformService,
             IDispatcherService dispatcherService,
             INavigationService navigationService,
+            IFrameAnalyzer<ServiceResponse> frameService,
             IFaceService faceService,
             IVisionService visionService)
         {
@@ -114,10 +127,17 @@ namespace Miriot.Core.ViewModels
             _platformService = platformService;
             _dispatcherService = dispatcherService;
             _navigationService = navigationService;
+            _frameService = frameService;
             _faceService = faceService;
             _visionService = visionService;
 
             SetCommands();
+
+            _toothbrushingLauncher = new DispatcherTimer { Interval = new TimeSpan(0, 0, 3) };
+            _toothbrushingLauncher.Tick += Timer_Tick;
+
+            _toothbrushingSemaphore = new SemaphoreSlim(1);
+            _toothbrushingTimer = new Stopwatch();
 
             _cancellationToken = new CancellationTokenSource();
             IsInternetAvailable = _platformService.IsInternetAvailable;
@@ -149,6 +169,7 @@ namespace Miriot.Core.ViewModels
             Widgets?.Clear();
             IsLoading = false;
 
+            _toothbrushingLauncher.Stop();
             IsListeningFirstName = false;
             _isListeningYesNo = false;
             User = null;
@@ -290,6 +311,31 @@ namespace Miriot.Core.ViewModels
             _isListeningYesNo = true;
         }
 
+        private async void Timer_Tick(object sender, object e)
+        {
+            if (!_toothbrushingSemaphore.Wait(0))
+            {
+                return;
+            }
+
+            IsToothbrushing = await IsToothbrushingAsync();
+
+            if (!IsToothbrushing)
+            {
+                _toothbrushingTimer.Stop();
+                _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 3);
+            }
+            else
+            {
+                _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 5);
+
+                if (!_toothbrushingTimer.IsRunning)
+                    _toothbrushingTimer.Start();
+            }
+
+            _toothbrushingSemaphore.Release();
+        }
+
         private async void OnUsersIdentified(ServiceResponse response)
         {
             User = response?.Users?.FirstOrDefault();
@@ -301,6 +347,8 @@ namespace Miriot.Core.ViewModels
                 try
                 {
                     await LoadUsers(user);
+
+                    _toothbrushingLauncher.Start();
                 }
                 catch (TaskCanceledException ex)
                 {
@@ -488,11 +536,17 @@ namespace Miriot.Core.ViewModels
             return UserEmotion.Uknown;
         }
 
-        public async Task<bool> IsToothbrushing()
+        private async Task<bool> IsToothbrushingAsync()
         {
             try
             {
-                var scene = await _visionService.CreateSceneAsync(User.Picture);
+                Debug.WriteLine("Toothbrushing checking...");
+
+                byte[] bitmap = await _frameService.GetFrame();
+
+                var scene = await _visionService.CreateSceneAsync(bitmap);
+
+                Debug.WriteLine($"Toothbrushing checked : {scene.IsToothbrushing}");
 
                 return scene.IsToothbrushing;
             }
@@ -509,6 +563,5 @@ namespace Miriot.Core.ViewModels
 
             base.Cleanup();
         }
-
     }
 }

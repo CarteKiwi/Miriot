@@ -143,6 +143,9 @@ namespace Miriot.Core.ViewModels
                     case WidgetType.Calendar:
                         w = new CalendarModel();
                         break;
+                    case WidgetType.Horoscope:
+                        w = new HoroscopeModel();
+                        break;
                     default:
                         w = new WidgetModel();
                         break;
