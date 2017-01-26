@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media.Imaging;
 using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets.Horoscope;
 using Miriot.Core.Services.Interfaces;
@@ -49,6 +50,7 @@ namespace Miriot.Controls
                     var horo = JsonConvert.DeserializeObject<HoroscopeResponse>(c);
 
                     Text.Text = horo.content[0].section[0].section_content;
+                    Sign.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Horoscope/{(Signs)_sign}.png", UriKind.RelativeOrAbsolute));
                 }
             }
             catch (Exception ex)

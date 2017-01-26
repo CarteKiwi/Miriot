@@ -2,17 +2,17 @@
 {
     public enum Signs
     {
-        Belier = 0,
-        Taureau = 1,
-        Gemeau = 2,
+        Aries = 0,
+        Taurus = 1,
+        Gemini = 2,
         Cancer = 3,
-        Lion = 4,
-        Vierge = 5,
-        Balance = 6,
-        Scorpion = 7,
-        Sagittaire = 8,
-        Capricorne = 9,
-        Verseau = 10,
-        Poissons = 11,
+        Leo = 4,
+        Virgo = 5,
+        Libra = 6,
+        SCorpio = 7,
+        Sagittarius = 8,
+        Capricorn = 9,
+        Aquarius = 10,
+        Pisces = 11,
     }
 }

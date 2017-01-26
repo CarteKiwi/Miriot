@@ -451,15 +451,10 @@ namespace Miriot
             if (w is IWidgetListener)
                 ((IWidgetListener)w).OnInfosChanged += WidgetInfosChanged;
 
-            if (w is WidgetHoroscope)
-                HoroscopeContainer.Children.Add(w);
-            else
-            {
-                w.SetPosition(widget.X, widget.Y);
+            w.SetPosition(widget.X, widget.Y);
 
-                // Add widget to grid
-                WidgetZone.Children.Add(w);
-            }
+            // Add widget to grid
+            WidgetZone.Children.Add(w);
         }
 
         private async void WidgetInfosChanged(object sender, EventArgs e)

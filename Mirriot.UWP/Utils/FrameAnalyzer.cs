@@ -46,7 +46,7 @@ namespace Miriot.Utils
                 return;
             }
 
-            VideoFrame currentFrame = await _camera.GetLatestFrame();
+            VideoFrame currentFrame = await GetVideoFrameSafe();
 
             // Use FaceDetector.GetSupportedBitmapPixelFormats and IsBitmapPixelFormatSupported to dynamically
             // determine supported formats
@@ -89,6 +89,19 @@ namespace Miriot.Utils
             currentFrame.Dispose();
         }
 
+        private async Task<VideoFrame> GetVideoFrameSafe()
+        {
+            try
+            {
+                return await _camera.GetLatestFrame();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
         public void Cleanup()
         {
             _frameProcessingTimer.Cancel();
@@ -97,7 +110,7 @@ namespace Miriot.Utils
 
         public async Task<byte[]> GetFrame()
         {
-            var frame = await _camera.GetLatestFrame();
+            var frame = await GetVideoFrameSafe();
             return await _fileService.EncodedBytes(frame.SoftwareBitmap);
         }
     }

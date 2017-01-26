@@ -205,8 +205,8 @@
                 </Grid>
 
                 <StackPanel Margin="10,35"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom" >
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom" >
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
                             <PaneThemeTransition/>
@@ -231,10 +231,6 @@
                            TextWrapping="WrapWholeWords"
                            FontSize="20"
                            Typography.Capitals="AllSmallCaps"/>
-
-                    <Grid x:Name="HoroscopeContainer" 
-                          MaxWidth="300"
-                          HorizontalAlignment="Left"/>
 
                 </StackPanel>
             </StackPanel>

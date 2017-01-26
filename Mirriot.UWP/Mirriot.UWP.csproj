@@ -99,6 +99,18 @@
     <None Include="project.json" />
     <Content Include="Assets\CircleOpacityMask.png" />
     <Content Include="Assets\cross.png" />
+    <Content Include="Assets\Horoscope\Aries.png" />
+    <Content Include="Assets\Horoscope\Taurus.png" />
+    <Content Include="Assets\Horoscope\Gemini.png" />
+    <Content Include="Assets\Horoscope\Cancer.png" />
+    <Content Include="Assets\Horoscope\Leo.png" />
+    <Content Include="Assets\Horoscope\Virgo.png" />
+    <Content Include="Assets\Horoscope\Libra.png" />
+    <Content Include="Assets\Horoscope\Scorpio.png" />
+    <Content Include="Assets\Horoscope\Sagittarius.png" />
+    <Content Include="Assets\Horoscope\Capricorn.png" />
+    <Content Include="Assets\Horoscope\Aquarius.png" />
+    <Content Include="Assets\Horoscope\Pisces.png" />
     <Content Include="Assets\wifi.png" />
     <Content Include="Controls\Widgets\Templates\HoroscopeTemplate.xml">
       <SubType>Designer</SubType>

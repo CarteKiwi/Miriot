@@ -500,7 +500,7 @@ namespace Miriot.Core.ViewModels
             {
                 if (ex.ErrorCode == "RateLimitExceeded")
                 {
-                    SubTitle = ex.Message;
+                    Debug.WriteLine($"GetUserAsync: RateLimitExceeded: {ex.Message}");
                 }
             }
             catch (Exception ex)
