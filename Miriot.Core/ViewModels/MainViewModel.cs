@@ -132,17 +132,19 @@ namespace Miriot.Core.ViewModels
             _visionService = visionService;
 
             SetCommands();
+        }
 
+        public void Initialize()
+        {
             _toothbrushingLauncher = new DispatcherTimer { Interval = new TimeSpan(0, 0, 3) };
             _toothbrushingLauncher.Tick += Timer_Tick;
-
             _toothbrushingSemaphore = new SemaphoreSlim(1);
             _toothbrushingTimer = new Stopwatch();
 
             _cancellationToken = new CancellationTokenSource();
-            IsInternetAvailable = _platformService.IsInternetAvailable;
 
             NetworkInformation.NetworkStatusChanged += OnNetworkStatusChanged;
+            IsInternetAvailable = _platformService.IsInternetAvailable;
         }
 
         private void OnNetworkStatusChanged(object sender)
@@ -346,7 +348,8 @@ namespace Miriot.Core.ViewModels
                 var user = User;
                 try
                 {
-                    await LoadUsers(user);
+                    await LoadUser(user);
+                    await UpdateUser(user);
 
                     _toothbrushingLauncher.Start();
                 }
@@ -363,7 +366,7 @@ namespace Miriot.Core.ViewModels
             IsLoading = false;
         }
 
-        private async Task LoadUsers(User user)
+        private async Task LoadUser(User user)
         {
             if (user.UserData.Widgets == null)
             {
@@ -376,9 +379,19 @@ namespace Miriot.Core.ViewModels
             Messenger.Default.Send(new ListeningMessage());
 
             user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangleTop, user.FaceRectangleLeft);
+
+            user.PreviousLoginDate = user.UserData.PreviousLoginDate;
         }
 
-        private async Task LoadWidgets(List<Widget> widgets)
+        private async Task UpdateUser(User user)
+        {
+            user.UserData.PreviousEmotion = user.Emotion;
+            user.UserData.PreviousLoginDate = DateTime.UtcNow;
+
+            await _faceService.UpdateUserDataAsync(user);
+        }
+
+        private async Task LoadWidgets(IEnumerable<Widget> widgets)
         {
             Widgets = new ObservableCollection<Widget>();
 
@@ -522,18 +535,7 @@ namespace Miriot.Core.ViewModels
 
         private async Task<UserEmotion> GetEmotionAsync(byte[] bitmap, int top, int left)
         {
-            try
-            {
-                var emotion = await _faceService.GetEmotion(bitmap, top, left);
-
-                return emotion;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"GetEmotionAsync: {ex.Message}");
-            }
-
-            return UserEmotion.Uknown;
+            return await _faceService.GetEmotion(bitmap, top, left);
         }
 
         private async Task<bool> IsToothbrushingAsync()
@@ -559,8 +561,9 @@ namespace Miriot.Core.ViewModels
 
         public override void Cleanup()
         {
+            _toothbrushingLauncher.Tick -= Timer_Tick;
             NetworkInformation.NetworkStatusChanged -= OnNetworkStatusChanged;
-
+            OnReset();
             base.Cleanup();
         }
     }

@@ -150,7 +150,7 @@ namespace Miriot.Core.Services
                 Debug.WriteLine(ex.Message);
             }
 
-            return UserEmotion.Uknown;
+            return UserEmotion.Unknown;
         }
 
         public async Task<bool> DeletePerson(Guid personId)
@@ -208,6 +208,24 @@ namespace Miriot.Core.Services
 
                 // Train model
                 await faceClient.TrainPersonGroupAsync(_miriotPersonGroupId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateUserDataAsync(User user)
+        {
+            try
+            {
+                var faceClient = new FaceServiceClient(OxfordFaceKey);
+
+                // Update user's data
+                await faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name, JsonConvert.SerializeObject(user.UserData));
 
                 return true;
             }

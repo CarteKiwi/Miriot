@@ -2,7 +2,7 @@
 {
     public enum UserEmotion
     {
-        Uknown,
+        Unknown,
         Anger,
         Contempt,
         Disgust,

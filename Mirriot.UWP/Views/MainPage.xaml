@@ -116,10 +116,10 @@
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height=".8*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -225,9 +225,24 @@
                            TextWrapping="WrapWholeWords"
                            FontSize="25"/>
 
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontWeight="Light"
+                                   Margin="0,0,3,0"
+                                   Text="Dernière connexion"
+                                   HorizontalAlignment="Left"
+                                   FontSize="18"
+                                   FontStyle="Italic"/>
+                        <TextBlock FontWeight="Light"
+                                   Text="{Binding User.PreviousLoginDate, Mode=OneWay, Converter={StaticResource RelativeTimeConverter}}"
+                                   HorizontalAlignment="Left"
+                                   TextWrapping="WrapWholeWords"
+                                   FontSize="18"
+                                   FontStyle="Italic"/>
+                    </StackPanel>
+
                     <TextBlock FontWeight="Light"
                            Text="{Binding User.FriendlyEmotion, Mode=OneWay}"
-                           HorizontalAlignment="Center"
+                           HorizontalAlignment="Left"
                            TextWrapping="WrapWholeWords"
                            FontSize="20"
                            Typography.Capitals="AllSmallCaps"/>

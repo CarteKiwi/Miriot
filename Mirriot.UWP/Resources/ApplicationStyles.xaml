@@ -10,6 +10,7 @@
     <conv:StringFormatConverter x:Key="StringFormat"/>
     <conv:StateToBoolConverter x:Key="StateToBoolConverter"/>
     <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
+    <conv:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
 
     <FontFamily x:Key="WeatherFont">/Fonts/WeatherTime.ttf#WeatherTime</FontFamily>
     

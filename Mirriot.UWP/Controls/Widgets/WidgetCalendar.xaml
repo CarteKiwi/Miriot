@@ -43,7 +43,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,5">
-                        <StackPanel Margin="5,0,0,0">
+                        <StackPanel Margin="8,0,0,0">
                             <TextBlock Typography.Capitals="AllPetiteCaps"
                                    Text="{Binding Subject}"
                                    TextWrapping="WrapWholeWords"
@@ -85,7 +85,7 @@
                 <DataTemplate>
                     <Grid Margin="0,5">
                         <Grid>
-                            <StackPanel Margin="5,0,0,0">
+                            <StackPanel Margin="8,0,0,0">
                                 <TextBlock Typography.Capitals="AllPetiteCaps"
                                            Text="{Binding Subject}"
                                            TextWrapping="WrapWholeWords"
@@ -98,11 +98,11 @@
                                     <Run Text="{Binding From}"/>
                                 </TextBlock>
 
-                                <TextBlock FontSize="13"
+                                <!--<TextBlock FontSize="13"
                                            FontWeight="Light">
                                     <Run Text="" FontSize="13" FontFamily="Segoe MDL2 Assets"/>
                                     <Run Text="{Binding Preview}"/>
-                                </TextBlock>
+                                </TextBlock>-->
                             </StackPanel>
                             <Rectangle Fill="White" 
                                        Margin="0,5"

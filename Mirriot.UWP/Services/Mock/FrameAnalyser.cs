@@ -40,7 +40,8 @@ namespace Miriot.Services.Mock
 
         public void Cleanup()
         {
-            
+            _frameProcessingTimer.Cancel();
+            _frameProcessingTimer = null;
         }
 
         public async Task<byte[]> GetFrame()

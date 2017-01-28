@@ -243,6 +243,14 @@ namespace Miriot
                 case "BlancheNeige":
                     await Speak("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
                     break;
+                case "HideAll":
+                    break;
+                case "StartScreen":
+                    break;
+                case "DisplayWidget":
+                    break;
+                case "DisplayMail":
+                    break;
                 case "None":
                     if (Vm.IsListeningFirstName)
                         Vm.Repeat();
@@ -512,6 +520,7 @@ namespace Miriot
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            Vm.Initialize();
             InitializeSpeech();
         }
 
@@ -519,6 +528,7 @@ namespace Miriot
         {
             _frameAnalyzer.Cleanup();
             Camera.Cleanup();
+            Vm.Cleanup();
             Stop();
             Messenger.Default.Unregister(this);
 

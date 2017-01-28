@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Practices.ServiceLocation;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
@@ -85,8 +84,7 @@ namespace Miriot.Core.ViewModels
 
         private async Task<bool> UpdateUserAsync()
         {
-            var vm = ServiceLocator.Current.GetInstance<MainViewModel>();
-            return await vm.UpdateUserAsync();
+            return await _faceService.UpdatePerson(User, User.Picture);
         }
 
         private void AddRemoveWidget(WidgetModel w)
@@ -122,8 +120,6 @@ namespace Miriot.Core.ViewModels
 
         private void OnLoaded()
         {
-            User = ServiceLocator.Current.GetInstance<MainViewModel>().User;
-
             if (User == null)
                 return;
 

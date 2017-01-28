@@ -116,6 +116,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Resources\WeatherTime.ttf" />
+    <PRIResource Include="Resources\fr-FR\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -157,6 +158,7 @@
     <Compile Include="Controls\Widgets\WidgetSncf.xaml.cs">
       <DependentUpon>WidgetSncf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\RelativeTimeConverter.cs" />
     <Compile Include="Converters\ByteArrayToImageConverter.cs" />
     <Compile Include="Converters\BoolInvertConverter.cs" />
     <Compile Include="Converters\StateToBoolConverter.cs" />
@@ -361,9 +363,7 @@
       <HintPath>..\..\..\JsBridge\dist\ChakraBridge.winmd</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\fr-FR\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
