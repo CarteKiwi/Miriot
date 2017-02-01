@@ -5,13 +5,24 @@
     xmlns:local="using:Miriot.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:gif="using:XamlAnimatedGif"
     mc:Ignorable="d"
     RequestedTheme="Dark"
     d:DesignHeight="100"
     d:DesignWidth="300">
+    <local:WidgetBase.Resources>
+        <Storyboard x:Name="IconSb" AutoReverse="True" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="Icon">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="Icon">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="360"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </local:WidgetBase.Resources>
 
-    <Grid x:Name="MainGrid">
+    <Grid>
         <MediaElement x:Name="Player"/>
 
         <Grid>
@@ -23,35 +34,27 @@
             <StackPanel Grid.Column="1">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Fill="White" 
-                       Margin="0,20"
-                       Width="3"/>
+                               Margin="0,25"
+                               Width="3"/>
 
-                    <Image gif:AnimationBehavior.SourceUri="/Assets/listening.gif"
-                   Height="90" Width="90"
-                   VerticalAlignment="Center"/>
+                    <TextBlock x:Name="Icon" FontSize="16"
+                               Margin="5,0"
+                               VerticalAlignment="Center"
+                               FontWeight="Light" RenderTransformOrigin="0.5,0.5">
+                        <TextBlock.RenderTransform>
+                            <CompositeTransform/>
+                        </TextBlock.RenderTransform>
+                        <Run Text="&#xE12B;" FontSize="35" FontFamily="Segoe MDL2 Assets"/>
+                    </TextBlock>
 
                     <TextBlock x:Name="Title"
-                       FontSize="35"
-                       FontWeight="Light"
-                       TextLineBounds="Tight"
-                       VerticalAlignment="Center"
-                       Typography.Capitals="AllSmallCaps"/>
+                               FontSize="35"
+                               FontWeight="Light"
+                               TextLineBounds="Tight"
+                               VerticalAlignment="Center"
+                               Typography.Capitals="AllSmallCaps"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <!--<Grid>
-            <Image gif:AnimationBehavior.SourceUri="/Assets/listening.gif"
-                   Height="140" Width="140"
-                   Opacity=".7"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"/>
-
-            <TextBlock x:Name="Title"
-                       FontSize="25"
-                       FontWeight="Light"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Typography.Capitals="AllSmallCaps"/>
-        </Grid>-->
     </Grid>
 </local:WidgetBase>

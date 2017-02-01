@@ -25,10 +25,11 @@ namespace Miriot.Controls
 
         private void WidgetTv_Loaded(object sender, RoutedEventArgs e)
         {
+            Loaded -= WidgetTv_Loaded;
             TurnOn(_intent);
         }
 
-        public async Task ChangeChannel(string url, string title)
+        private async Task ChangeChannel(string url, string title)
         {
             var result = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(url, UriKind.Absolute));
             if (result.Status == AdaptiveMediaSourceCreationStatus.Success)
@@ -42,6 +43,8 @@ namespace Miriot.Controls
             }
 
             Title.Text = title;
+
+            IconSb.Begin();
         }
 
         public void TurnOn(IntentResponse intent)
