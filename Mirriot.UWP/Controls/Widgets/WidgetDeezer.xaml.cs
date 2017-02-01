@@ -78,7 +78,7 @@ namespace Miriot.Controls
             }
 
             Title.Text = track.title;
-            ArtworkImg.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
+            ArtworkImg.ImageSource = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
         }
     }
 

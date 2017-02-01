@@ -12,37 +12,36 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid x:Name="MainGrid"
-          Margin="30,0">
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Grid Margin="30,0">
 
         <MediaElement x:Name="Player"/>
 
-        <!--<WebView x:Name="Browser" 
-                 Height="1" Width="1"
-                 VerticalAlignment="Stretch"></WebView>-->
+        <StackPanel VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Margin="20,0,0,0"
+                    HorizontalAlignment="Stretch">
+            <Grid RenderTransformOrigin="0.5,0.5">
+                <Grid.RenderTransform>
+                    <CompositeTransform/>
+                </Grid.RenderTransform>
 
-        <Image x:Name="ArtworkImg"
-               Grid.RowSpan="2"
-               Stretch="UniformToFill"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
+                <Ellipse Height="140" Width="140"
+                     Stroke="{StaticResource AccentBrush}"
+                     StrokeThickness="1"/>
+                <Ellipse Height="120" Width="120">
+                    <Ellipse.Fill>
+                        <ImageBrush x:Name="ArtworkImg"  Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </Grid>
 
-        <Grid Grid.Row="1">
-            <Grid.Background>
-                <SolidColorBrush Color="Black" Opacity=".5"/>
-            </Grid.Background>
             <TextBlock x:Name="Title"
-                       Margin="5"
+                       Margin="10,0,0,0"
+                       FontWeight="ExtraLight"
                        HorizontalAlignment="Center"
                        TextWrapping="WrapWholeWords"
-                       FontSize="20"
-                       FontWeight="Normal"
-                       VerticalAlignment="Center"/>
-        </Grid>
+                       FontSize="20"/>
+        </StackPanel>
+
     </Grid>
 </controls:WidgetBase>
