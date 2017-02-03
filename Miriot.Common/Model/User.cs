@@ -69,7 +69,7 @@ namespace Miriot.Common.Model
     {
         public List<Widget> Widgets { get; set; }
 
-        public DateTime PreviousLoginDate { get; set; }
+        public DateTime? PreviousLoginDate { get; set; }
 
         public UserEmotion PreviousEmotion { get; set; }
 
