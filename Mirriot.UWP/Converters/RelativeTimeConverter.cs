@@ -249,8 +249,14 @@ namespace Miriot.Converters
         /// <returns>The given date and time as a string.</returns>
         public object Convert(object value, Type targetType, object parameter, string culture)
         {
+
+            if (value == null)
+            {
+                return string.Empty;
+            }
+
             // Target value must be a System.DateTime object.
-            if (!(value is DateTime))
+            if (!(value is DateTime) && !(value is DateTime?))
             {
                 throw new ArgumentException(TimeResources.GetString("InvalidDateTimeArgument"));
             }
