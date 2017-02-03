@@ -24,7 +24,7 @@
         <TextBlock x:Name="Text"
                    Grid.Row="1"
                    Margin="10"
-                   FontSize="18"
+                   FontSize="15"
                    TextWrapping="WrapWholeWords"
                    TextLineBounds="TrimToCapHeight"
                    FontStyle="Italic"

@@ -16,32 +16,42 @@
 
         <MediaElement x:Name="Player"/>
 
-        <StackPanel VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Margin="20,0,0,0"
-                    HorizontalAlignment="Stretch">
+        <Grid VerticalAlignment="Center"
+              Margin="20,0,0,0"
+              HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
             <Grid RenderTransformOrigin="0.5,0.5">
                 <Grid.RenderTransform>
                     <CompositeTransform/>
                 </Grid.RenderTransform>
 
-                <Ellipse Height="140" Width="140"
-                     Stroke="{StaticResource AccentBrush}"
-                     StrokeThickness="1"/>
-                <Ellipse Height="120" Width="120">
+                <Ellipse Height="120" Width="120"
+                         Stroke="{StaticResource AccentBrush}"
+                         StrokeThickness="1"/>
+                <Ellipse Height="100" Width="100"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center">
                     <Ellipse.Fill>
-                        <ImageBrush x:Name="ArtworkImg"  Stretch="UniformToFill"/>
+                        <ImageBrush x:Name="ArtworkImg" Stretch="UniformToFill"/>
                     </Ellipse.Fill>
                 </Ellipse>
             </Grid>
 
             <TextBlock x:Name="Title"
-                       Margin="10,0,0,0"
+                       Grid.Column="1"
+                       Text="tttdsfs dfsd fsd fsdf sdf sdf sdf sdf qsdqd"
+                       Margin="10,0,10,0"
                        FontWeight="ExtraLight"
                        HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"
                        TextWrapping="WrapWholeWords"
                        FontSize="20"/>
-        </StackPanel>
+        </Grid>
 
     </Grid>
 </controls:WidgetBase>
