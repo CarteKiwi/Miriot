@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Toolkit.Uwp.Services.Twitter;
 using Miriot.Common;
 using Miriot.Controls;
 using Miriot.Core.Services.Interfaces;
@@ -22,6 +23,7 @@ namespace Miriot
             SimpleIoc.Default.Register<IAuthentication, Authentication>();
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
             SimpleIoc.Default.Register<IFileService, FileService>();
+            SimpleIoc.Default.Register<ITwitterService, Services.TwitterWrapperService>();
 #if MOCK
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
 #else

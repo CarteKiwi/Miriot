@@ -182,9 +182,10 @@ namespace Miriot
             {
                 _speechRecognizer = new SpeechRecognizer(new Windows.Globalization.Language("fr-FR"));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Debug.WriteLine("SpeechRecognizer failed to initialize : check the microphone");
+                Debug.WriteLine(ex.Message);
                 return;
             }
 
@@ -198,11 +199,18 @@ namespace Miriot
             _speechRecognizer.ContinuousRecognitionSession.ResultGenerated += ContinuousRecognitionSession_ResultGenerated;
             _speechRecognizer.ContinuousRecognitionSession.Completed += ContinuousRecognitionSession_Completed;
 
-            _speechSynthesizer = new SpeechSynthesizer
+            try
             {
-                Voice = (from voiceInformation in SpeechSynthesizer.AllVoices
-                         select voiceInformation).First(e => e.Language == "fr-FR")
-            };
+                _speechSynthesizer = new SpeechSynthesizer
+                {
+                    Voice = (from voiceInformation in SpeechSynthesizer.AllVoices
+                             select voiceInformation).First(e => e.Language == "fr-FR")
+                };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         #region Continuous Recognition
@@ -243,6 +251,9 @@ namespace Miriot
                 case "BlancheNeige":
                     await Speak("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
                     break;
+                case "Tweet":
+
+                    break;
                 case "HideAll":
                     break;
                 case "StartScreen":
@@ -272,7 +283,7 @@ namespace Miriot
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetRadio);
             if (w != null)
             {
-                ((WidgetRadio)w).TurnOn(intent);
+                ((WidgetRadio)w).DoAction(intent);
             }
             else
                 WidgetZone.Children.Add(new WidgetRadio(intent));
@@ -367,7 +378,7 @@ namespace Miriot
 
         private async void StartListening()
         {
-            if (_speechRecognizer.State == SpeechRecognizerState.Idle)
+            if (_speechRecognizer?.State == SpeechRecognizerState.Idle)
             {
                 try
                 {
@@ -406,12 +417,21 @@ namespace Miriot
         /// <returns>nothing</returns>
         private async Task Speak(string text)
         {
+            if (_speechSynthesizer == null) return;
+
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(text);
-                MediaElementCtrl.PlaybackRate = 1.5;
-                MediaElementCtrl.SetSource(stream, stream.ContentType);
-                MediaElementCtrl.Play();
+                try
+                {
+                    var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(text);
+                    MediaElementCtrl.PlaybackRate = 1.5;
+                    MediaElementCtrl.SetSource(stream, stream.ContentType);
+                    MediaElementCtrl.Play();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
             });
         }
 
@@ -449,6 +469,9 @@ namespace Miriot
                 case WidgetType.Sport:
                     var sport = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
                     w = new WidgetSport(sport);
+                    break;
+                case WidgetType.Twitter:
+                    w = new WidgetTwitter(widget);
                     break;
                 default:
                     return;

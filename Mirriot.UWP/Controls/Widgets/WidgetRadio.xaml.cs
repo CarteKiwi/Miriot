@@ -10,7 +10,7 @@ using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetRadio : IWidgetExclusive
+    public sealed partial class WidgetRadio : IWidgetAction, IWidgetExclusive
     {
         private readonly IntentResponse _intent;
 
@@ -47,7 +47,12 @@ namespace Miriot.Controls
             IconSb.Begin();
         }
 
-        public void TurnOn(IntentResponse intent)
+        public void DoAction(IntentResponse intent)
+        {
+            TurnOn(intent);
+        }
+
+        private void TurnOn(IntentResponse intent)
         {
             var action = intent.Actions.FirstOrDefault(e => e.Triggered);
 

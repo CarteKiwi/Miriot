@@ -111,7 +111,7 @@ namespace Miriot.Utils
         public async Task<byte[]> GetFrame()
         {
             var frame = await GetVideoFrameSafe();
-            return await _fileService.EncodedBytes(frame.SoftwareBitmap);
+            return await _fileService.EncodedBytes(frame?.SoftwareBitmap);
         }
     }
 }

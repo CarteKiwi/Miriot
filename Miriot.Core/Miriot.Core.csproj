@@ -52,13 +52,14 @@
     <Compile Include="Messages\ActionMessage.cs" />
     <Compile Include="Messages\ListeningMessage.cs" />
     <Compile Include="Messages\SpeakMessage.cs" />
+    <Compile Include="Services\Interfaces\ITwitterService.cs" />
     <Compile Include="Services\Interfaces\ICameraService.cs" />
     <Compile Include="Services\Interfaces\IFaceService.cs" />
     <Compile Include="Services\Interfaces\IFrameAnalyzer.cs" />
     <Compile Include="Services\Interfaces\ISpeechService.cs" />
     <Compile Include="Services\Interfaces\IVisionService.cs" />
     <Compile Include="Services\Interfaces\IWidgetExclusive.cs" />
-    <Compile Include="Services\Interfaces\IWidgeStartStop.cs" />
+    <Compile Include="Services\Interfaces\IWidgeAction.cs" />
     <Compile Include="Services\Interfaces\IWidgetListener.cs" />
     <Compile Include="Services\Interfaces\IWidgetOAuth.cs" />
     <Compile Include="Services\VisionService.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModels\Widgets\TwitterModel.cs" />
     <Compile Include="ViewModels\Widgets\CalendarModel.cs" />
     <Compile Include="ViewModels\Widgets\HoroscopeModel.cs" />
     <Compile Include="ViewModels\Widgets\WeatherModel.cs" />

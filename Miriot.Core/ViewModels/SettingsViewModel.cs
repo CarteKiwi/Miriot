@@ -142,6 +142,9 @@ namespace Miriot.Core.ViewModels
                     case WidgetType.Horoscope:
                         w = new HoroscopeModel();
                         break;
+                    case WidgetType.Twitter:
+                        w = new TwitterModel();
+                        break;
                     default:
                         w = new WidgetModel();
                         break;

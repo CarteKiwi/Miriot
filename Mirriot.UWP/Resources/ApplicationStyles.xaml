@@ -19,7 +19,7 @@
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
 
     <!--Blue-->
-    <Color x:Key="Accent2Color">#1A2E45</Color>
+    <Color x:Key="Accent2Color">#343638</Color>
     <SolidColorBrush x:Key="Accent2Brush" Color="{StaticResource Accent2Color}"/>
 
     <!--Dark Gray-->

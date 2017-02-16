@@ -60,6 +60,7 @@ namespace Miriot.Controls
             
             Loaded += async (a, b) =>
             {
+                _displayInformation = DisplayInformation.GetForCurrentView();
                 await InitializeCameraAsync();
             };
         }
@@ -71,11 +72,6 @@ namespace Miriot.Controls
         /// <returns></returns>
         private async Task InitializeCameraAsync()
         {
-            await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-            {
-                _displayInformation = DisplayInformation.GetForCurrentView();
-            });
-
             Debug.WriteLine("InitializeCameraAsync");
 
             if (_mediaCapture == null)

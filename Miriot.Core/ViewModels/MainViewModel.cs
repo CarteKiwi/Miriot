@@ -137,7 +137,7 @@ namespace Miriot.Core.ViewModels
         public void Initialize()
         {
             _toothbrushingLauncher = new DispatcherTimer { Interval = new TimeSpan(0, 0, 3) };
-            _toothbrushingLauncher.Tick += Timer_Tick;
+            _toothbrushingLauncher.Tick += ToothbrushingLauncher;
             _toothbrushingSemaphore = new SemaphoreSlim(1);
             _toothbrushingTimer = new Stopwatch();
 
@@ -313,12 +313,10 @@ namespace Miriot.Core.ViewModels
             _isListeningYesNo = true;
         }
 
-        private async void Timer_Tick(object sender, object e)
+        private async void ToothbrushingLauncher(object sender, object e)
         {
             if (!_toothbrushingSemaphore.Wait(0))
-            {
                 return;
-            }
 
             IsToothbrushing = await IsToothbrushingAsync();
 
@@ -329,7 +327,7 @@ namespace Miriot.Core.ViewModels
             }
             else
             {
-                _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 5);
+                _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 3);
 
                 if (!_toothbrushingTimer.IsRunning)
                     _toothbrushingTimer.Start();
@@ -546,6 +544,9 @@ namespace Miriot.Core.ViewModels
 
                 byte[] bitmap = await _frameService.GetFrame();
 
+                if (bitmap == null)
+                    return false;
+
                 var scene = await _visionService.CreateSceneAsync(bitmap);
 
                 Debug.WriteLine($"Toothbrushing checked : {scene.IsToothbrushing}");
@@ -561,7 +562,7 @@ namespace Miriot.Core.ViewModels
 
         public override void Cleanup()
         {
-            _toothbrushingLauncher.Tick -= Timer_Tick;
+            _toothbrushingLauncher.Tick -= ToothbrushingLauncher;
             NetworkInformation.NetworkStatusChanged -= OnNetworkStatusChanged;
             OnReset();
             base.Cleanup();

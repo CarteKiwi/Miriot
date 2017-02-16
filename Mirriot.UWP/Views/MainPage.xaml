@@ -116,14 +116,14 @@
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height=".8*"/>
+                <RowDefinition Height=".6*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height=".6*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="1.2*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
@@ -174,14 +174,14 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width=".8*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width=".8*"/>
             </Grid.ColumnDefinitions>
             <!--Profile panel-->
             <StackPanel VerticalAlignment="Bottom"
                     Orientation="Horizontal"
-                    Margin="20"
+                    Margin="20,0,0,20"
                     HorizontalAlignment="Stretch"
                     Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
                 <Grid x:Name="UserPicture" RenderTransformOrigin="0.5,0.5">
@@ -204,7 +204,7 @@
                     </Ellipse>
                 </Grid>
 
-                <StackPanel Margin="10,35"
+                <StackPanel Margin="10,35,0,35"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Bottom" >
                     <StackPanel.ChildrenTransitions>
@@ -225,20 +225,18 @@
                            TextWrapping="WrapWholeWords"
                            FontSize="25"/>
 
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontWeight="Light"
+                    <TextBlock FontWeight="Light"
                                    Margin="0,0,3,0"
-                                   Text="Dernière connexion"
+                                   Text="Dernière connexion :"
                                    HorizontalAlignment="Left"
-                                   FontSize="18"
+                                   FontSize="15"
                                    FontStyle="Italic"/>
-                        <TextBlock FontWeight="Light"
+                    <TextBlock FontWeight="Light"
                                    Text="{Binding User.PreviousLoginDate, Mode=OneWay, Converter={StaticResource RelativeTimeConverter}}"
                                    HorizontalAlignment="Left"
                                    TextWrapping="WrapWholeWords"
-                                   FontSize="18"
+                                   FontSize="15"
                                    FontStyle="Italic"/>
-                    </StackPanel>
 
                     <TextBlock FontWeight="Light"
                            Text="{Binding User.FriendlyEmotion, Mode=OneWay}"
@@ -253,6 +251,7 @@
             <ctrl:WidgetTimer Grid.Column="1"
                               VerticalAlignment="Bottom"
                               HorizontalAlignment="Center"
+                              Visibility="{x:Bind Vm.User, Converter={StaticResource NullToVisibilityConverter}}"
                               IsRunning="{x:Bind Vm.IsToothbrushing, Mode=OneWay}"/>
 
             <!--Loader-->

@@ -12,10 +12,14 @@
 
     <Grid HorizontalAlignment="Center">
         <StackPanel>
-            <TextBlock x:Name="TimeTb" Text="13 : 30"
-                       FontSize="50"
+            <TextBlock FontSize="45"
                        HorizontalAlignment="Center"
-                       FontWeight="Light"/>
+                       FontWeight="Light">
+                    <Run x:Name="Hours" Text="13"/>
+                    <Run x:Name="Seconds" Text=":" FontSize="30"/>
+                    <Run x:Name="Minutes" Text="30"/>
+                    <Run Text=" " FontSize="30" FontStyle="Italic"/>
+            </TextBlock>
 
             <TextBlock x:Name="DateTb" Text="Ven. 06 Mars"
                        FontSize="23"

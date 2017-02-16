@@ -17,6 +17,9 @@ namespace Miriot.Services
 
         public async Task<byte[]> EncodedBytes(SoftwareBitmap softwareBitmap)
         {
+            if (softwareBitmap == null)
+                return null;
+
             SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
             
             byte[] array = null;

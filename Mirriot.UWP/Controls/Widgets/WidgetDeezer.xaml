@@ -30,8 +30,10 @@
                 </Grid.RenderTransform>
 
                 <Ellipse Height="120" Width="120"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
                          Stroke="{StaticResource AccentBrush}"
-                         StrokeThickness="1"/>
+                         StrokeThickness="2"/>
                 <Ellipse Height="100" Width="100"
                          VerticalAlignment="Center"
                          HorizontalAlignment="Center">
@@ -43,7 +45,6 @@
 
             <TextBlock x:Name="Title"
                        Grid.Column="1"
-                       Text="tttdsfs dfsd fsd fsdf sdf sdf sdf sdf qsdqd"
                        Margin="10,0,10,0"
                        FontWeight="ExtraLight"
                        HorizontalAlignment="Center"

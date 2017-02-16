@@ -9,6 +9,7 @@
         Sncf,
         Image,
         Calendar,
-        Horoscope
+        Horoscope,
+        Twitter
     }
 }
