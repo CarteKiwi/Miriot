@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Miriot.Controls"
-    xmlns:widgets="using:Miriot.Core.ViewModels.Widgets"
     xmlns:twitter="using:Miriot.Common.Model.Widgets.Twitter"
     mc:Ignorable="d"
     HorizontalAlignment="Stretch"
@@ -14,25 +13,50 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid x:Name="MainGrid"
-          Margin="30,0">
-
+    <Grid>
         <Grid>
             <Grid.Background>
                 <SolidColorBrush Color="Black" Opacity=".5"/>
             </Grid.Background>
-            <ListView x:Name="ListView"
-                      Margin="5"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center">
-                <ListView.ItemTemplate>
+            <ItemsControl x:Name="ListView"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
+                <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="twitter:Tweet">
-                        <Grid>
-                            <TextBlock Text="{x:Bind Text}"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Ellipse Height="32" Width="32"
+                                     StrokeThickness="1"
+                                     Stroke="White">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind User.ProfileImageUrl}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="0"
+                                       Margin="5"
+                                       Text="{x:Bind User.ScreenName}"
+                                       Typography.Capitals="AllSmallCaps"
+                                       VerticalAlignment="Center"
+                                       FontSize="15"/>
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="2"
+                                       Text="{x:Bind Text}"
+                                       TextWrapping="WrapWholeWords"
+                                       FontSize="16"/>
                         </Grid>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
     </Grid>
 </controls:WidgetBase>

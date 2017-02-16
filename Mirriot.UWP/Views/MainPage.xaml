@@ -123,7 +123,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="1.4*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
@@ -133,7 +133,8 @@
                                  Grid.Row="1"></ctrl:WidgetCalendar>
             <ctrl:WidgetSncf Grid.Column="2" Grid.Row="1"></ctrl:WidgetSncf>
             <ctrl:WidgetTime Grid.Column="2"></ctrl:WidgetTime>
-            <ctrl:WidgetWeather Grid.Column="2" Grid.Row="2"></ctrl:WidgetWeather>-->
+            <ctrl:WidgetWeather Grid.Column="2" Grid.Row="2"></ctrl:WidgetWeather>
+            <ctrl:WidgetTwitter Grid.Column="1" Grid.Row="1"></ctrl:WidgetTwitter>-->
         </Grid>
 
         <!--Welcome text-->

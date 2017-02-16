@@ -3,7 +3,6 @@ using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 using System;
 using System.Diagnostics;
-using Windows.Graphics.Imaging;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -30,7 +29,7 @@ namespace Miriot.Controls
             Loaded += WidgetTwitter_Loaded;
         }
 
-        private async void WidgetTwitter_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void WidgetTwitter_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
