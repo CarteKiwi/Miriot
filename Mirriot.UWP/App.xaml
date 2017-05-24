@@ -9,6 +9,29 @@
         
         <ResourceDictionary>
 
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <AcrylicBrush x:Key="MyAcrylicBrush"
+                                  BackgroundSource="HostBackdrop"
+                                  TintColor="Black"
+                                  TintOpacity="0.4"
+                                  FallbackColor="Black"/>
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="MyAcrylicBrush"
+                                     Color="{ThemeResource SystemColorWindowColor}"/>
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="MyAcrylicBrush"
+                                  BackgroundSource="HostBackdrop"
+                                  TintColor="#FFFF0000"
+                                  TintOpacity="0.8"
+                                  FallbackColor="#FFFF7F7F"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources\ApplicationStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>

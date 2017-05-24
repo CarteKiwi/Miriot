@@ -24,7 +24,7 @@ namespace Miriot.Common.Model.Widgets.Twitter
             get
             {
                 DateTime result;
-                if (!DateTime.TryParseExact(this.CreatedAt, "ddd MMM dd HH:mm:ss zzzz yyyy", (IFormatProvider)CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                if (!DateTime.TryParseExact(CreatedAt, "ddd MMM dd HH:mm:ss zzzz yyyy", (IFormatProvider)CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
                     result = DateTime.Today;
                 return result;
             }

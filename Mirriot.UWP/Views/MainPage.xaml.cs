@@ -90,6 +90,16 @@ namespace Miriot
                     Vm.Widgets.CollectionChanged += WidgetsChanged;
                 }
             }
+
+            if (e.PropertyName == nameof(Vm.IsListeningFirstName))
+            {
+                _speechRecognizer.Constraints.First().IsEnabled = !Vm.IsListeningFirstName;
+            }
+
+            if (e.PropertyName == nameof(Vm.IsListening))
+            {
+                _speechRecognizer.Constraints.First().IsEnabled = !Vm.IsListening;
+            }
         }
 
         private void WidgetsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -188,6 +198,13 @@ namespace Miriot
                 Debug.WriteLine(ex.Message);
                 return;
             }
+
+            // Add a list constraint to the recognizer.
+
+            // Compile the dictation topic constraint, which optimizes for dictated speech.
+            var listConstraint = new SpeechRecognitionListConstraint(new[] { "Miriot" });
+            _speechRecognizer.Constraints.Add(listConstraint);
+            _speechRecognizer.Constraints.Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, ""));
 
             await _speechRecognizer.CompileConstraintsAsync();
 
@@ -365,14 +382,14 @@ namespace Miriot
 
         private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
         {
-            if (args.Status != SpeechRecognitionResultStatus.Success)
-            {
-                if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
-                {
+            //if (args.Status != SpeechRecognitionResultStatus.Success)
+            //{
+            //    if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
+            //    {
                     // Enable continuous listening
                     StartListening();
-                }
-            }
+            //    }
+            //}
         }
         #endregion
 

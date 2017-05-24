@@ -125,6 +125,9 @@ namespace Miriot.Services
 
         public async Task<IEnumerable<Tweet>> GetHomeTimelineAsync()
         {
+            if (!IsInitialized)
+                Initialize();
+
             // Get user timeline
             var tweet = await TwitterService.Instance.RequestAsync(new TwitterDataConfig
             {

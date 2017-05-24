@@ -45,6 +45,7 @@ namespace Miriot.Core.ViewModels
         private Stopwatch _toothbrushingTimer;
         private SemaphoreSlim _toothbrushingSemaphore;
         private bool _isToothbrushing;
+        private bool _isListening;
         #endregion
 
         #region Commands
@@ -54,6 +55,12 @@ namespace Miriot.Core.ViewModels
         public RelayCommand<string> ActionNavigateTo { get; private set; }
         public RelayCommand ResetCommand { get; private set; }
         #endregion
+
+        public bool IsListening
+        {
+            get => _isListening;
+            set { Set(() => IsListening, ref _isListening, value); }
+        }
 
         public User User
         {
@@ -216,10 +223,6 @@ namespace Miriot.Core.ViewModels
 
             text = CleanForDemo(text);
 
-            SetMessage("Un instant...", "je réfléchis...");
-
-            IsLoading = true;
-
             if (_isListeningYesNo)
             {
                 _isListeningYesNo = false;
@@ -241,6 +244,23 @@ namespace Miriot.Core.ViewModels
             }
             else
             {
+                if (text.Contains("Miriot"))
+                {
+                    IsListening = true;
+                    SetMessage("J'écoute.", "vous pouvez parler.");
+
+                    return;
+                }
+
+                if (!IsListening)
+                    return;
+
+                SetMessage("Un instant...", "je réfléchis...");
+
+                IsLoading = true;
+
+                IsListening = false;
+
                 // Appel au service LUIS
                 var res = await AskLuisAsync(text);
 

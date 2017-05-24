@@ -1,4 +1,5 @@
 ﻿<local:WidgetBase
+    x:Name="Root"
     x:Class="Miriot.Controls.WidgetTime"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,14 +13,35 @@
 
     <Grid HorizontalAlignment="Center">
         <StackPanel>
-            <TextBlock FontSize="45"
-                       HorizontalAlignment="Center"
-                       FontWeight="Light">
-                    <Run x:Name="Hours" Text="13"/>
-                    <Run x:Name="Seconds" Text=":" FontSize="30"/>
-                    <Run x:Name="Minutes" Text="30"/>
-                    <Run Text=" " FontSize="30" FontStyle="Italic"/>
-            </TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="Hours"
+                           Text="13"
+                           FontSize="45"
+                           HorizontalAlignment="Center"
+                           FontWeight="Light"/>
+
+                <TextBlock x:Name="Seconds"
+                           Text=":"
+                           Grid.Column="1"
+                           FontSize="45"
+                           HorizontalAlignment="Center"
+                           FontWeight="Light"/>
+
+                <TextBlock x:Name="Minutes"
+                           Text="30"
+                           Grid.Column="2"
+                           FontSize="45"
+                           HorizontalAlignment="Center"
+                           FontWeight="Light">
+                        <Run Text=" " FontSize="30" FontStyle="Italic"/>
+                </TextBlock>
+                           
+            </Grid>
 
             <TextBlock x:Name="DateTb" Text="Ven. 06 Mars"
                        FontSize="23"

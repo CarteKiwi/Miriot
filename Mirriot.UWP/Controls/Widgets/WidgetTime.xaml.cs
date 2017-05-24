@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Miriot.Controls
 {
@@ -21,15 +22,15 @@ namespace Miriot.Controls
         {
             Hours.Text = DateTime.Now.ToString("hh", CultureInfo.CurrentUICulture);
             Minutes.Text = DateTime.Now.ToString("mm", CultureInfo.CurrentUICulture);
-            DateTb.Text = $"{DateTime.Now.ToString("ddd. dd MMM", CultureInfo.CurrentUICulture)}";
+            DateTb.Text = $"{DateTime.Now.ToString("ddd dd MMM", CultureInfo.CurrentUICulture)}";
             if (_secondDisplayed)
             {
-                Seconds.Text = ":";
+                Seconds.Visibility = Visibility.Visible;
                 _secondDisplayed = false;
             }
             else
             {
-                Seconds.Text = "";
+                Seconds.Visibility = Visibility.Collapsed;
                 _secondDisplayed = true;
             }
         }
