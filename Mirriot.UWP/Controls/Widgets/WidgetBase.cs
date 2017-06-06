@@ -12,6 +12,19 @@ namespace Miriot.Controls
             Margin = new Thickness(20);
         }
 
+        private WidgetStates _state;
+        public WidgetStates State
+        {
+            get { return _state; }
+            set
+            {
+                _state = value;
+                OnStateChanged();
+            }
+        }
+
+        public virtual void OnStateChanged() { }
+
         public virtual void SetPosition(int x, int y)
         {
             Grid.SetColumn(this, x);

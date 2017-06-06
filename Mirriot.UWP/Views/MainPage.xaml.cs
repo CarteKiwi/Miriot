@@ -382,14 +382,14 @@ namespace Miriot
 
         private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
         {
-            //if (args.Status != SpeechRecognitionResultStatus.Success)
-            //{
-            //    if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
-            //    {
-                    // Enable continuous listening
+            if (args.Status != SpeechRecognitionResultStatus.Success)
+            {
+                if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
+                {
+                    //Enable continuous listening
                     StartListening();
-            //    }
-            //}
+                }
+            }
         }
         #endregion
 

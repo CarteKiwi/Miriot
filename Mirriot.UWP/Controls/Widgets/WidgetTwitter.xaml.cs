@@ -1,22 +1,22 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
+using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Miriot.Common;
-using Miriot.Common.Model.Widgets.Twitter;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetTwitter : IWidgetOAuth, IWidgetExclusive, IWidgetAction
+    public sealed partial class WidgetTwitter : IWidgetOAuth, IWidgetExclusive, IWidgetAction, INotifyPropertyChanged
     {
         public bool IsFullscreen { get; set; }
 
@@ -24,14 +24,17 @@ namespace Miriot.Controls
 
         public string Token { get; set; }
 
-        public ObservableCollection<Tweet> Tweets { get; set; }
-
-
-        private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        private ObservableCollection<ITwitterResult> _tweets;
+        public ObservableCollection<ITwitterResult> Tweets
+        {
+            get => _tweets;
+            private set => Set(ref _tweets, value);
+        }
 
         public WidgetTwitter(Widget widget)
         {
             OriginalWidget = widget;
+            State = WidgetStates.Minimal;
 
             InitializeComponent();
 
@@ -40,18 +43,15 @@ namespace Miriot.Controls
             Loaded += WidgetTwitter_Loaded;
         }
 
-        private void WidgetTwitter_Loaded(object sender, RoutedEventArgs e)
+        private async void WidgetTwitter_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                //var twitter = ServiceLocator.Current.GetInstance<ITwitterService>();
+                TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://miriot.suismoi.fr");
 
-                // Get current user info
-                //var user = await twitter.GetUserAsync();
+                await LoadTweetsAsync();
+                await GetStream();
 
-                var timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 6) };
-                timer.Tick += TweetCheck_Tick;
-                timer.Start();
             }
             catch (Exception ex)
             {
@@ -59,31 +59,31 @@ namespace Miriot.Controls
             }
         }
 
-        private async void TweetCheck_Tick(object sender, object e)
+        public override void OnStateChanged()
         {
-            await _semaphoreSlim.WaitAsync();
+            base.OnStateChanged();
 
-            await LoadTweetsAsync();
+            switch (State)
+            {
+                default:
+                case WidgetStates.Minimal:
 
-            _semaphoreSlim.Release();
+                    break;
+            }
         }
 
         private async Task LoadTweetsAsync()
         {
             try
             {
-                var twitter = ServiceLocator.Current.GetInstance<ITwitterService>();
-
                 // Get user timeline
-                var tweets = await twitter.GetHomeTimelineAsync();
+                var tweets = await TwitterService.Instance.RequestAsync(new TwitterDataConfig
+                {
+                    QueryType = TwitterQueryType.Home
+                }, 50);
 
                 if (Tweets == null || !Tweets.Any())
-                    Tweets = new ObservableCollection<Tweet>(tweets);
-                else
-                    foreach (var tweet in tweets.Where(t => !Tweets.Contains(t, new TweetComparer())))
-                    {
-                        Tweets.Insert(0, tweet);
-                    }
+                    Tweets = new ObservableCollection<ITwitterResult>(tweets);
             }
             catch (Exception ex)
             {
@@ -91,16 +91,41 @@ namespace Miriot.Controls
             }
         }
 
+        private async Task GetStream()
+        {
+            await TwitterService.Instance.StartUserStreamAsync(async tweet =>
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    if (tweet != null)
+                    {
+                        if (tweet is TwitterStreamDeletedEvent)
+                        {
+                            var toRemove = _tweets.Where(t => t is Tweet)
+                                .SingleOrDefault(t => ((Tweet)t).Id == ((TwitterStreamDeletedEvent)tweet).Id);
+
+                            if (toRemove != null)
+                            {
+                                _tweets.Remove(toRemove);
+                            }
+                        }
+                        else
+                        {
+                            _tweets.Insert(0, tweet);
+                        }
+                    }
+                });
+            });
+        }
+
         public async void Tweet(string text)
         {
-            var twitter = ServiceLocator.Current.GetInstance<ITwitterService>();
-            var statut = await twitter.TweetStatusAsync("Tweet from Miriot");
+            var statut = await TwitterService.Instance.TweetStatusAsync("Tweet from Miriot");
         }
 
         public async void Tweet(string text, ImageSource image)
         {
-            var twitter = ServiceLocator.Current.GetInstance<ITwitterService>();
-            var statut = await twitter.TweetStatusAsync("Tweet from Miriot");
+            var statut = await TwitterService.Instance.TweetStatusAsync("Tweet from Miriot");
         }
 
         public void DoAction(IntentResponse intent)
@@ -113,18 +138,20 @@ namespace Miriot.Controls
             Grid.SetRowSpan(this, 2);
             base.SetPosition(x, y);
         }
-    }
 
-    internal class TweetComparer : IEqualityComparer<Tweet>
-    {
-        public bool Equals(Tweet x, Tweet y)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
         {
-            return x.Id == y.Id;
+            if (Equals(storage, value))
+            {
+                return;
+            }
+
+            storage = value;
+            OnPropertyChanged(propertyName);
         }
 
-        public int GetHashCode(Tweet obj)
-        {
-            return obj.GetHashCode();
-        }
+        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

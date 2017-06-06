@@ -5,7 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Miriot.Controls"
-    xmlns:twitter="using:Miriot.Common.Model.Widgets.Twitter"
+    xmlns:twitter="using:Microsoft.Toolkit.Uwp.Services.Twitter"
+    xmlns:widgets="using:Miriot.Controls.Widgets"
     mc:Ignorable="d"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
@@ -13,8 +14,224 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
+    <controls:WidgetBase.Resources>
+        <DataTemplate x:Key="TwitterSchemaTemplate"
+                      x:DataType="twitter:Tweet">
+            <Grid Margin="0,0,0,15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Ellipse Height="32" Width="32"
+                         StrokeThickness="1"
+                         Stroke="White">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{x:Bind User.ProfileImageUrl}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Grid.Column="1"
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   Text="{x:Bind User.ScreenName}"
+                                   Typography.Capitals="AllSmallCaps"
+                                   VerticalAlignment="Center"
+                                   FontSize="15"/>
+
+                <TextBlock Grid.Column="1"
+                                   Grid.Row="0"
+                                   Typography.Capitals="AllSmallCaps"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"
+                                   HorizontalAlignment="Right"
+                                   FontWeight="ExtraLight"
+                                   Text="{x:Bind CreationDate}" />
+
+                <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   Text="{x:Bind Text}"
+                                   TextWrapping="WrapWholeWords"
+                                   FontSize="16"/>
+
+                <Image Grid.Row="2"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       Source="{x:Bind Entities.Media[0].MediaUrl}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TwitterEventTemplate"
+                      x:DataType="twitter:TwitterStreamEvent">
+            <Border Margin="12,0,12,12"
+                    Padding="12"
+                    Background="#FFCCCCCC"
+                    BorderBrush="#E2FFF893"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.RowSpan="2"
+                               Width="25"
+                               Height="25"
+                               Margin="0,0,12,0"
+                               VerticalAlignment="Top"
+                               Source="{Binding Source.ProfileImageUrl}"
+                               Stretch="Uniform" />
+                        <TextBlock Grid.Column="1"
+                                   FontWeight="SemiBold"
+                                   FontSize="12"
+                                   Text="{x:Bind Source.Name}" />
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Top"
+                                   FontSize="12"
+                                   FontWeight="Light"
+                                   Text="{x:Bind Source.ScreenName}" />
+                        <TextBlock Grid.RowSpan="2"
+                                   Grid.Column="2"
+                                   Margin="4,0,0,0"
+                                   FontWeight="ExtraBold"
+                                   Text="{x:Bind EventType}" />
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.RowSpan="2"
+                               Width="50"
+                               Height="50"
+                               Margin="0,0,12,0"
+                               VerticalAlignment="Top"
+                               Source="{Binding Target.ProfileImageUrl}"
+                               Stretch="Uniform" />
+                        <TextBlock Grid.Column="1"
+                                   FontWeight="SemiBold"
+                                   Text="{x:Bind Target.Name}" />
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Top"
+                                   FontWeight="Light"
+                                   Text="{x:Bind Target.ScreenName}" />
+                        <Image Grid.RowSpan="2"
+                               Grid.Column="2"
+                               Width="24"
+                               Height="24"
+                               VerticalAlignment="Top"
+                               Source="/Assets/TwitterLogo.png"
+                               Stretch="Uniform" />
+                    </Grid>
+                    <TextBlock Grid.Row="2"
+                               FontWeight="SemiBold"
+                               Text="{x:Bind TargetObject.Text}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="WrapWholeWords" />
+
+                    <StackPanel Grid.Row="3"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <TextBlock FontWeight="ExtraLight"
+                                   Text="{x:Bind CreationDate}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!--Template Selector-->
+        <widgets:TwitterTemplateSelector x:Key="TwitterTemplateSelector" 
+                                         TweetTemplate="{StaticResource TwitterSchemaTemplate}"
+                                         EventTemplate="{StaticResource TwitterEventTemplate}"/>
+    </controls:WidgetBase.Resources>
+
+
     <Grid>
-        <ListView ItemsSource="{x:Bind Tweets}"
+        <!--<VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonState">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition From="*" GeneratedDuration="0" To="ActiveState"/>
+                    <VisualTransition From="*" GeneratedDuration="0" To="PassiveState"/>
+                    <VisualTransition From="*" GeneratedDuration="0" To="InactiveState"/>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Active">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ActionPanel">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="InfoUnknownPanel">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>-->
+
+        <!--<Grid x:Name="Minimal" Margin="0,0,0,15"
+              x:Load={}
+              Visibility="Collapsed"
+              DataContext="{x:Bind Tweets[0]}"
+              HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Ellipse Height="32" Width="32"
+                     StrokeThickness="1"
+                     Stroke="White">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="{x:Bind User.ProfileImageUrl}"/>
+                </Ellipse.Fill>
+            </Ellipse>
+            <TextBlock Grid.Column="1"
+                       Grid.Row="0"
+                       Margin="5"
+                       Text="{x:Bind User.ScreenName}"
+                       Typography.Capitals="AllSmallCaps"
+                       VerticalAlignment="Center"
+                       FontSize="15"/>
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       Text="{x:Bind Text}"
+                       TextWrapping="WrapWholeWords"
+                       FontSize="16"/>
+        </Grid>-->
+
+        <ListView x:Name="TwList" ItemsSource="{x:Bind Tweets, Mode=OneWay}"
+                  ItemTemplateSelector="{StaticResource TwitterTemplateSelector}"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
             <ListView.ItemContainerTransitions>
@@ -22,41 +239,6 @@
                     <AddDeleteThemeTransition/>
                 </TransitionCollection>
             </ListView.ItemContainerTransitions>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="twitter:Tweet">
-                    <Grid Margin="0,0,0,15">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Ellipse Height="32" Width="32"
-                                     StrokeThickness="1"
-                                     Stroke="White">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="{x:Bind User.ProfileImageUrl}"/>
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Grid.Column="1"
-                                       Grid.Row="0"
-                                       Margin="5"
-                                       Text="{x:Bind User.ScreenName}"
-                                       Typography.Capitals="AllSmallCaps"
-                                       VerticalAlignment="Center"
-                                       FontSize="15"/>
-                        <TextBlock Grid.Row="1"
-                                       Grid.Column="0"
-                                       Grid.ColumnSpan="2"
-                                       Text="{x:Bind Text}"
-                                       TextWrapping="WrapWholeWords"
-                                       FontSize="16"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
         </ListView>
     </Grid>
 </controls:WidgetBase>

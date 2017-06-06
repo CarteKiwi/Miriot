@@ -115,8 +115,12 @@
     <Content Include="Assets\Horoscope\Capricorn.png" />
     <Content Include="Assets\Horoscope\Aquarius.png" />
     <Content Include="Assets\Horoscope\Pisces.png" />
+    <Content Include="Assets\TwitterLogo.png" />
     <Content Include="Assets\wifi.png" />
     <Content Include="Controls\Widgets\Templates\HoroscopeTemplate.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Controls\Widgets\Templates\TwitterTemplate.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Resources\WeatherTime.ttf" />
@@ -132,6 +136,7 @@
     <Compile Include="Controls\IotLoader.xaml.cs">
       <DependentUpon>IotLoader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Widgets\TwitterTemplateSelector.cs" />
     <Compile Include="Controls\Widgets\WidgetTwitter.xaml.cs">
       <DependentUpon>WidgetTwitter.xaml</DependentUpon>
     </Compile>
@@ -171,7 +176,6 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="Locator.cs" />
-    <Compile Include="Services\TwitterWrapperService.cs" />
     <Compile Include="Services\Authentication.cs" />
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
@@ -179,6 +183,7 @@
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\SpeechService.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
+    <Compile Include="Services\TwitterWrapperService.cs" />
     <Compile Include="Utils\ColorBloomTransitionHelper.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />

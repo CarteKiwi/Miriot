@@ -59,12 +59,12 @@ namespace Miriot.Core.ViewModels
         public bool IsListening
         {
             get => _isListening;
-            set { Set(() => IsListening, ref _isListening, value); }
+            private set => Set(() => IsListening, ref _isListening, value);
         }
 
         public User User
         {
-            get { return _user; }
+            get => _user;
             private set
             {
                 Set(() => User, ref _user, value);
@@ -74,20 +74,19 @@ namespace Miriot.Core.ViewModels
 
         public ObservableCollection<Widget> Widgets
         {
-            get { return _widgets; }
-            private set { Set(() => Widgets, ref _widgets, value); }
+            get => _widgets;
+            private set => Set(() => Widgets, ref _widgets, value);
         }
 
         public bool IsInternetAvailable
         {
-            get { return _isInternetAvailable; }
-            private set { Set(ref _isInternetAvailable, value); }
+            get => _isInternetAvailable;
+            private set => Set(ref _isInternetAvailable, value);
         }
 
         public bool IsToothbrushing
         {
-            get { return _isToothbrushing; }
-            private set { Set(ref _isToothbrushing, value); }
+            get => _isToothbrushing; private set => Set(ref _isToothbrushing, value);
         }
 
         public bool IsConnected => User != null;
@@ -96,8 +95,8 @@ namespace Miriot.Core.ViewModels
 
         public States CurrentState
         {
-            get { return _currentState; }
-            set
+            get => _currentState;
+            private set
             {
                 // Force Active state for Mobile apps
                 if (IsMobile)
@@ -111,14 +110,14 @@ namespace Miriot.Core.ViewModels
 
         public string Title
         {
-            get { return _title; }
-            set { Set(ref _title, value); }
+            get => _title;
+            private set => Set(ref _title, value);
         }
 
         public string SubTitle
         {
-            get { return _subTitle; }
-            set { Set(ref _subTitle, value); }
+            get => _subTitle;
+            private set => Set(ref _subTitle, value);
         }
 
         public MainViewModel(
@@ -216,6 +215,8 @@ namespace Miriot.Core.ViewModels
 
         private async void OnProceedSpeech(string text)
         {
+            Messenger.Default.Send(new ListeningMessage());
+
             //if (!_isListeningYesNo && !IsListeningFirstName && !text.Contains("miriot"))
             //{
             //    return;

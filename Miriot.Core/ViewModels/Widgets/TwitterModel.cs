@@ -5,16 +5,24 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Miriot.Common.Model.Widgets.Twitter;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
     public class TwitterModel : WidgetModel
     {
         private string _token;
+        private TwitterUser _user;
+
+        public TwitterUser User
+        {
+            get => _user;
+            set => Set(ref _user, value);
+        }
 
         public string Token
         {
-            get { return _token; }
+            get => _token;
             set { Set(() => Token, ref _token, value); }
         }
 
@@ -28,22 +36,26 @@ namespace Miriot.Core.ViewModels.Widgets
             return new OAuthWidgetInfo { Token = Token };
         }
 
-        public override void LoadInfos(List<string> infos)
+        public override async void LoadInfos(List<string> infos)
         {
             var info = infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return;
 
             Token = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info).Token;
+            User = await ServiceLocator.Current.GetInstance<ITwitterService>().GetUserAsync();
+
             base.LoadInfos(infos);
         }
 
         public override void OnActivated()
         {
-            if (string.IsNullOrEmpty(Token))
+            if (!string.IsNullOrEmpty(Token)) return;
+            var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
+            dispatcher.Invoke(async () =>
             {
-                var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
-                dispatcher.Invoke(async () => await Login());
-            }
+                await Login();
+                await GetUser();
+            });
         }
 
         public override void OnDisabled()
@@ -54,10 +66,14 @@ namespace Miriot.Core.ViewModels.Widgets
 
         private async Task Login()
         {
-            var service = ServiceLocator.Current.GetInstance<ITwitterService>();
-            var success = await service.LoginAsync();
+            var success = await ServiceLocator.Current.GetInstance<ITwitterService>().LoginAsync();
 
             IsActive = success;
+        }
+
+        private async Task GetUser()
+        {
+            User = await ServiceLocator.Current.GetInstance<ITwitterService>().GetUserAsync();
         }
     }
 }

@@ -1,13 +1,9 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Toolkit.Uwp.Services.Twitter;
 using Miriot.Common;
-using Miriot.Controls;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
-using Miriot.Utils;
 using Miriot.Views;
 
 namespace Miriot
@@ -19,11 +15,11 @@ namespace Miriot
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             var navigationService = CreateNavigationService();
-            SimpleIoc.Default.Register<INavigationService>(() => navigationService);
+            SimpleIoc.Default.Register(() => navigationService);
             SimpleIoc.Default.Register<IAuthentication, Authentication>();
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
             SimpleIoc.Default.Register<IFileService, FileService>();
-            SimpleIoc.Default.Register<ITwitterService, Services.TwitterWrapperService>();
+            SimpleIoc.Default.Register<ITwitterService, TwitterWrapperService>();
 #if MOCK
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
 #else

@@ -1,16 +1,9 @@
-﻿using Miriot.Controls;
-using Miriot.Core.ViewModels.Widgets;
-using System;
-using System.Collections.Generic;
+﻿using Miriot.Core.ViewModels.Widgets;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Markup;
 
 namespace Miriot
@@ -36,7 +29,8 @@ namespace Miriot
 
                     return template; //Return the DataTemplateSelector for a disabled tile.
                 }
-                else if (item is HoroscopeModel)
+
+                if (item is HoroscopeModel)
                 {
                     string xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/HoroscopeTemplate.xml");
                     XDocument templateXml = XDocument.Load(xmlTemplatePath);
@@ -44,8 +38,17 @@ namespace Miriot
 
                     return template; //Return the DataTemplateSelector for a disabled tile.
                 }
-                else
-                    return DefaultTemplate; //In case of an error above return the DataTemplateSelector for a normal tile.
+
+                if (item is TwitterModel)
+                {
+                    string xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/TwitterTemplate.xml");
+                    XDocument templateXml = XDocument.Load(xmlTemplatePath);
+                    DataTemplate template = (DataTemplate)XamlReader.Load(templateXml.ToString());
+
+                    return template; //Return the DataTemplateSelector for a disabled tile.
+                }
+
+                return DefaultTemplate; //In case of an error above return the DataTemplateSelector for a normal tile.
             }
 
             return base.SelectTemplateCore(item, container);
