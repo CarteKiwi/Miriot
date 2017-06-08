@@ -1,32 +1,19 @@
 ﻿using Miriot.Common;
+using Miriot.Common.Model;
+using Miriot.Core.Services.Interfaces;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Media.Streaming.Adaptive;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
     public sealed partial class WidgetRadio : IWidgetAction, IWidgetExclusive
     {
-        private readonly IntentResponse _intent;
-
-        public WidgetRadio(IntentResponse intent)
+        public WidgetRadio(Widget widget): base (widget)
         {
             InitializeComponent();
-
             IsExclusive = true;
-            _intent = intent;
-            Loaded += WidgetTv_Loaded;
-        }
-
-        private void WidgetTv_Loaded(object sender, RoutedEventArgs e)
-        {
-            Loaded -= WidgetTv_Loaded;
-            TurnOn(_intent);
         }
 
         private async Task ChangeChannel(string url, string title)

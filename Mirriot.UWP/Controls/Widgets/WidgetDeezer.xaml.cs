@@ -5,19 +5,20 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
+using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
     public sealed partial class WidgetDeezer : IWidgetExclusive
     {
-        private Random _rnd = new Random();
+        private readonly Random _rnd = new Random();
 
         public bool IsFullscreen { get; set; }
 
         public bool IsExclusive { get; set; }
 
-        public WidgetDeezer()
+        public WidgetDeezer(Widget widget) : base(widget)
         {
             InitializeComponent();
             IsExclusive = true;

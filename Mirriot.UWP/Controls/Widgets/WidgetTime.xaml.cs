@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Miriot.Common.Model;
+using System;
 using System.Globalization;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace Miriot.Controls
 {
@@ -9,7 +9,7 @@ namespace Miriot.Controls
     {
         private bool _secondDisplayed;
 
-        public WidgetTime()
+        public WidgetTime(Widget widget) : base(widget)
         {
             InitializeComponent();
 

@@ -15,12 +15,7 @@ namespace Miriot.Controls
         private readonly string _key = "84bc189921c14c7a98fdea2a98aa11ba";
         private string _location = "paris";
 
-        public WidgetWeather()
-        {
-            InitializeComponent();
-        }
-
-        public WidgetWeather(Widget widget)
+        public WidgetWeather(Widget widget) : base(widget)
         {
             InitializeComponent();
 

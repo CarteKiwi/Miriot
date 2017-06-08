@@ -14,14 +14,7 @@ namespace Miriot.Controls
     {
         public string Token { get; set; }
 
-        public WidgetCalendar()
-        {
-            InitializeComponent();
-
-            Loaded += WidgetCalendar_Loaded;
-        }
-
-        public WidgetCalendar(Widget widget)
+        public WidgetCalendar(Widget widget) : base(widget)
         {
             OriginalWidget = widget;
 

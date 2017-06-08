@@ -1,21 +1,19 @@
-﻿using System;
+﻿using Miriot.Common.Model;
+using Miriot.Common.Model.Widgets.Horoscope;
+using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
-using Miriot.Common.Model;
-using Miriot.Common.Model.Widgets.Horoscope;
-using Miriot.Core.Services.Interfaces;
-using Newtonsoft.Json;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetHoroscope : IWidgetBase
+    public sealed partial class WidgetHoroscope
     {
         private int? _sign;
 
-        public WidgetHoroscope(Widget widget)
+        public WidgetHoroscope(Widget widget) : base(widget)
         {
             InitializeComponent();
 

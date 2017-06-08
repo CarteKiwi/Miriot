@@ -279,6 +279,8 @@ namespace Miriot
                     break;
                 case "DisplayMail":
                     break;
+                case "AddReminder":
+                    break;
                 case "None":
                     if (Vm.IsListeningFirstName)
                         Vm.Repeat();
@@ -298,23 +300,27 @@ namespace Miriot
         private void TurnOnRadio(IntentResponse intent)
         {
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetRadio);
-            if (w != null)
+
+            if (w == null)
             {
-                ((WidgetRadio)w).DoAction(intent);
+                w = new WidgetRadio(null);
+                WidgetZone.Children.Add(w);
             }
-            else
-                WidgetZone.Children.Add(new WidgetRadio(intent));
+
+            ((WidgetRadio)w).DoAction(intent);
         }
 
         private void TurnOnTv(IntentResponse intent)
         {
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetTv);
-            if (w != null)
+          
+            if (w == null)
             {
-                ((WidgetTv)w).TurnOn(intent);
+                w = new WidgetTv(null, Vm.User.UserData.CachedTvUrls);
+                WidgetZone.Children.Add(w);
             }
-            else
-                WidgetZone.Children.Add(new WidgetTv(intent, Vm.User.UserData.CachedTvUrls));
+
+            ((WidgetTv)w).TurnOn(intent);
         }
 
         private async Task TurnOff()
@@ -369,7 +375,7 @@ namespace Miriot
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetDeezer);
             if (w == null)
             {
-                w = new WidgetDeezer();
+                w = new WidgetDeezer(null);
                 WidgetZone.Children.Add(w);
             }
             else
@@ -466,16 +472,16 @@ namespace Miriot
             switch (widget.Type)
             {
                 case WidgetType.Time:
-                    w = new WidgetTime();
+                    w = new WidgetTime(widget);
                     break;
                 case WidgetType.Fitbit:
-                    w = new WidgetFitbit();
+                    w = new WidgetFitbit(widget);
                     break;
                 case WidgetType.Calendar:
                     w = new WidgetCalendar(widget);
                     break;
                 case WidgetType.Sncf:
-                    w = new WidgetSncf();
+                    w = new WidgetSncf(widget);
                     break;
                 case WidgetType.Weather:
                     w = new WidgetWeather(widget);
@@ -484,8 +490,7 @@ namespace Miriot
                     w = new WidgetHoroscope(widget);
                     break;
                 case WidgetType.Sport:
-                    var sport = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
-                    w = new WidgetSport(sport);
+                    w = new WidgetSport(widget);
                     break;
                 case WidgetType.Twitter:
                     w = new WidgetTwitter(widget);
@@ -494,12 +499,8 @@ namespace Miriot
                     return;
             }
 
-            w.OriginalWidget = widget;
-
             if (w is IWidgetListener)
                 ((IWidgetListener)w).OnInfosChanged += WidgetInfosChanged;
-
-            w.SetPosition(widget.X, widget.Y);
 
             // Add widget to grid
             WidgetZone.Children.Add(w);

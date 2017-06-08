@@ -12,7 +12,7 @@
     <DefaultLanguage>fr-FR</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.16190.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.16190.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -161,9 +161,6 @@
     <Compile Include="Controls\Widgets\WidgetCalendar.xaml.cs">
       <DependentUpon>WidgetCalendar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Widgets\WidgetImage.xaml.cs">
-      <DependentUpon>WidgetImage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Widgets\WidgetSncf.xaml.cs">
       <DependentUpon>WidgetSncf.xaml</DependentUpon>
     </Compile>
@@ -305,10 +302,6 @@
     <Page Include="Controls\Widgets\WidgetCalendar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Widgets\WidgetImage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Widgets\WidgetSncf.xaml">
       <Generator>MSBuild:Compile</Generator>

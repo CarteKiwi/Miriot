@@ -47,11 +47,11 @@ namespace Miriot.Controls
 
         public bool IsExclusive { get; set; }
 
-        public WidgetTv(IntentResponse intent, Dictionary<string, string> cachedUrls)
+        public WidgetTv(Widget widget, Dictionary<string, string> cachedUrls) : base(widget)
         {
             InitializeComponent();
+
             _cachedUrls = cachedUrls ?? new Dictionary<string, string>();
-            //TurnOn(intent);
         }
 
         public async void LoadChannel(string channelKey, string url)

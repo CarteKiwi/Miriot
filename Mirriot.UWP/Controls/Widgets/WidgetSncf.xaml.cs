@@ -8,8 +8,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
@@ -19,13 +17,11 @@ namespace Miriot.Controls
         private DateTime? _nextDepartureDate;
         private bool _isBusy;
 
-        public WidgetSncf()
+        public WidgetSncf(Widget widget) : base(widget)
         {
             InitializeComponent();
 
-
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(1000);
+            DispatcherTimer timer = new DispatcherTimer {Interval = new TimeSpan(1000)};
             timer.Tick += Timer_Tick;
             timer.Start();
         }

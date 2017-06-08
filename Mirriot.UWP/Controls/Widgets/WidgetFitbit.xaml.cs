@@ -18,7 +18,7 @@ namespace Miriot.Controls
     {
         public OAuth2AccessToken AccessToken;
 
-        public WidgetFitbit()
+        public WidgetFitbit(Widget widget) : base(widget)
         {
             InitializeComponent();
             Load();

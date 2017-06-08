@@ -31,7 +31,7 @@ namespace Miriot.Controls
             private set => Set(ref _tweets, value);
         }
 
-        public WidgetTwitter(Widget widget)
+        public WidgetTwitter(Widget widget) : base(widget)
         {
             OriginalWidget = widget;
             State = WidgetStates.Minimal;
@@ -67,7 +67,12 @@ namespace Miriot.Controls
             {
                 default:
                 case WidgetStates.Minimal:
-
+                    SetPosition(1, 2);
+                    //VisualStateManager.GoToState(this, "Minimal", true);
+                    break;
+                case WidgetStates.Large:
+                    SetPosition(1, 1);
+                    //VisualStateManager.GoToState(this, "Large", true);
                     break;
             }
         }

@@ -7,15 +7,21 @@ namespace Miriot.Controls
 {
     public class WidgetBase : UserControl, IWidgetBase
     {
-        public WidgetBase()
+        public Widget OriginalWidget { get; set; }
+
+        public WidgetBase(Widget widget)
         {
             Margin = new Thickness(20);
+            OriginalWidget = widget;
+
+            if (widget != null)
+                SetPosition(widget.X, widget.Y);
         }
 
         private WidgetStates _state;
         public WidgetStates State
         {
-            get { return _state; }
+            get => _state;
             set
             {
                 _state = value;
@@ -30,7 +36,5 @@ namespace Miriot.Controls
             Grid.SetColumn(this, x);
             Grid.SetRow(this, y);
         }
-
-        public Widget OriginalWidget { get; set; }
     }
 }

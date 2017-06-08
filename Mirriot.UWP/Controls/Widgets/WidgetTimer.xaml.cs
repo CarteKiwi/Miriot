@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Windows.UI.Xaml;
+using Miriot.Common.Model;
 
 namespace Miriot.Controls
 {
@@ -10,8 +11,8 @@ namespace Miriot.Controls
 
         public bool IsRunning
         {
-            get { return (bool)GetValue(IsRunningProperty); }
-            set { SetValue(IsRunningProperty, value); }
+            get => (bool)GetValue(IsRunningProperty);
+            set => SetValue(IsRunningProperty, value);
         }
 
         public static readonly DependencyProperty IsRunningProperty =
@@ -27,7 +28,7 @@ namespace Miriot.Controls
                 w.Stop();
         }
 
-        public WidgetTimer()
+        public WidgetTimer(Widget widget) : base(widget)
         {
             InitializeComponent();
 
@@ -44,13 +45,13 @@ namespace Miriot.Controls
             TimerTb.Text = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
         }
 
-        public void Start()
+        private void Start()
         {
             _stopWatch = new Stopwatch();
             _stopWatch.Start();
         }
 
-        public void Stop()
+        private void Stop()
         {
             _stopWatch.Stop();
         }

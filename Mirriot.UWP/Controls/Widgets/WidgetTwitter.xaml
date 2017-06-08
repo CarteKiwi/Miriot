@@ -170,32 +170,18 @@
                                          EventTemplate="{StaticResource TwitterEventTemplate}"/>
     </controls:WidgetBase.Resources>
 
-
     <Grid>
-        <!--<VisualStateManager.VisualStateGroups>
+        <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonState">
                 <VisualStateGroup.Transitions>
-                    <VisualTransition From="*" GeneratedDuration="0" To="ActiveState"/>
-                    <VisualTransition From="*" GeneratedDuration="0" To="PassiveState"/>
-                    <VisualTransition From="*" GeneratedDuration="0" To="InactiveState"/>
+                    <VisualTransition From="*" GeneratedDuration="0" To="MinimalState"/>
+                    <VisualTransition From="*" GeneratedDuration="0" To="LargeState"/>
                 </VisualStateGroup.Transitions>
-                <VisualState x:Name="Active">
-                    <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ActionPanel">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
-                        </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="InfoUnknownPanel">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
-                        </DoubleAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
             </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>-->
+        </VisualStateManager.VisualStateGroups>
 
-        <!--<Grid x:Name="Minimal" Margin="0,0,0,15"
-              x:Load={}
+        <Grid x:Name="MinimalGrid" Margin="0,0,0,15"
+              x:Load="False"
               Visibility="Collapsed"
               DataContext="{x:Bind Tweets[0]}"
               HorizontalAlignment="Center">
@@ -212,23 +198,23 @@
                      StrokeThickness="1"
                      Stroke="White">
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="{x:Bind User.ProfileImageUrl}"/>
+                    <ImageBrush ImageSource="{Binding User.ProfileImageUrl}"/>
                 </Ellipse.Fill>
             </Ellipse>
             <TextBlock Grid.Column="1"
                        Grid.Row="0"
                        Margin="5"
-                       Text="{x:Bind User.ScreenName}"
+                       Text="{Binding User.ScreenName}"
                        Typography.Capitals="AllSmallCaps"
                        VerticalAlignment="Center"
                        FontSize="15"/>
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
                        Grid.ColumnSpan="2"
-                       Text="{x:Bind Text}"
+                       Text="{Binding Text}"
                        TextWrapping="WrapWholeWords"
                        FontSize="16"/>
-        </Grid>-->
+        </Grid>
 
         <ListView x:Name="TwList" ItemsSource="{x:Bind Tweets, Mode=OneWay}"
                   ItemTemplateSelector="{StaticResource TwitterTemplateSelector}"

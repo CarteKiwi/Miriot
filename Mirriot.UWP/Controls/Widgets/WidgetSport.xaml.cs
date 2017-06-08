@@ -1,14 +1,16 @@
-﻿using Windows.UI.Xaml.Controls;
-using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+﻿using Miriot.Common.Model;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace Miriot.Controls
 {
     public sealed partial class WidgetSport
     {
-        public WidgetSport(Miriot.Common.Model.SportWidgetInfo info)
+        public WidgetSport(Widget widget) : base(widget)
         {
             InitializeComponent();
+
+            var info = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
 
             TitleTb.Text = info.Competition;
             Score1Tb.Text = info.Score1.ToString();
