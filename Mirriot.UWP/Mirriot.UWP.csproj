@@ -167,6 +167,7 @@
     <Compile Include="Converters\RelativeTimeConverter.cs" />
     <Compile Include="Converters\ByteArrayToImageConverter.cs" />
     <Compile Include="Converters\BoolInvertConverter.cs" />
+    <Compile Include="Converters\WidgetStateToBoolConverter.cs" />
     <Compile Include="Converters\StateToBoolConverter.cs" />
     <Compile Include="Converters\BoolVisibilityConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />

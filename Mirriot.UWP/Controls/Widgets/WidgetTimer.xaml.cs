@@ -28,6 +28,11 @@ namespace Miriot.Controls
                 w.Stop();
         }
 
+        public WidgetTimer()
+        {
+            InitializeComponent();
+        }
+
         public WidgetTimer(Widget widget) : base(widget)
         {
             InitializeComponent();

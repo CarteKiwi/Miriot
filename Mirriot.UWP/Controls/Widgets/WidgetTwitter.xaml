@@ -172,18 +172,34 @@
 
     <Grid>
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="CommonState">
+            <VisualStateGroup x:Name="MinimalGroup">
                 <VisualStateGroup.Transitions>
-                    <VisualTransition From="*" GeneratedDuration="0" To="MinimalState"/>
-                    <VisualTransition From="*" GeneratedDuration="0" To="LargeState"/>
+                    <VisualTransition GeneratedDuration="0:0:1" To="MinimalState"/>
+                    <VisualTransition GeneratedDuration="0:0:1" To="LargeState"/>
                 </VisualStateGroup.Transitions>
+                <VisualState x:Name="MinimalState">
+                    <VisualState.Setters>
+                        <!--<Setter Target="TwList.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="MinimalGrid.(UIElement.Visibility)" Value="Visible"/>-->
+                        <Setter Target="MinimalGrid.(x:Load)" Value="True"/>
+                        <Setter Target="TwList.(x:Load)" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LargeState">
+                    <VisualState.Setters>
+                        <!--<Setter Target="MinimalGrid.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="TwList.(UIElement.Visibility)" Value="Visible"/>-->
+                        <Setter Target="TwList.(x:Load)" Value="True"/>
+                        <Setter Target="MinimalGrid.(x:Load)" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid x:Name="MinimalGrid" Margin="0,0,0,15"
-              x:Load="False"
-              Visibility="Collapsed"
-              DataContext="{x:Bind Tweets[0]}"
+              x:Load="{x:Bind State, Mode=OneWay, Converter={StaticResource WidgetStateToBoolConverter}, ConverterParameter=1}"
+              DataContext="{x:Bind Tweets[0], Mode=OneWay}"
+              VerticalAlignment="Bottom"
               HorizontalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -217,6 +233,7 @@
         </Grid>
 
         <ListView x:Name="TwList" ItemsSource="{x:Bind Tweets, Mode=OneWay}"
+                  x:Load="{x:Bind State, Mode=OneWay, Converter={StaticResource WidgetStateToBoolConverter}, ConverterParameter=3}"
                   ItemTemplateSelector="{StaticResource TwitterTemplateSelector}"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">

@@ -68,11 +68,11 @@ namespace Miriot.Controls
                 default:
                 case WidgetStates.Minimal:
                     SetPosition(1, 2);
-                    //VisualStateManager.GoToState(this, "Minimal", true);
+                    VisualStateManager.GoToState(this, "MinimalState", true);
                     break;
                 case WidgetStates.Large:
                     SetPosition(1, 1);
-                    //VisualStateManager.GoToState(this, "Large", true);
+                    VisualStateManager.GoToState(this, "LargeState", true);
                     break;
             }
         }
@@ -135,7 +135,7 @@ namespace Miriot.Controls
 
         public void DoAction(IntentResponse intent)
         {
-
+            // TODO: Switch state
         }
 
         public override void SetPosition(int x, int y)

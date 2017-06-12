@@ -9,6 +9,10 @@ namespace Miriot.Controls
     {
         public Widget OriginalWidget { get; set; }
 
+        public WidgetBase()
+        {
+        }
+
         public WidgetBase(Widget widget)
         {
             Margin = new Thickness(20);

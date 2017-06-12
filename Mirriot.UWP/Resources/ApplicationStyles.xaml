@@ -9,6 +9,7 @@
     <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
     <conv:StringFormatConverter x:Key="StringFormat"/>
     <conv:StateToBoolConverter x:Key="StateToBoolConverter"/>
+    <conv:WidgetStateToBoolConverter x:Key="WidgetStateToBoolConverter"/>
     <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
     <conv:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
 
