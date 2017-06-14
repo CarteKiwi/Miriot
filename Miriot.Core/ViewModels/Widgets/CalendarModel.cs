@@ -9,17 +9,25 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Security.Authentication.Web;
+using Miriot.Common.Model.Widgets;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
     public class CalendarModel : WidgetModel
     {
         private string _token;
+        private GraphUser _user;
 
         public string Token
         {
             get { return _token; }
             set { Set(() => Token, ref _token, value); }
+        }
+
+        public GraphUser User
+        {
+            get => _user;
+            set => Set(ref _user, value);
         }
 
         public CalendarModel()
@@ -46,7 +54,7 @@ namespace Miriot.Core.ViewModels.Widgets
             if (string.IsNullOrEmpty(Token))
             {
                 var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
-                dispatcher.Invoke(async () => await Login());
+                dispatcher.Invoke(async () => await Initialize());
             }
         }
 
@@ -54,6 +62,21 @@ namespace Miriot.Core.ViewModels.Widgets
         {
             Token = string.Empty;
             base.OnDisabled();
+        }
+
+        private async Task Initialize()
+        {
+            var auth = ServiceLocator.Current.GetInstance<IAuthentication>();
+            // from Azure portal - Cellenza subscription
+            var clientId = "ca026d51-8d86-4f85-a697-7be9c0a86453";
+
+            if (auth.Initialize(clientId))
+            {
+                if (await auth.LoginAsync())
+                {
+                    User = await auth.GetUserAsync();
+                }
+            }
         }
 
         private async Task Login()

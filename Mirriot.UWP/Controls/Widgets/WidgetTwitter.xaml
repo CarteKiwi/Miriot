@@ -15,6 +15,13 @@
     d:DesignWidth="400">
 
     <controls:WidgetBase.Resources>
+        <Storyboard x:Name="TweetReceivedSb">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="MinimalGrid">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        
         <DataTemplate x:Key="TwitterSchemaTemplate"
                       x:DataType="twitter:Tweet">
             <Grid Margin="0,0,0,15">

@@ -69,6 +69,7 @@
     <Compile Include="Model\Widgets\SportWidgetInfo.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Model\UserEmotion.cs" />
+    <Compile Include="Model\Widgets\GraphUser.cs" />
     <Compile Include="Model\Widgets\Twitter\TwitterUser.cs" />
     <Compile Include="Model\Widgets\Weather\WeatherResponse.cs" />
     <Compile Include="Model\Widgets\Weather\WeatherWidgetInfo.cs" />

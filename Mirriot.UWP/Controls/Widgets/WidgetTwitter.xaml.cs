@@ -117,6 +117,9 @@ namespace Miriot.Controls
                         else
                         {
                             _tweets.Insert(0, tweet);
+
+                            if (State == WidgetStates.Minimal)
+                                TweetReceivedSb.Begin();
                         }
                     }
                 });
