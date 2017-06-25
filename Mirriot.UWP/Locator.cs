@@ -4,6 +4,7 @@ using Microsoft.Practices.ServiceLocation;
 using Miriot.Common;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
+using Miriot.Utils;
 using Miriot.Views;
 
 namespace Miriot
@@ -16,7 +17,7 @@ namespace Miriot
 
             var navigationService = CreateNavigationService();
             SimpleIoc.Default.Register(() => navigationService);
-            SimpleIoc.Default.Register<IAuthentication, Authentication>();
+            SimpleIoc.Default.Register<IGraphService, GraphService>();
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
             SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<ITwitterService, TwitterWrapperService>();

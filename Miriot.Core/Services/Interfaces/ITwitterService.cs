@@ -12,5 +12,7 @@ namespace Miriot.Core.Services.Interfaces
         Task<bool> LoginAsync();
 
         Task<TwitterUser> GetUserAsync();
+
+        void Logout();
     }
 }

@@ -23,6 +23,7 @@ namespace Miriot.Core.Services
                 var vision = await client.GetTagsAsync(stream);
 
                 scene.IsToothbrushing = IsToothBrushing(vision);
+                scene.Faces = vision.Faces;
             }
 
             return scene;

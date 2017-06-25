@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Shapes;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
 using Microsoft.ProjectOxford.Face;
@@ -12,6 +13,7 @@ using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 using Newtonsoft.Json;
+using Rectangle = Microsoft.ProjectOxford.Common.Rectangle;
 
 namespace Miriot.Core.Services
 {
@@ -91,8 +93,13 @@ namespace Miriot.Core.Services
                     Id = person.PersonId,
                     Name = person.Name,
                     UserData = data,
-                    FaceRectangleTop = face.FaceRectangle.Top,
-                    FaceRectangleLeft = face.FaceRectangle.Left,
+                    FaceRectangle = new Rectangle
+                    {
+                        Height = face.FaceRectangle.Height,
+                        Width = face.FaceRectangle.Width, 
+                        Top = face.FaceRectangle.Top,
+                        Left = face.FaceRectangle.Left
+                    },
                     Picture = bitmap
                 };
 

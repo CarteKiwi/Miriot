@@ -11,8 +11,8 @@
     <AssemblyName>Miriot</AssemblyName>
     <DefaultLanguage>fr-FR</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.16190.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.16190.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -98,6 +98,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="Connected Services\Office365\ConnectedService.json" />
     <None Include="Miriot.pfx" />
     <None Include="Mirriot.UWP_TemporaryKey.pfx" />
     <None Include="project.json" />
@@ -118,6 +119,9 @@
     <Content Include="Assets\TwitterLogo.png" />
     <Content Include="Assets\wifi.png" />
     <Content Include="Controls\Widgets\Templates\HoroscopeTemplate.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Controls\Widgets\Templates\CalendarMailTemplate.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Controls\Widgets\Templates\TwitterTemplate.xml">
@@ -174,7 +178,7 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="Locator.cs" />
-    <Compile Include="Services\Authentication.cs" />
+    <Compile Include="Services\GraphService.cs" />
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\Mock\FrameAnalyser.cs" />
@@ -186,6 +190,7 @@
     <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />
     <Compile Include="Utils\Graph\GraphHelper.cs" />
+    <Compile Include="Utils\Graph\MicrosoftGraphSource.cs" />
     <Compile Include="Utils\ImageHelper.cs" />
     <Compile Include="Utils\ImageLoader\ImageLoader.cs" />
     <Compile Include="Utils\ImageLoader\ManagedSurface.cs" />
@@ -352,13 +357,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsDesktop, Version=10.0.16190.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.10586.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsIoT, Version=10.0.16190.0">
+    <SDKReference Include="WindowsIoT, Version=10.0.10586.0">
       <Name>Windows IoT Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.16190.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
@@ -366,8 +371,14 @@
     <Reference Include="ChakraBridge">
       <HintPath>..\..\..\JsBridge\dist\ChakraBridge.winmd</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Toolkit.Uwp.Services, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Microsoft.Toolkit.Uwp.Services.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

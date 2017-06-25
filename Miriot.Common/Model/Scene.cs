@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.ProjectOxford.Vision.Contract;
 
 namespace Miriot.Common.Model
 {
@@ -11,5 +7,7 @@ namespace Miriot.Common.Model
         public bool IsToothbrushing { get; set; }
 
         public string[] Tags { get; set; }
+
+        public Face[] Faces { get; set; }
     }
 }

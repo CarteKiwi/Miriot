@@ -72,7 +72,7 @@
     <Compile Include="Services\FaceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Interfaces\IDispatcherService.cs" />
-    <Compile Include="Services\Interfaces\IAuthentication.cs" />
+    <Compile Include="Services\Interfaces\IGraphService.cs" />
     <Compile Include="Services\Interfaces\IFileService.cs" />
     <Compile Include="Services\Interfaces\IPlatformService.cs" />
     <Compile Include="Services\Interfaces\IWidgetBase.cs" />

@@ -3,5 +3,8 @@
     public class OAuthWidgetInfo : WidgetInfo
     {
         public string Token { get; set; }
+        public string TokenSecret { get; set; }
+        public string Username { get; set; }
+
     }
 }

@@ -20,9 +20,11 @@ using Windows.Media.SpeechSynthesis;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.ProjectOxford.Common;
 using Window = Windows.UI.Xaml.Window;
 
 namespace Miriot
@@ -150,11 +152,26 @@ namespace Miriot
 
             if (Vm.User != null)
             {
+                if (Vm.IsToothbrushing)
+                {
+                    var user = response.Users.FirstOrDefault();
+                    if (user != null)
+                        SetToothZone(user.FaceRectangle);
+                }
                 return;
             }
 
             CleanUi();
             await RunOnUiThread(() => { Vm.UsersIdentifiedCommand.Execute(response); });
+        }
+
+        private async void SetToothZone(Rectangle userFaceRectangle)
+        {
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Canvas.SetTop(ToothIndicator, userFaceRectangle.Top);
+                Canvas.SetLeft(ToothIndicator, userFaceRectangle.Left);
+            });
         }
 
         /// <summary>
@@ -313,7 +330,7 @@ namespace Miriot
         private void TurnOnTv(IntentResponse intent)
         {
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetTv);
-          
+
             if (w == null)
             {
                 w = new WidgetTv(null, Vm.User.UserData.CachedTvUrls);

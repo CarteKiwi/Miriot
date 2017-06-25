@@ -13,6 +13,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Controls
 {
@@ -47,16 +48,22 @@ namespace Miriot.Controls
         {
             try
             {
+                RetrieveData();
                 TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://miriot.suismoi.fr");
 
                 await LoadTweetsAsync();
                 await GetStream();
-
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
+        }
+
+        private void RetrieveData()
+        {
+            TwitterModel c = new TwitterModel();
+            c.LoadInfos(OriginalWidget.Infos);
         }
 
         public override void OnStateChanged()

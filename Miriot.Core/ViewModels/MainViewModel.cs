@@ -86,7 +86,8 @@ namespace Miriot.Core.ViewModels
 
         public bool IsToothbrushing
         {
-            get => _isToothbrushing; private set => Set(ref _isToothbrushing, value);
+            get => _isToothbrushing;
+            private set => Set(ref _isToothbrushing, value);
         }
 
         public bool IsConnected => User != null;
@@ -339,22 +340,41 @@ namespace Miriot.Core.ViewModels
             if (!_toothbrushingSemaphore.Wait(0))
                 return;
 
-            IsToothbrushing = await IsToothbrushingAsync();
+            var scene = await GetToothbrushingSceneAsync();
+
+            IsToothbrushing = scene.IsToothbrushing;
 
             if (!IsToothbrushing)
             {
-                _toothbrushingTimer.Stop();
-                _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 3);
+                ToothbrushingEnding();
             }
             else
             {
-                _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 3);
-
-                if (!_toothbrushingTimer.IsRunning)
-                    _toothbrushingTimer.Start();
+                ToothbrushingStarting();
             }
 
             _toothbrushingSemaphore.Release();
+        }
+
+        private void ToothbrushingStarting()
+        {
+            _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 3);
+
+            if (!_toothbrushingTimer.IsRunning)
+                _toothbrushingTimer.Start();
+        }
+
+        private void ToothbrushingEnding()
+        {
+            _toothbrushingTimer.Stop();
+            _toothbrushingLauncher.Interval = new TimeSpan(0, 0, 3);
+
+            if (_toothbrushingTimer.Elapsed.Seconds > 5)
+            {
+                if (User.UserData.ToothbrushingHistory == null)
+                    User.UserData.ToothbrushingHistory = new Dictionary<DateTime, int>();
+                User.UserData.ToothbrushingHistory.Add(DateTime.UtcNow, _toothbrushingTimer.Elapsed.Seconds);
+            }
         }
 
         private async void OnUsersIdentified(ServiceResponse response)
@@ -397,7 +417,7 @@ namespace Miriot.Core.ViewModels
 
             Messenger.Default.Send(new ListeningMessage());
 
-            user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangleTop, user.FaceRectangleLeft);
+            user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
 
             user.PreviousLoginDate = user.UserData.PreviousLoginDate;
         }
@@ -557,7 +577,7 @@ namespace Miriot.Core.ViewModels
             return await _faceService.GetEmotion(bitmap, top, left);
         }
 
-        private async Task<bool> IsToothbrushingAsync()
+        private async Task<Scene> GetToothbrushingSceneAsync()
         {
             try
             {
@@ -566,18 +586,18 @@ namespace Miriot.Core.ViewModels
                 byte[] bitmap = await _frameService.GetFrame();
 
                 if (bitmap == null)
-                    return false;
+                    return new Scene();
 
                 var scene = await _visionService.CreateSceneAsync(bitmap);
 
                 Debug.WriteLine($"Toothbrushing checked : {scene.IsToothbrushing}");
 
-                return scene.IsToothbrushing;
+                return scene;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                return false;
+                return new Scene();
             }
         }
 

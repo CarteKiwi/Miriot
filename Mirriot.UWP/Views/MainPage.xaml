@@ -161,6 +161,14 @@
                VerticalAlignment="Stretch"
                HorizontalAlignment="Stretch"/>
 
+        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ctrl:WidgetTimer x:Name="ToothIndicator"
+                              VerticalAlignment="Bottom"
+                              HorizontalAlignment="Center"
+                              Visibility="{x:Bind Vm.User, Converter={StaticResource NullToVisibilityConverter}}"
+                              IsRunning="{x:Bind Vm.IsToothbrushing, Mode=OneWay}"/>
+        </Canvas>
+        
         <!--Info panel-->
         <StackPanel Margin="10,35"
                     x:Name="InfoUnknownPanel"
@@ -249,12 +257,6 @@
 
                 </StackPanel>
             </StackPanel>
-
-            <ctrl:WidgetTimer Grid.Column="1"
-                              VerticalAlignment="Bottom"
-                              HorizontalAlignment="Center"
-                              Visibility="{x:Bind Vm.User, Converter={StaticResource NullToVisibilityConverter}}"
-                              IsRunning="{x:Bind Vm.IsToothbrushing, Mode=OneWay}"/>
 
             <!--Loader-->
             <ctrl:IotLoader Grid.Column="1"

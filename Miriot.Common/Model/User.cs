@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using Miriot.Common.Model.Widgets.Horoscope;
+using System;
+using System.Collections.Generic;
+using Microsoft.ProjectOxford.Common;
 
 namespace Miriot.Common.Model
 {
@@ -61,8 +60,7 @@ namespace Miriot.Common.Model
             }
         }
 
-        public int FaceRectangleTop { get; set; }
-        public int FaceRectangleLeft { get; set; }
+        public Rectangle FaceRectangle { get; set; }
     }
 
     public class UserData
@@ -78,5 +76,7 @@ namespace Miriot.Common.Model
         public Signs HoroscopeSign { get; set; }
 
         public Dictionary<string, string> CachedTvUrls { get; set; }
+
+        public Dictionary<DateTime, int> ToothbrushingHistory { get; set; }
     }
 }

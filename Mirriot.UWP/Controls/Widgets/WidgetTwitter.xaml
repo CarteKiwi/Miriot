@@ -203,7 +203,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid x:Name="MinimalGrid" Margin="0,0,0,15"
+        <!--<Grid x:Name="MinimalGrid" Margin="0,0,0,15"
               x:Load="{x:Bind State, Mode=OneWay, Converter={StaticResource WidgetStateToBoolConverter}, ConverterParameter=1}"
               DataContext="{x:Bind Tweets[0], Mode=OneWay}"
               VerticalAlignment="Bottom"
@@ -249,6 +249,41 @@
                     <AddDeleteThemeTransition/>
                 </TransitionCollection>
             </ListView.ItemContainerTransitions>
-        </ListView>
+        </ListView>-->
+
+        <Grid x:Name="MinimalGrid" Margin="0,0,0,15"
+              DataContext="{x:Bind Tweets[0], Mode=OneWay}"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Ellipse Height="32" Width="32"
+                     StrokeThickness="1"
+                     Stroke="White">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="{Binding User.ProfileImageUrl}"/>
+                </Ellipse.Fill>
+            </Ellipse>
+            <TextBlock Grid.Column="1"
+                       Grid.Row="0"
+                       Margin="5"
+                       Text="{Binding User.ScreenName}"
+                       Typography.Capitals="AllSmallCaps"
+                       VerticalAlignment="Center"
+                       FontSize="15"/>
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       Text="{Binding Text}"
+                       TextWrapping="WrapWholeWords"
+                       FontSize="16"/>
+        </Grid>
     </Grid>
 </controls:WidgetBase>

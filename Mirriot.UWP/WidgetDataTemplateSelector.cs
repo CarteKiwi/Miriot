@@ -21,34 +21,22 @@ namespace Miriot
 
             if (item != null && currentPage != null)
             {
+                string xmlTemplatePath;
+
                 if (item is WeatherModel)
-                {
-                    string xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/WeatherTemplate.xml");
-                    XDocument templateXml = XDocument.Load(xmlTemplatePath);
-                    DataTemplate template = (DataTemplate)XamlReader.Load(templateXml.ToString());
+                    xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/WeatherTemplate.xml");
+                else if (item is HoroscopeModel)
+                    xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/HoroscopeTemplate.xml");
+                else if (item is TwitterModel)
+                    xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/TwitterTemplate.xml");
+                else if (item is CalendarModel)
+                    xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/CalendarMailTemplate.xml");
+                else
+                    return DefaultTemplate;
 
-                    return template; //Return the DataTemplateSelector for a disabled tile.
-                }
-
-                if (item is HoroscopeModel)
-                {
-                    string xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/HoroscopeTemplate.xml");
-                    XDocument templateXml = XDocument.Load(xmlTemplatePath);
-                    DataTemplate template = (DataTemplate)XamlReader.Load(templateXml.ToString());
-
-                    return template; //Return the DataTemplateSelector for a disabled tile.
-                }
-
-                if (item is TwitterModel)
-                {
-                    string xmlTemplatePath = Path.Combine(Package.Current.InstalledLocation.Path, "Controls/Widgets/Templates/TwitterTemplate.xml");
-                    XDocument templateXml = XDocument.Load(xmlTemplatePath);
-                    DataTemplate template = (DataTemplate)XamlReader.Load(templateXml.ToString());
-
-                    return template; //Return the DataTemplateSelector for a disabled tile.
-                }
-
-                return DefaultTemplate; //In case of an error above return the DataTemplateSelector for a normal tile.
+                var templateXml = XDocument.Load(xmlTemplatePath);
+                var template = (DataTemplate)XamlReader.Load(templateXml.ToString());
+                return template;
             }
 
             return base.SelectTemplateCore(item, container);

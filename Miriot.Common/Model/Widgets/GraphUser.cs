@@ -1,4 +1,6 @@
-﻿namespace Miriot.Common.Model.Widgets
+﻿using Windows.UI.Xaml.Media.Imaging;
+
+namespace Miriot.Common.Model.Widgets
 {
     public class GraphUser
     {
@@ -8,10 +10,7 @@
         /// <summary>Gets or sets user name.</summary>
         public string Name { get; set; }
 
-        /// <summary>Gets or sets user screen name.</summary>
-        public string ScreenName { get; set; }
-
-        /// <summary>Gets or sets user profile image Url.</summary>
-        public string ProfileImageUrl { get; set; }
+        /// <summary>Gets or sets user photo.</summary>
+        public BitmapImage Photo { get; set; }
     }
 }

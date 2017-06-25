@@ -5,25 +5,20 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Security.Credentials;
+using Windows.Storage;
 using Miriot.Common.Model.Widgets.Twitter;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
     public class TwitterModel : WidgetModel
     {
-        private string _token;
         private TwitterUser _user;
 
         public TwitterUser User
         {
             get => _user;
             set => Set(ref _user, value);
-        }
-
-        public string Token
-        {
-            get => _token;
-            set { Set(() => Token, ref _token, value); }
         }
 
         public TwitterModel()
@@ -33,7 +28,12 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public override WidgetInfo GetInfos()
         {
-            return new OAuthWidgetInfo { Token = Token };
+            var vault = new PasswordVault();
+            var passwordCredentials = vault.RetrieveAll();
+            var temp = passwordCredentials.FirstOrDefault(c => c.Resource == "TwitterAccessToken");
+            var cred = vault.Retrieve(temp.Resource, temp.UserName);
+
+            return new OAuthWidgetInfo { Token = cred.UserName, TokenSecret = cred.Password, Username = User.ScreenName };
         }
 
         public override async void LoadInfos(List<string> infos)
@@ -41,7 +41,16 @@ namespace Miriot.Core.ViewModels.Widgets
             var info = infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return;
 
-            Token = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info).Token;
+            var cred = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info);
+
+            if (!string.IsNullOrEmpty(cred.Token) || !string.IsNullOrEmpty(cred.TokenSecret))
+            {
+                var vault = new PasswordVault();
+                var passwordCredential = new PasswordCredential("TwitterAccessToken", cred.Token, cred.TokenSecret);
+                vault.Add(passwordCredential);
+                ApplicationData.Current.LocalSettings.Values["TwitterScreenName"] = cred.Username;
+            }
+
             User = await ServiceLocator.Current.GetInstance<ITwitterService>().GetUserAsync();
 
             base.LoadInfos(infos);
@@ -49,7 +58,7 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public override void OnActivated()
         {
-            if (!string.IsNullOrEmpty(Token)) return;
+            if (User != null) return;
             var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
             dispatcher.Invoke(async () =>
             {
@@ -60,14 +69,13 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public override void OnDisabled()
         {
-            Token = string.Empty;
+            ServiceLocator.Current.GetInstance<ITwitterService>().Logout();
             base.OnDisabled();
         }
 
         private async Task Login()
         {
             var success = await ServiceLocator.Current.GetInstance<ITwitterService>().LoginAsync();
-
             IsActive = success;
         }
 

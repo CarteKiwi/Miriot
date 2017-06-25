@@ -80,8 +80,10 @@
                <Run Text="Nouveaux mails"/>
         </TextBlock>
 
-        <ItemsControl x:Name="Mails" Grid.Row="3">
-            <ItemsControl.ItemTemplate>
+        <ListView x:Name="Mails" Grid.Row="3"
+                  IncrementalLoadingThreshold="1"
+                  IncrementalLoadingTrigger="Edge">
+            <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,5">
                         <Grid>
@@ -112,8 +114,8 @@
                         </Grid>
                     </Grid>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ListView.ItemTemplate>
+        </ListView>
 
         <ProgressRing HorizontalAlignment="Center"
                       VerticalAlignment="Center"
