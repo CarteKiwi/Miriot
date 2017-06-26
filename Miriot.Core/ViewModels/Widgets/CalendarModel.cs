@@ -52,51 +52,49 @@ namespace Miriot.Core.ViewModels.Widgets
 
             var cred = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info);
 
-            if (!string.IsNullOrEmpty(cred.Token) || !string.IsNullOrEmpty(cred.TokenSecret))
+            if (!string.IsNullOrEmpty(cred.Token))
             {
                 var vault = new PasswordVault();
                 var passwordCredential = new PasswordCredential("AccessToken", cred.Username, cred.Token);
                 vault.Add(passwordCredential);
                 ApplicationData.Current.LocalSettings.Values["user"] = cred.Username;
+                OnActivated();
             }
 
-            User = await ServiceLocator.Current.GetInstance<IGraphService>().GetUserAsync();
             base.LoadInfos(infos);
         }
 
-        public override void OnActivated()
+        public override async void OnActivated()
         {
-            if (string.IsNullOrEmpty(Token))
+            if (User == null)
             {
-                var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
-                dispatcher.Invoke(async () => await Initialize());
-            }
-        }
+                var auth = ServiceLocator.Current.GetInstance<IGraphService>();
+                auth.Initialize();
 
-        public override void OnDisabled()
-        {
-            Token = string.Empty;
-            base.OnDisabled();
-        }
-
-        private async Task Initialize()
-        {
-            var auth = ServiceLocator.Current.GetInstance<IGraphService>();
-            auth.Initialize();
-
-            try
-            {
-                if (await auth.LoginAsync())
+                try
                 {
-                    User = await auth.GetUserAsync();
+                    if (await auth.LoginAsync())
+                    {
+                        var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
+                        dispatcher.Invoke(async () => User = await auth.GetUserAsync());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    //User = new GraphUser { Name = "Echec de la connexion" };
+                    User = null;
+                    IsActive = false;
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                User = new GraphUser { Name = "Echec de la connexion" };
-                IsActive = false;
-            }
+        }
+
+        public override async void OnDisabled()
+        {
+            User = null;
+            var auth = ServiceLocator.Current.GetInstance<IGraphService>();
+            await auth.LogoutAsync();
+            base.OnDisabled();
         }
     }
 }

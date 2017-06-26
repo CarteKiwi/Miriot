@@ -20,8 +20,8 @@ namespace Miriot.Services
         {
             // From Azure portal - Cellenza subscription
             var appClientId = "ca026d51-8d86-4f85-a697-7be9c0a86453";
-
-            IsInitialized = MicrosoftGraphService.Instance.Initialize(appClientId);
+            //var appClientId = "1a383460-c136-44e4-be92-aa8a379f3265";
+            IsInitialized = MicrosoftGraphService.Instance.Initialize(appClientId, MicrosoftGraphEnums.AuthenticationModel.V1);
         }
 
         public async Task<bool> LoginAsync()
@@ -77,6 +77,11 @@ namespace Miriot.Services
 
                 return photo;
             }
+        }
+
+        public Task LogoutAsync()
+        {
+            return MicrosoftGraphService.Instance.Logout();
         }
     }
 }

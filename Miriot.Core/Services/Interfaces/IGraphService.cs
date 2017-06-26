@@ -14,5 +14,6 @@ namespace Miriot.Core.Services.Interfaces
         Task<bool> LoginAsync();
 
         Task<GraphUser> GetUserAsync();
+        Task LogoutAsync();
     }
 }
