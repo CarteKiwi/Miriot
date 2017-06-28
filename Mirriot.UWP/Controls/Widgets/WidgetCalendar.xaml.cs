@@ -1,7 +1,7 @@
-﻿using Microsoft.Graph;
-using Microsoft.Office365.OutlookServices;
+﻿using Microsoft.Office365.OutlookServices;
 using Microsoft.Toolkit.Uwp;
 using Miriot.Common.Model;
+using Miriot.Common.Model.Widgets;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Utils.Graph;
@@ -11,12 +11,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
+using Microsoft.Graph;
 
 namespace Miriot.Controls
 {
     public sealed partial class WidgetCalendar : IWidgetOAuth, IWidgetListener
     {
         public string Token { get; set; }
+        public GraphUser User { get; set; }
 
         public WidgetCalendar(Widget widget) : base(widget)
         {
@@ -27,12 +29,13 @@ namespace Miriot.Controls
             Loaded += WidgetCalendar_Loaded;
         }
 
-        private void RetrieveData()
+        private async Task RetrieveData()
         {
-            CalendarModel c = new CalendarModel();
-            c.LoadInfos(OriginalWidget.Infos);
+            var calendar = new CalendarModel();
+            await calendar.LoadInfos(OriginalWidget.Infos);
 
-            Token = c.Token;
+            Token = calendar.Token;
+            User = calendar.User;
         }
 
         public event EventHandler OnInfosChanged;
@@ -42,11 +45,18 @@ namespace Miriot.Controls
             OnInfosChanged?.Invoke(this, new EventArgs());
         }
 
-        private void WidgetCalendar_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void WidgetCalendar_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            RetrieveData();
+            await RetrieveData();
             NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            Init();
+
+            if (User != null)
+                Init();
+            else
+            {
+                Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
         }
 
         private void Init()
@@ -54,6 +64,7 @@ namespace Miriot.Controls
             try
             {
                 GetEmails();
+                GetEvents();
                 //await LoadEvents();
                 //await LoadMails();
             }
@@ -108,6 +119,47 @@ namespace Miriot.Controls
                 });
 
             Mails.ItemsSource = collection;
+        }
+
+        private void GetEvents()
+        {
+            var collection = new IncrementalLoadingCollection<MicrosoftGraphSource<DisplayEvent>, DisplayEvent>(
+                10,
+                async () =>
+                {
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        Loader.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    });
+                },
+                async () =>
+                {
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    });
+                },
+                async ex =>
+                {
+                    if (!Dispatcher.HasThreadAccess)
+                    {
+                        if (ex is ServiceException)
+                        {
+                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                            {
+                                NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                                Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                                //await DisplayAuthorizationErrorMessageAsync(ex as ServiceException, "Read user mail");
+                            });
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                });
+
+            Events.ItemsSource = collection;
         }
 
         private async Task LoadMails()

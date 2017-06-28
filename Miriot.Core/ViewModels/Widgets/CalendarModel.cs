@@ -45,7 +45,7 @@ namespace Miriot.Core.ViewModels.Widgets
             return new OAuthWidgetInfo { Token = cred.Password, Username = temp.UserName };
         }
 
-        public override async void LoadInfos(List<string> infos)
+        public override async Task LoadInfos(List<string> infos)
         {
             var info = infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return;
@@ -58,34 +58,16 @@ namespace Miriot.Core.ViewModels.Widgets
                 var passwordCredential = new PasswordCredential("AccessToken", cred.Username, cred.Token);
                 vault.Add(passwordCredential);
                 ApplicationData.Current.LocalSettings.Values["user"] = cred.Username;
-                OnActivated();
+                await Initialize();
             }
-
-            base.LoadInfos(infos);
         }
 
-        public override async void OnActivated()
+        public override void OnActivated()
         {
             if (User == null)
             {
-                var auth = ServiceLocator.Current.GetInstance<IGraphService>();
-                auth.Initialize();
-
-                try
-                {
-                    if (await auth.LoginAsync())
-                    {
-                        var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
-                        dispatcher.Invoke(async () => User = await auth.GetUserAsync());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                    //User = new GraphUser { Name = "Echec de la connexion" };
-                    User = null;
-                    IsActive = false;
-                }
+                var dispatcher = ServiceLocator.Current.GetInstance<IDispatcherService>();
+                dispatcher.Invoke(async () => await Initialize());
             }
         }
 
@@ -95,6 +77,27 @@ namespace Miriot.Core.ViewModels.Widgets
             var auth = ServiceLocator.Current.GetInstance<IGraphService>();
             await auth.LogoutAsync();
             base.OnDisabled();
+        }
+
+        private async Task Initialize()
+        {
+            var auth = ServiceLocator.Current.GetInstance<IGraphService>();
+            auth.Initialize();
+
+            try
+            {
+                if (await auth.LoginAsync())
+                {
+                    User = await auth.GetUserAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                //User = new GraphUser { Name = "Echec de la connexion" };
+                User = null;
+                IsActive = false;
+            }
         }
     }
 }

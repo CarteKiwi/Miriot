@@ -36,7 +36,7 @@ namespace Miriot.Core.ViewModels.Widgets
             return new OAuthWidgetInfo { Token = cred.UserName, TokenSecret = cred.Password, Username = User.ScreenName };
         }
 
-        public override async void LoadInfos(List<string> infos)
+        public override async Task LoadInfos(List<string> infos)
         {
             var info = infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return;
@@ -52,8 +52,6 @@ namespace Miriot.Core.ViewModels.Widgets
             }
 
             User = await ServiceLocator.Current.GetInstance<ITwitterService>().GetUserAsync();
-
-            base.LoadInfos(infos);
         }
 
         public override void OnActivated()

@@ -81,7 +81,7 @@ namespace Miriot.Services
 
         public Task LogoutAsync()
         {
-            return MicrosoftGraphService.Instance.Logout();
+            return MicrosoftGraphService.Instance.LogoutAsync();
         }
     }
 }

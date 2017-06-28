@@ -82,7 +82,7 @@ namespace Miriot
             await Speak(msg.Text);
         }
 
-        private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Vm.Widgets))
             {

@@ -39,8 +39,10 @@
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"/>
 
-        <ItemsControl x:Name="Events" Grid.Row="1">
-            <ItemsControl.ItemTemplate>
+        <ListView x:Name="Events" Grid.Row="1"
+                  IncrementalLoadingThreshold="1"
+                  IncrementalLoadingTrigger="Edge">
+            <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,5">
                         <StackPanel Margin="8,0,0,0">
@@ -63,8 +65,8 @@
                                    VerticalAlignment="Stretch"/>
                     </Grid>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ListView.ItemTemplate>
+        </ListView>
 
         <TextBlock FontSize="16"
                    Grid.Row="2"
@@ -97,14 +99,14 @@
                                 <TextBlock FontSize="15"
                                            FontWeight="Light">
                                     <Run Text="&#xE2AF;" FontSize="15" FontFamily="Segoe MDL2 Assets"/>
-                                    <Run Text="{Binding From}"/>
+                                    <Run Text="{Binding From.EmailAddress.Name}"/>
                                 </TextBlock>
 
-                                <!--<TextBlock FontSize="13"
+                                <TextBlock FontSize="13"
                                            FontWeight="Light">
                                     <Run Text="" FontSize="13" FontFamily="Segoe MDL2 Assets"/>
-                                    <Run Text="{Binding Preview}"/>
-                                </TextBlock>-->
+                                    <Run Text="{Binding BodyPreview}"/>
+                                </TextBlock>
                             </StackPanel>
                             <Rectangle Fill="White" 
                                        Margin="0,5"

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
@@ -62,7 +63,10 @@ namespace Miriot.Core.ViewModels.Widgets
             };
         }
 
-        public virtual void LoadInfos(List<string> infos) { }
+        public virtual Task LoadInfos(List<string> infos)
+        {
+            return Task.FromResult(0);
+        }
 
         public virtual WidgetInfo GetInfos()
         {

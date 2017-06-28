@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Miriot.Common.Model;
 using System.Linq;
+using System.Threading.Tasks;
 using Miriot.Common.Model.Widgets.Horoscope;
 using Newtonsoft.Json;
 
@@ -30,13 +31,15 @@ namespace Miriot.Core.ViewModels.Widgets
             return new HoroscopeWidgetInfo { SignId = (int)Sign };
         }
 
-        public override void LoadInfos(List<string> infos)
+        public override Task LoadInfos(List<string> infos)
         {
             var info = infos.FirstOrDefault();
-            if (info == null) return;
+            if (info == null) return Task.FromResult(0);
 
             Sign = (Signs)JsonConvert.DeserializeObject<HoroscopeWidgetInfo>(info).SignId;
             base.LoadInfos(infos);
+
+            return Task.FromResult(0);
         }
     }
 }

@@ -82,7 +82,7 @@
                StrokeThickness="1"
                Stroke="White">
         <Ellipse.Fill>
-          <ImageBrush ImageSource="{Binding User.ProfileImageUrl}"/>
+          <ImageBrush ImageSource="{Binding User.Photo}"/>
         </Ellipse.Fill>
       </Ellipse>
       <TextBlock Grid.Column="1"

@@ -139,9 +139,7 @@ namespace Miriot.Utils
             // we want our scale animation to be anchored around the center of the visual
             coloredCircleVisual.AnchorPoint = new Vector2(0.5f, 0.5f);
 
-
             return coloredCircleVisual;
-
         }
 
 
@@ -150,7 +148,6 @@ namespace Miriot.Utils
         /// </summary>
         private CompositionEffectBrush CreateCircleBrushWithColor(Windows.UI.Color color)
         {
-
             var colorBrush = _compositor.CreateColorBrush(color);
 
             //

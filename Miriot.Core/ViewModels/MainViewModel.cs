@@ -246,7 +246,7 @@ namespace Miriot.Core.ViewModels
             }
             else
             {
-                if (text.Contains("Miriot"))
+                if (text.Contains("Miriot") || text.Contains("Myriade") || text.Contains("Mariotte"))
                 {
                     IsListening = true;
                     SetMessage("J'écoute.", "vous pouvez parler.");
