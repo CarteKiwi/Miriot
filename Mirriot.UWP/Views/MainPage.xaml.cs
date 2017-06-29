@@ -39,7 +39,7 @@ namespace Miriot
         private readonly IFrameAnalyzer<ServiceResponse> _frameAnalyzer;
         private int _noFaceDetectedCount;
 
-        public MainViewModel Vm => ServiceLocator.Current.GetInstance<MainViewModel>();
+        private MainViewModel Vm => DataContext as MainViewModel;
 
         #region Ctor
         public MainPage()
@@ -82,7 +82,7 @@ namespace Miriot
             await Speak(msg.Text);
         }
 
-        private async void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Vm.Widgets))
             {
@@ -104,17 +104,16 @@ namespace Miriot
             }
         }
 
-        private void WidgetsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void WidgetsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 WidgetZone.Children.Clear();
             }
-            else
-
-            if (e.NewItems.Count > 0)
+            else if (e.NewItems.Count > 0)
+            {
                 LoadWidget((Widget)e.NewItems[0]);
-
+            }
         }
 
         private void OnListen(ListeningMessage msg)
@@ -124,13 +123,13 @@ namespace Miriot
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
         {
-            if (Vm.CurrentState == States.Active)
-            {
-                return;
-            }
-
             await RunOnUiThread(() =>
             {
+                if (Vm.CurrentState == States.Active)
+                {
+                    return;
+                }
+
                 Vm.IsLoading = true;
                 Vm.StateChangedCommand.Execute(States.Active);
             });
@@ -138,40 +137,43 @@ namespace Miriot
 
         private async void OnNoFaceDetected(object sender, EventArgs e)
         {
-            _noFaceDetectedCount++;
+            await RunOnUiThread(() =>
+            {
+                _noFaceDetectedCount++;
 
-            if (_noFaceDetectedCount < 15) return;
+                if (_noFaceDetectedCount < 15) return;
 
-            await RunOnUiThread(() => { Vm.StateChangedCommand.Execute(States.Inactive); });
-            CleanUi();
+                Vm.StateChangedCommand.Execute(States.Inactive);
+                CleanUi();
+            });
         }
 
         private async void OnUsersIdentified(object sender, ServiceResponse response)
         {
-            _noFaceDetectedCount = 0;
-
-            if (Vm.User != null)
+            await RunOnUiThread(() =>
             {
-                if (Vm.IsToothbrushing)
-                {
-                    var user = response.Users.FirstOrDefault();
-                    if (user != null)
-                        SetToothZone(user.FaceRectangle);
-                }
-                return;
-            }
+                _noFaceDetectedCount = 0;
 
-            CleanUi();
-            await RunOnUiThread(() => { Vm.UsersIdentifiedCommand.Execute(response); });
+                if (Vm.User != null)
+                {
+                    if (Vm.IsToothbrushing)
+                    {
+                        var user = response.Users.FirstOrDefault();
+                        if (user != null)
+                            SetToothZone(user.FaceRectangle);
+                    }
+                    return;
+                }
+
+                CleanUi();
+                Vm.UsersIdentifiedCommand.Execute(response);
+            });
         }
 
-        private async void SetToothZone(Rectangle userFaceRectangle)
+        private void SetToothZone(Rectangle userFaceRectangle)
         {
-            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Canvas.SetTop(ToothIndicator, userFaceRectangle.Top);
-                Canvas.SetLeft(ToothIndicator, userFaceRectangle.Left);
-            });
+            Canvas.SetTop(ToothIndicator, userFaceRectangle.Top);
+            Canvas.SetLeft(ToothIndicator, userFaceRectangle.Left);
         }
 
         /// <summary>
@@ -545,18 +547,15 @@ namespace Miriot
             await Vm.UpdateUserAsync();
         }
 
-        private async void CleanUi()
+        private void CleanUi()
         {
-            await RunOnUiThread(() =>
-            {
-                Vm.ResetCommand.Execute(null);
-                // Force delete transition
-                WidgetZone.Children.Clear();
-                InfoUnknownPanel.Opacity = 0;
-                Img.Source = null;
-                MediaElementCtrl.Stop();
-                Stop();
-            });
+            Vm.ResetCommand.Execute(null);
+            // Force delete transition
+            WidgetZone.Children.Clear();
+            InfoUnknownPanel.Opacity = 0;
+            Img.Source = null;
+            MediaElementCtrl.Stop();
+            Stop();
         }
 
         private void TakePhoto()
