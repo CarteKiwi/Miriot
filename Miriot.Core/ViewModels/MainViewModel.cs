@@ -188,7 +188,7 @@ namespace Miriot.Core.ViewModels
 
         private void SetCommands()
         {
-            ProceedSpeechCommand = new RelayCommand<string>(OnProceedSpeech);
+            ProceedSpeechCommand = new RelayCommand<string>(txt => _dispatcherService.Invoke(() => OnProceedSpeech(txt)));
             UsersIdentifiedCommand = new RelayCommand<ServiceResponse>(OnUsersIdentified);
             StateChangedCommand = new RelayCommand<States>(OnStateChanged);
             ActionNavigateTo = new RelayCommand<string>(OnNavigateTo);
