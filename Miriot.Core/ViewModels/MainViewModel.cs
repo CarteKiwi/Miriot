@@ -11,12 +11,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Networking.Connectivity;
+using Windows.Storage.Streams;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
 
@@ -32,6 +34,7 @@ namespace Miriot.Core.ViewModels
         private readonly IFrameAnalyzer<ServiceResponse> _frameService;
         private readonly IFaceService _faceService;
         private readonly IVisionService _visionService;
+        private readonly ISpeechService _speechService;
         private string _title;
         private string _subTitle;
         private bool _isListeningYesNo;
@@ -56,10 +59,26 @@ namespace Miriot.Core.ViewModels
         public RelayCommand ResetCommand { get; private set; }
         #endregion
 
+        private IRandomAccessStream _speakStream;
+
+        public IRandomAccessStream SpeakStream
+        {
+            get => _speakStream;
+            set
+            {
+                Set(() => SpeakStream, ref _speakStream, value);
+            }
+        }
+
         public bool IsListening
         {
             get => _isListening;
-            private set => Set(() => IsListening, ref _isListening, value);
+            private set
+            {
+                _speechService.IsLimited = !value;
+
+                Set(() => IsListening, ref _isListening, value);
+            }
         }
 
         public User User
@@ -128,7 +147,8 @@ namespace Miriot.Core.ViewModels
             INavigationService navigationService,
             IFrameAnalyzer<ServiceResponse> frameService,
             IFaceService faceService,
-            IVisionService visionService)
+            IVisionService visionService,
+            ISpeechService speechService)
         {
             _fileService = fileService;
             _platformService = platformService;
@@ -137,6 +157,7 @@ namespace Miriot.Core.ViewModels
             _frameService = frameService;
             _faceService = faceService;
             _visionService = visionService;
+            _speechService = speechService;
 
             SetCommands();
         }
@@ -152,6 +173,9 @@ namespace Miriot.Core.ViewModels
 
             NetworkInformation.NetworkStatusChanged += OnNetworkStatusChanged;
             IsInternetAvailable = _platformService.IsInternetAvailable;
+
+            _speechService.InitializeAsync();
+            _speechService.SetCommand(ProceedSpeechCommand);
         }
 
         private void OnNetworkStatusChanged(object sender)
@@ -184,6 +208,8 @@ namespace Miriot.Core.ViewModels
             User = null;
             Title = null;
             SubTitle = null;
+
+            _speechService.Stop();
         }
 
         private string CleanForDemo(string text)
@@ -216,7 +242,7 @@ namespace Miriot.Core.ViewModels
 
         private async void OnProceedSpeech(string text)
         {
-            Messenger.Default.Send(new ListeningMessage());
+            await _speechService.StartListeningAsync();
 
             //if (!_isListeningYesNo && !IsListeningFirstName && !text.Contains("miriot"))
             //{
@@ -415,7 +441,7 @@ namespace Miriot.Core.ViewModels
 
             await LoadWidgets(user.UserData.Widgets);
 
-            Messenger.Default.Send(new ListeningMessage());
+            await _speechService.StartListeningAsync();
 
             user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
 
@@ -468,24 +494,24 @@ namespace Miriot.Core.ViewModels
             }
         }
 
-        private void PromptForUnknownFace()
+        private async void PromptForUnknownFace()
         {
             SetMessage("Bonjour. Je m'appelle MirioT.", "Quel est votre prénom ? (dites: je m'appelle...)");
             Speak("Bonjour, je m'appelle Miriotte. Et vous ? Quel est votre prénom ?");
 
             IsListeningFirstName = true;
 
-            Messenger.Default.Send(new ListeningMessage());
+            await _speechService.StartListeningAsync();
         }
 
-        private void RepeatPromptForUnknownFace()
+        private async void RepeatPromptForUnknownFace()
         {
             SetMessage("Je n'ai pas compris", "Quel est votre prénom ? (dites: je m'appelle...)");
             Speak("Je n'ai pas compris. Quel est votre prénom ?");
 
             IsListeningFirstName = true;
 
-            Messenger.Default.Send(new ListeningMessage());
+            await _speechService.StartListeningAsync();
         }
 
         private void SetWelcomeMessage(string name)
@@ -505,9 +531,9 @@ namespace Miriot.Core.ViewModels
             SubTitle = subTitle;
         }
 
-        private void Speak(string text)
+        private async void Speak(string text)
         {
-            Messenger.Default.Send(new SpeakMessage(text));
+            SpeakStream = await _speechService.SynthesizeTextToStreamAsync(text);
         }
 
         private void OnStateChanged(States state)

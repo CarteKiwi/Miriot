@@ -99,7 +99,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <MediaElement x:Name="MediaElementCtrl"/>
+        <MediaElement x:Name="MediaElementCtrl" PlaybackRate="1.5"/>
 
         <!-- This element hosts the Visuals. Lays out below the Pivot in z-order within the same Grid cell -->
         <Rectangle x:Name="HostForVisual" Fill="Transparent"/>

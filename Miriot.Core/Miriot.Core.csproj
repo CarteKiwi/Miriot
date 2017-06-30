@@ -56,8 +56,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Messages\ActionMessage.cs" />
-    <Compile Include="Messages\ListeningMessage.cs" />
-    <Compile Include="Messages\SpeakMessage.cs" />
     <Compile Include="Services\Interfaces\ICameraService.cs" />
     <Compile Include="Services\Interfaces\IFaceService.cs" />
     <Compile Include="Services\Interfaces\IFrameAnalyzer.cs" />

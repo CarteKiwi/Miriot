@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Controls;
@@ -12,10 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
 using Windows.UI;
 using Windows.UI.Core;
@@ -24,7 +23,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.ProjectOxford.Common;
 using Window = Windows.UI.Xaml.Window;
 
 namespace Miriot
@@ -33,8 +31,6 @@ namespace Miriot
     {
         private bool _isProcessing;
         private CoreDispatcher _dispatcher;
-        private SpeechRecognizer _speechRecognizer;
-        private SpeechSynthesizer _speechSynthesizer;
         private ColorBloomTransitionHelper _transition;
         private readonly IFrameAnalyzer<ServiceResponse> _frameAnalyzer;
         private int _noFaceDetectedCount;
@@ -65,8 +61,6 @@ namespace Miriot
             _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
             _frameAnalyzer.OnPreAnalysis += OnStartingIdentification;
 
-            Messenger.Default.Register<ListeningMessage>(this, OnListen);
-            Messenger.Default.Register<SpeakMessage>(this, OnSpeak);
             Messenger.Default.Register<ActionMessage>(this, OnAction);
 
             Vm.PropertyChanged += VmOnPropertyChanged;
@@ -75,11 +69,6 @@ namespace Miriot
         private async void OnAction(ActionMessage msg)
         {
             await DoAction(msg.Intent);
-        }
-
-        private async void OnSpeak(SpeakMessage msg)
-        {
-            await Speak(msg.Text);
         }
 
         private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -93,14 +82,13 @@ namespace Miriot
                 }
             }
 
-            if (e.PropertyName == nameof(Vm.IsListeningFirstName))
+            if (e.PropertyName == nameof(Vm.SpeakStream))
             {
-                _speechRecognizer.Constraints.First().IsEnabled = !Vm.IsListeningFirstName;
-            }
-
-            if (e.PropertyName == nameof(Vm.IsListening))
-            {
-                _speechRecognizer.Constraints.First().IsEnabled = !Vm.IsListening;
+                if (Vm.SpeakStream != null)
+                {
+                    MediaElementCtrl.SetSource(Vm.SpeakStream, ((SpeechSynthesisStream) Vm.SpeakStream).ContentType);
+                    MediaElementCtrl.Play();
+                }
             }
         }
 
@@ -114,11 +102,6 @@ namespace Miriot
             {
                 LoadWidget((Widget)e.NewItems[0]);
             }
-        }
-
-        private void OnListen(ListeningMessage msg)
-        {
-            StartListening();
         }
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
@@ -191,7 +174,7 @@ namespace Miriot
 
         private void Bloomer()
         {
-            var initialBounds = new Windows.Foundation.Rect()  // maps to a rectangle the size of the header
+            var initialBounds = new Windows.Foundation.Rect  // maps to a rectangle the size of the header
             {
                 Width = 110,
                 Height = 110,
@@ -202,58 +185,6 @@ namespace Miriot
             var finalBounds = Window.Current.Bounds;  // maps to the bounds of the current window
 
             _transition.Start(Colors.Black, initialBounds, finalBounds);
-        }
-
-        #region Speech
-        private async void InitializeSpeech()
-        {
-            try
-            {
-                _speechRecognizer = new SpeechRecognizer(new Windows.Globalization.Language("fr-FR"));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("SpeechRecognizer failed to initialize : check the microphone");
-                Debug.WriteLine(ex.Message);
-                return;
-            }
-
-            // Add a list constraint to the recognizer.
-
-            // Compile the dictation topic constraint, which optimizes for dictated speech.
-            var listConstraint = new SpeechRecognitionListConstraint(new[] { "Miriot" });
-            _speechRecognizer.Constraints.Add(listConstraint);
-            _speechRecognizer.Constraints.Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, ""));
-
-            await _speechRecognizer.CompileConstraintsAsync();
-
-            // Stop listening events
-            _speechRecognizer.ContinuousRecognitionSession.ResultGenerated -= ContinuousRecognitionSession_ResultGenerated;
-            _speechRecognizer.ContinuousRecognitionSession.Completed -= ContinuousRecognitionSession_Completed;
-
-            // Start listening events
-            _speechRecognizer.ContinuousRecognitionSession.ResultGenerated += ContinuousRecognitionSession_ResultGenerated;
-            _speechRecognizer.ContinuousRecognitionSession.Completed += ContinuousRecognitionSession_Completed;
-
-            try
-            {
-                _speechSynthesizer = new SpeechSynthesizer
-                {
-                    Voice = (from voiceInformation in SpeechSynthesizer.AllVoices
-                             select voiceInformation).First(e => e.Language == "fr-FR")
-                };
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
-
-        #region Continuous Recognition
-
-        private async void ContinuousRecognitionSession_ResultGenerated(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionResultGeneratedEventArgs args)
-        {
-            await RunOnUiThread(() => Vm.ProceedSpeechCommand.Execute(args.Result.Text));
         }
 
         private async Task DoAction(IntentResponse intent)
@@ -285,7 +216,7 @@ namespace Miriot
                     TurnOnRadio(intent);
                     break;
                 case "BlancheNeige":
-                    await Speak("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
+                    //Vm.SpeakCommand.Execute("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
                     break;
                 case "Tweet":
 
@@ -405,80 +336,6 @@ namespace Miriot
             await ((WidgetDeezer)w).FindTrackAsync(search);
         }
 
-        private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)
-        {
-            if (args.Status != SpeechRecognitionResultStatus.Success)
-            {
-                if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
-                {
-                    //Enable continuous listening
-                    StartListening();
-                }
-            }
-        }
-        #endregion
-
-        private async void StartListening()
-        {
-            if (_speechRecognizer?.State == SpeechRecognizerState.Idle)
-            {
-                try
-                {
-                    await _speechRecognizer.ContinuousRecognitionSession.StartAsync();
-                }
-                catch (Exception ex)
-                {
-                    InitializeSpeech();
-                    Debug.WriteLine(ex.Message);
-                }
-            }
-        }
-
-        private async void Stop()
-        {
-            if (_speechRecognizer?.State != SpeechRecognizerState.Idle)
-            {
-                try
-                {
-                    var asyncAction = _speechRecognizer?.ContinuousRecognitionSession?.StopAsync();
-                    if (asyncAction != null)
-                        await asyncAction;
-                }
-                catch (Exception)
-                {
-                    // Do nothing
-                }
-            }
-        }
-
-        /// <summary>
-        /// Make the voice speak the text
-        /// When the voice has ended, start listening
-        /// </summary>
-        /// <param name="text">Text to be spoken</param>
-        /// <returns>nothing</returns>
-        private async Task Speak(string text)
-        {
-            if (_speechSynthesizer == null) return;
-
-            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                try
-                {
-                    var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(text);
-                    MediaElementCtrl.PlaybackRate = 1.5;
-                    MediaElementCtrl.SetSource(stream, stream.ContentType);
-                    MediaElementCtrl.Play();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-            });
-        }
-
-        #endregion
-
         private async Task RunOnUiThread(DispatchedHandler action)
         {
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, action);
@@ -555,7 +412,6 @@ namespace Miriot
             InfoUnknownPanel.Opacity = 0;
             Img.Source = null;
             MediaElementCtrl.Stop();
-            Stop();
         }
 
         private void TakePhoto()
@@ -578,7 +434,6 @@ namespace Miriot
         {
             base.OnNavigatedTo(e);
             Vm.Initialize();
-            InitializeSpeech();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -586,7 +441,6 @@ namespace Miriot
             _frameAnalyzer.Cleanup();
             Camera.Cleanup();
             Vm.Cleanup();
-            Stop();
             Messenger.Default.Unregister(this);
 
             base.OnNavigatedFrom(e);
