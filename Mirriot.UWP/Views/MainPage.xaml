@@ -106,7 +106,7 @@
 
         <!--Camera control-->
         <ctrl:CameraControl x:Name="Camera" ShowPreview="False"/>
-        
+
         <!--Widget zone-->
         <Grid x:Name="WidgetZone" 
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -168,7 +168,7 @@
                               Visibility="{x:Bind Vm.User, Converter={StaticResource NullToVisibilityConverter}}"
                               IsRunning="{x:Bind Vm.IsToothbrushing, Mode=OneWay}"/>
         </Canvas>
-        
+
         <!--Info panel-->
         <StackPanel Margin="10,35"
                     x:Name="InfoUnknownPanel"
@@ -190,29 +190,33 @@
             </Grid.ColumnDefinitions>
             <!--Profile panel-->
             <StackPanel VerticalAlignment="Bottom"
-                    Orientation="Horizontal"
-                    Margin="20,0,0,20"
-                    HorizontalAlignment="Stretch"
-                    Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
-                <Grid x:Name="UserPicture" RenderTransformOrigin="0.5,0.5">
-                    <interactivity:Interaction.Behaviors>
-                        <core:DataTriggerBehavior Binding="{Binding IsConnected, Mode=OneWay}" Value="true">
-                            <media:ControlStoryboardAction Storyboard="{StaticResource UserPictureSb}"/>
-                        </core:DataTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                    <Grid.RenderTransform>
-                        <CompositeTransform/>
-                    </Grid.RenderTransform>
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Stretch"
+                        Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
+                <Button Command="{x:Bind Vm.ActionNavigateTo}" 
+                        CommandParameter="Settings"
+                        Style="{StaticResource EmptyButtonStyle}">
+                    <Grid x:Name="UserPicture" RenderTransformOrigin="0.5,0.5">
+                        <interactivity:Interaction.Behaviors>
+                            <core:DataTriggerBehavior Binding="{Binding IsConnected, Mode=OneWay}" Value="true">
+                                <media:ControlStoryboardAction Storyboard="{StaticResource UserPictureSb}"/>
+                            </core:DataTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                        <Grid.RenderTransform>
+                            <CompositeTransform/>
+                        </Grid.RenderTransform>
 
-                    <Ellipse Height="90" Width="90"
-                     Stroke="{StaticResource AccentBrush}"
-                     StrokeThickness="1"/>
-                    <Ellipse Height="70" Width="70">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{x:Bind Vm.User.Picture, Mode=OneWay, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
-                        </Ellipse.Fill>
-                    </Ellipse>
-                </Grid>
+                        <Ellipse Height="85" Width="85"
+                                 Stroke="{StaticResource AccentBrush}"
+                                 StrokeThickness="1"/>
+
+                        <Ellipse Height="70" Width="70">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{x:Bind Vm.User.Picture, Mode=OneWay, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </Grid>
+                </Button>
 
                 <StackPanel Margin="10,35,0,35"
                             HorizontalAlignment="Left"
@@ -290,19 +294,6 @@
                 </Ellipse>
             </Grid>
         </Grid>
-
-        <!--Actions panel-->
-        <StackPanel x:Name="ActionPanel" VerticalAlignment="Bottom">
-
-            <!--Create & Detect buttons-->
-            <StackPanel Orientation="Horizontal">
-                <Button Margin="10" Command="{x:Bind Vm.ActionNavigateTo}" CommandParameter="Settings">
-                    <TextBlock Text="&#xE115;" FontFamily="Segoe MDL2 Assets"/>
-                </Button>
-            </StackPanel>
-
-        </StackPanel>
-
     </Grid>
 </Page>
 
