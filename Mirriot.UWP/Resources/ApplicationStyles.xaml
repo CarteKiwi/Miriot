@@ -12,6 +12,7 @@
     <conv:WidgetStateToBoolConverter x:Key="WidgetStateToBoolConverter"/>
     <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
     <conv:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
+    <conv:DoubleInvertConverter x:Key="DoubleInvertConverter"/>
 
     <FontFamily x:Key="WeatherFont">/Fonts/WeatherTime.ttf#WeatherTime</FontFamily>
     

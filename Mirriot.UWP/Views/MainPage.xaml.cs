@@ -468,7 +468,7 @@ namespace Miriot
         private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var uiCanvasLocation = MainGrid.TransformToVisual(MainGrid).TransformPoint(new Windows.Foundation.Point(0d, 0d));
-            var clip = new RectangleGeometry()
+            var clip = new RectangleGeometry
             {
                 Rect = new Windows.Foundation.Rect(uiCanvasLocation, e.NewSize)
             };

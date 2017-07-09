@@ -140,6 +140,9 @@
     <Compile Include="Controls\IotLoader.xaml.cs">
       <DependentUpon>IotLoader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Lights.xaml.cs">
+      <DependentUpon>Lights.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Widgets\TwitterTemplateSelector.cs" />
     <Compile Include="Controls\Widgets\WidgetTwitter.xaml.cs">
       <DependentUpon>WidgetTwitter.xaml</DependentUpon>
@@ -168,6 +171,7 @@
     <Compile Include="Controls\Widgets\WidgetSncf.xaml.cs">
       <DependentUpon>WidgetSncf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\DoubleInvertConverter.cs" />
     <Compile Include="Converters\RelativeTimeConverter.cs" />
     <Compile Include="Converters\ByteArrayToImageConverter.cs" />
     <Compile Include="Converters\BoolInvertConverter.cs" />
@@ -274,6 +278,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\IotLoader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Lights.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

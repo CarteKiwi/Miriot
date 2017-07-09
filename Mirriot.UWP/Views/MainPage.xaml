@@ -37,18 +37,6 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Name="ToothbrushungSb">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="UserPicture">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.2"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" Storyboard.TargetName="UserPicture">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.2"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
     </Page.Resources>
 
     <Grid x:Name="MainGrid" Background="{StaticResource Accent2Brush}" SizeChanged="MainGrid_SizeChanged">
@@ -161,7 +149,8 @@
                VerticalAlignment="Stretch"
                HorizontalAlignment="Stretch"/>
 
-        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Canvas HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch">
             <ctrl:WidgetTimer x:Name="ToothIndicator"
                               VerticalAlignment="Bottom"
                               HorizontalAlignment="Center"
@@ -169,6 +158,8 @@
                               IsRunning="{x:Bind Vm.IsToothbrushing, Mode=OneWay}"/>
         </Canvas>
 
+        <ctrl:Lights DataContext="{x:Bind Vm}"/>
+        
         <!--Info panel-->
         <StackPanel Margin="10,35"
                     x:Name="InfoUnknownPanel"
@@ -218,7 +209,7 @@
                     </Grid>
                 </Button>
 
-                <StackPanel Margin="10,35,0,35"
+                <StackPanel Margin="10,35,0,10"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Bottom" >
                     <StackPanel.ChildrenTransitions>
@@ -234,30 +225,30 @@
                     <Grid Width="Auto" Height="1" Background="White"/>
 
                     <TextBlock Text="{x:Bind Vm.User.Name, Mode=OneWay}"
-                           FontWeight="ExtraLight"
-                           HorizontalAlignment="Center"
-                           TextWrapping="WrapWholeWords"
-                           FontSize="25"/>
+                               FontWeight="ExtraLight"
+                               HorizontalAlignment="Center"
+                               TextWrapping="WrapWholeWords"
+                               FontSize="25"/>
 
                     <TextBlock FontWeight="Light"
-                                   Margin="0,0,3,0"
-                                   Text="Dernière connexion :"
-                                   HorizontalAlignment="Left"
-                                   FontSize="15"
-                                   FontStyle="Italic"/>
+                               Margin="0,0,3,0"
+                               Text="Dernière connexion :"
+                               HorizontalAlignment="Left"
+                               FontSize="15"
+                               FontStyle="Italic"/>
                     <TextBlock FontWeight="Light"
-                                   Text="{Binding User.PreviousLoginDate, Mode=OneWay, Converter={StaticResource RelativeTimeConverter}}"
-                                   HorizontalAlignment="Left"
-                                   TextWrapping="WrapWholeWords"
-                                   FontSize="15"
-                                   FontStyle="Italic"/>
+                               Text="{Binding User.PreviousLoginDate, Mode=OneWay, Converter={StaticResource RelativeTimeConverter}}"
+                               HorizontalAlignment="Left"
+                               TextWrapping="WrapWholeWords"
+                               FontSize="15"
+                               FontStyle="Italic"/>
 
                     <TextBlock FontWeight="Light"
-                           Text="{Binding User.FriendlyEmotion, Mode=OneWay}"
-                           HorizontalAlignment="Left"
-                           TextWrapping="WrapWholeWords"
-                           FontSize="20"
-                           Typography.Capitals="AllSmallCaps"/>
+                               Text="{Binding User.FriendlyEmotion, Mode=OneWay}"
+                               HorizontalAlignment="Left"
+                               TextWrapping="WrapWholeWords"
+                               FontSize="20"
+                               Typography.Capitals="AllSmallCaps"/>
 
                 </StackPanel>
             </StackPanel>
