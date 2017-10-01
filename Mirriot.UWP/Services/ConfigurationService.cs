@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Miriot.Core.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
-using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Services
 {
@@ -12,7 +12,7 @@ namespace Miriot.Services
     {
         public async Task<Dictionary<string, string>> GetKeysAsync()
         {
-            var uri = new System.Uri("ms-appx:///Configuration.xml");
+            var uri = new Uri("ms-appx:///Configuration.xml");
             var sampleFile = await StorageFile.GetFileFromApplicationUriAsync(uri);
 
             var contents = await FileIO.ReadTextAsync(sampleFile);
