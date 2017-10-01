@@ -18,6 +18,7 @@ namespace Miriot.Core.Services
 {
     public class FaceService : IFaceService
     {
+        private string _defaultApiRoot = "https://northeurope.api.cognitive.microsoft.com/face/v1.0";
         private string _oxfordFaceKey;
         private string _oxfordEmotionKey;
 
@@ -39,7 +40,7 @@ namespace Miriot.Core.Services
         {
             try
             {
-                var faceClient = new FaceServiceClient(_oxfordFaceKey);
+                var faceClient = new FaceServiceClient(_oxfordFaceKey, _defaultApiRoot);
 
                 // Récupère les groupes
                 var groups = await faceClient.ListPersonGroupsAsync();
@@ -55,7 +56,7 @@ namespace Miriot.Core.Services
 
         public async Task<ServiceResponse> GetUsers(byte[] bitmap)
         {
-            var faceClient = new FaceServiceClient(_oxfordFaceKey);
+            var faceClient = new FaceServiceClient(_oxfordFaceKey, _defaultApiRoot);
 
             List<Face> faces;
             Debug.WriteLine("DetectAsync started");
