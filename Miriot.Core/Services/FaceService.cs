@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Shapes;
-using Microsoft.ProjectOxford.Emotion;
+﻿using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
@@ -13,6 +6,12 @@ using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Rectangle = Microsoft.ProjectOxford.Common.Rectangle;
 
 namespace Miriot.Core.Services

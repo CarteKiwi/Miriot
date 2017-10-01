@@ -1,4 +1,20 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Devices.Gpio;
+using Windows.Foundation;
+using Windows.Media.SpeechSynthesis;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
@@ -9,21 +25,6 @@ using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
 using Miriot.Utils;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.Media.SpeechSynthesis;
-using Windows.UI;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Window = Windows.UI.Xaml.Window;
 
 namespace Miriot
 {
@@ -61,14 +62,25 @@ namespace Miriot
             _frameAnalyzer.NoFaceDetected += OnNoFaceDetected;
             _frameAnalyzer.OnPreAnalysis += OnStartingIdentification;
 
-            Messenger.Default.Register<ActionMessage>(this, OnAction);
+            Vm.ActionCallback = OnAction;
 
             Vm.PropertyChanged += VmOnPropertyChanged;
         }
 
-        private async void OnAction(ActionMessage msg)
+        private void TurnOnLeds()
         {
-            await DoAction(msg.Intent);
+            var gpio = GpioController.GetDefault();
+
+            if (gpio == null) return;
+
+            var pin = gpio.OpenPin(2);
+            pin.SetDriveMode(GpioPinDriveMode.Output);
+            pin.Write(GpioPinValue.High);
+        }
+
+        private void OnAction(ActionMessage msg)
+        {
+            DoAction(msg.Intent);
         }
 
         private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -86,7 +98,7 @@ namespace Miriot
             {
                 if (Vm.SpeakStream != null)
                 {
-                    MediaElementCtrl.SetSource(Vm.SpeakStream, ((SpeechSynthesisStream) Vm.SpeakStream).ContentType);
+                    MediaElementCtrl.SetSource(Vm.SpeakStream, ((SpeechSynthesisStream)Vm.SpeakStream).ContentType);
                     MediaElementCtrl.Play();
                 }
             }
@@ -174,7 +186,7 @@ namespace Miriot
 
         private void Bloomer()
         {
-            var initialBounds = new Windows.Foundation.Rect  // maps to a rectangle the size of the header
+            var initialBounds = new Rect  // maps to a rectangle the size of the header
             {
                 Width = 110,
                 Height = 110,
@@ -187,93 +199,46 @@ namespace Miriot
             _transition.Start(Colors.Black, initialBounds, finalBounds);
         }
 
-        private async Task DoAction(IntentResponse intent)
+        private WidgetBase GetWidgetInstance(Type t)
         {
-            switch (intent.Intent)
-            {
-                case "PlaySong":
-                    await TurnOff();
-                    await PlaySong(intent);
-                    break;
-                case "TakePhoto":
-                    TakePhoto();
-                    break;
-                case "TurnOnTv":
-                    await TurnOff();
-                    TurnOnTv(intent);
-                    break;
-                case "TurnOff":
-                    await TurnOff();
-                    break;
-                case "FullScreenTv":
-                    SetTvScreenSize(true);
-                    break;
-                case "ReduceScreenTv":
-                    SetTvScreenSize(false);
-                    break;
-                case "TurnOnRadio":
-                    await TurnOff();
-                    TurnOnRadio(intent);
-                    break;
-                case "BlancheNeige":
-                    //Vm.SpeakCommand.Execute("Si je m'en tiens aux personnes que je connais, je peux affirmer que tu es le plus beau.");
-                    break;
-                case "Tweet":
-
-                    break;
-                case "HideAll":
-                    break;
-                case "StartScreen":
-                    break;
-                case "DisplayWidget":
-                    break;
-                case "DisplayMail":
-                    break;
-                case "AddReminder":
-                    break;
-                case "None":
-                    if (Vm.IsListeningFirstName)
-                        Vm.Repeat();
-                    break;
-            }
-        }
-
-        private void SetTvScreenSize(bool isFullScreen)
-        {
-            var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetTv);
-            if (w != null)
-            {
-                ((IWidgetExclusive)w).IsFullscreen = isFullScreen;
-            }
-        }
-
-        private void TurnOnRadio(IntentResponse intent)
-        {
-            var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetRadio);
-
+            var w = WidgetZone.Children.FirstOrDefault(e => e.GetType() == t) as WidgetBase;
             if (w == null)
             {
-                w = new WidgetRadio(null);
+                w = (WidgetBase)Activator.CreateInstance(t);
                 WidgetZone.Children.Add(w);
             }
 
-            ((WidgetRadio)w).DoAction(intent);
+            return w;
         }
 
-        private void TurnOnTv(IntentResponse intent)
+        private void DoAction(IntentResponse intent)
         {
-            var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetTv);
+            TurnOff();
+
+            var t = intent.GetIntentType();
+
+            var w = GetWidgetInstance(t);
+
+            if (w is IWidgetAction)
+                ((IWidgetAction)w).DoAction(intent);
 
             if (w == null)
             {
-                w = new WidgetTv(null, Vm.User.UserData.CachedTvUrls);
-                WidgetZone.Children.Add(w);
+                // Generic actions
+                switch (intent.Intent)
+                {
+                    case "TakePhoto":
+                        TakePhoto();
+                        break;
+                    case "None":
+                        if (Vm.IsListeningFirstName)
+                            Vm.Repeat();
+                        break;
+                }
             }
-
-            ((WidgetTv)w).TurnOn(intent);
         }
 
-        private async Task TurnOff()
+        private void TurnOff()
         {
             var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetTv);
             if (w != null)
@@ -290,50 +255,8 @@ namespace Miriot
             w = WidgetZone.Children.FirstOrDefault(e => e is WidgetDeezer);
             if (w != null)
             {
-                await StopSong();
                 WidgetZone.Children.Remove(w);
             }
-        }
-
-        private async Task StopSong()
-        {
-            var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetDeezer);
-            if (w == null) return;
-
-            await ((WidgetDeezer)w).StopAsync();
-        }
-
-        private async Task PlaySong(IntentResponse intent)
-        {
-            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
-
-            string search = string.Empty;
-            string genre = string.Empty;
-
-            if (action.Parameters != null && action.Parameters.Any())
-                foreach (var p in action.Parameters)
-                {
-                    if (p.Value != null)
-                    {
-                        if (p.Name == "Search")
-                            search = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                        if (p.Name == "Genre")
-                            genre = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                    }
-                }
-
-            var w = WidgetZone.Children.FirstOrDefault(e => e is WidgetDeezer);
-            if (w == null)
-            {
-                w = new WidgetDeezer(null);
-                WidgetZone.Children.Add(w);
-            }
-            else
-            {
-                StopSong();
-            }
-
-            await ((WidgetDeezer)w).FindTrackAsync(search);
         }
 
         private async Task RunOnUiThread(DispatchedHandler action)
@@ -343,37 +266,8 @@ namespace Miriot
 
         private void LoadWidget(Widget widget)
         {
-            WidgetBase w;
-
-            switch (widget.Type)
-            {
-                case WidgetType.Time:
-                    w = new WidgetTime(widget);
-                    break;
-                case WidgetType.Fitbit:
-                    w = new WidgetFitbit(widget);
-                    break;
-                case WidgetType.Calendar:
-                    w = new WidgetCalendar(widget);
-                    break;
-                case WidgetType.Sncf:
-                    w = new WidgetSncf(widget);
-                    break;
-                case WidgetType.Weather:
-                    w = new WidgetWeather(widget);
-                    break;
-                case WidgetType.Horoscope:
-                    w = new WidgetHoroscope(widget);
-                    break;
-                case WidgetType.Sport:
-                    w = new WidgetSport(widget);
-                    break;
-                case WidgetType.Twitter:
-                    w = new WidgetTwitter(widget);
-                    break;
-                default:
-                    return;
-            }
+            var t = widget.GetWidgetType();
+            var w = (WidgetBase)Activator.CreateInstance(t, widget);
 
             if (w is IWidgetListener)
                 ((IWidgetListener)w).OnInfosChanged += WidgetInfosChanged;
@@ -467,10 +361,10 @@ namespace Miriot
         /// </summary>
         private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var uiCanvasLocation = MainGrid.TransformToVisual(MainGrid).TransformPoint(new Windows.Foundation.Point(0d, 0d));
+            var uiCanvasLocation = MainGrid.TransformToVisual(MainGrid).TransformPoint(new Point(0d, 0d));
             var clip = new RectangleGeometry
             {
-                Rect = new Windows.Foundation.Rect(uiCanvasLocation, e.NewSize)
+                Rect = new Rect(uiCanvasLocation, e.NewSize)
             };
             MainGrid.Clip = clip;
         }

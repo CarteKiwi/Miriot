@@ -63,7 +63,7 @@
     <Compile Include="Services\Interfaces\ITwitterService.cs" />
     <Compile Include="Services\Interfaces\IVisionService.cs" />
     <Compile Include="Services\Interfaces\IWidgetExclusive.cs" />
-    <Compile Include="Services\Interfaces\IWidgeAction.cs" />
+    <Compile Include="Services\Interfaces\IWidgetAction.cs" />
     <Compile Include="Services\Interfaces\IWidgetListener.cs" />
     <Compile Include="Services\Interfaces\IWidgetOAuth.cs" />
     <Compile Include="Services\VisionService.cs" />

@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Common;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetDeezer : IWidgetExclusive
+    public sealed partial class WidgetDeezer : IWidgetAction, IWidgetExclusive
     {
+        private bool _isPlaying;
         private readonly Random _rnd = new Random();
 
         public bool IsFullscreen { get; set; }
@@ -26,7 +28,30 @@ namespace Miriot.Controls
 
         public async Task StopAsync()
         {
+            _isPlaying = false;
             //await Browser.InvokeScriptAsync("Stop", null);
+        }
+
+        public async void DoAction(IntentResponse intent)
+        {
+            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
+
+            string search = string.Empty;
+            string genre = string.Empty;
+
+            if (action.Parameters != null && action.Parameters.Any())
+                foreach (var p in action.Parameters)
+                {
+                    if (p.Value != null)
+                    {
+                        if (p.Name == "Search")
+                            search = p.Value.OrderByDescending(e => e.Score).First().Entity;
+                        if (p.Name == "Genre")
+                            genre = p.Value.OrderByDescending(e => e.Score).First().Entity;
+                    }
+                }
+
+            await FindTrackAsync(search);
         }
 
         public async Task FindTrackAsync(string search)
@@ -64,6 +89,10 @@ namespace Miriot.Controls
 
         public async Task Play(DeezerTrack track)
         {
+            if (_isPlaying)
+                await StopAsync();
+
+            _isPlaying = true;
             var path = track?.album?.cover_medium;
 
             if (path == null)

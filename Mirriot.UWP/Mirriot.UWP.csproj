@@ -213,6 +213,7 @@
     <Compile Include="Controls\Widgets\WidgetTime.xaml.cs">
       <DependentUpon>WidgetTime.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\WidgetExtensions.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

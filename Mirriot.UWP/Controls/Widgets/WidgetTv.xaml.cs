@@ -16,7 +16,7 @@ using Miriot.Common.Model;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetTv : IWidgetExclusive
+    public sealed partial class WidgetTv : IWidgetAction, IWidgetExclusive
     {
         //private FFmpegInteropMSS FFmpegMSS;
         private string _urlHub;
@@ -278,6 +278,24 @@ namespace Miriot.Controls
 
             _urlHub = channelUri;
             LoadChannel(key, channelUri);
+        }
+
+        public void DoAction(IntentResponse intent)
+        {
+            if (intent.Intent == "TurnOnTv")
+            {
+                TurnOn(intent);
+            }
+
+            if (intent.Intent == "FullScreenTv")
+            {
+                IsFullscreen = true;
+            }
+
+            if (intent.Intent == "ReduceScreenTv")
+            {
+                IsFullscreen = false;
+            }
         }
     }
 }

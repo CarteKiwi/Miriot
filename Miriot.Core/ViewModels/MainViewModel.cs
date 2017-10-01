@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.ProjectOxford.Face;
 using Miriot.Common;
@@ -11,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -57,9 +55,11 @@ namespace Miriot.Core.ViewModels
         public RelayCommand<States> StateChangedCommand { get; private set; }
         public RelayCommand<string> ActionNavigateTo { get; private set; }
         public RelayCommand ResetCommand { get; private set; }
+        public RelayCommand ToggleLedsCommand { get; private set; }
         #endregion
 
         private IRandomAccessStream _speakStream;
+        public Action<ActionMessage> ActionCallback;
 
         public IRandomAccessStream SpeakStream
         {
@@ -306,7 +306,7 @@ namespace Miriot.Core.ViewModels
                 {
                     if (intent != null)
                     {
-                        Messenger.Default.Send(new ActionMessage(intent));
+                        ActionCallback.Invoke(new ActionMessage(intent));
                     }
 
                     SetMessage(string.Empty, string.Empty);

@@ -1,7 +1,5 @@
 ﻿using Miriot.Common.Model.Widgets;
-using System;
 using System.Threading.Tasks;
-using Windows.Security.Authentication.Web;
 
 namespace Miriot.Core.Services.Interfaces
 {
