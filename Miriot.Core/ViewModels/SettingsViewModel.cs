@@ -43,11 +43,12 @@ namespace Miriot.Core.ViewModels
 
         public SettingsViewModel(
             IDialogService dialogService, 
-            IDispatcherService dispatcher)
+            IDispatcherService dispatcher,
+            IConfigurationService configurationService)
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;
-            _faceService = new FaceService();
+            _faceService = new FaceService(configurationService);
 
             ActionLoaded = new RelayCommand(OnLoaded);
             ActionSave = new RelayCommand(OnSave);

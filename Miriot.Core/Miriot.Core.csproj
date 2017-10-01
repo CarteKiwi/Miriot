@@ -59,6 +59,7 @@
     <Compile Include="Services\Interfaces\ICameraService.cs" />
     <Compile Include="Services\Interfaces\IFaceService.cs" />
     <Compile Include="Services\Interfaces\IFrameAnalyzer.cs" />
+    <Compile Include="Services\Interfaces\IConfigurationService.cs" />
     <Compile Include="Services\Interfaces\ISpeechService.cs" />
     <Compile Include="Services\Interfaces\ITwitterService.cs" />
     <Compile Include="Services\Interfaces\IVisionService.cs" />

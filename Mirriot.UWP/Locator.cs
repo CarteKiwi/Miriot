@@ -17,6 +17,7 @@ namespace Miriot
 
             var navigationService = CreateNavigationService();
             SimpleIoc.Default.Register(() => navigationService);
+            SimpleIoc.Default.Register<IConfigurationService, ConfigurationService>();
             SimpleIoc.Default.Register<ISpeechService, SpeechService>();
             SimpleIoc.Default.Register<IGraphService, GraphService>();
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();

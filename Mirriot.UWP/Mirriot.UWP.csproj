@@ -118,6 +118,7 @@
     <Content Include="Assets\Horoscope\Pisces.png" />
     <Content Include="Assets\TwitterLogo.png" />
     <Content Include="Assets\wifi.png" />
+    <Content Include="Configuration.xml" />
     <Content Include="Controls\Widgets\Templates\HoroscopeTemplate.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -134,6 +135,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Controls\CameraControl.xaml.cs">
       <DependentUpon>CameraControl.xaml</DependentUpon>
     </Compile>

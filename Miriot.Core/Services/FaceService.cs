@@ -18,21 +18,28 @@ namespace Miriot.Core.Services
 {
     public class FaceService : IFaceService
     {
-        private const string OxfordFaceKey = "89b53f9d8db046ae9fca71ee98a72330";
-        private const string OxfordEmotionKey = "5194871378f6446c91a6a247495cb6f5";
+        private string _oxfordFaceKey;
+        private string _oxfordEmotionKey;
 
         private string _miriotPersonGroupId;
 
-        public FaceService()
+        public FaceService(IConfigurationService configurationService)
         {
-            Task.Run(async () => await LoadGroup());
+            Task.Run(async () =>
+            {
+                var config = await configurationService.GetKeysAsync();
+                _oxfordFaceKey = config["face"];
+                _oxfordEmotionKey = config["emotion"];
+
+                await LoadGroup();
+            });
         }
 
         private async Task LoadGroup()
         {
             try
             {
-                var faceClient = new FaceServiceClient(OxfordFaceKey);
+                var faceClient = new FaceServiceClient(_oxfordFaceKey);
 
                 // Récupère les groupes
                 var groups = await faceClient.ListPersonGroupsAsync();
@@ -48,7 +55,7 @@ namespace Miriot.Core.Services
 
         public async Task<ServiceResponse> GetUsers(byte[] bitmap)
         {
-            var faceClient = new FaceServiceClient(OxfordFaceKey);
+            var faceClient = new FaceServiceClient(_oxfordFaceKey);
 
             List<Face> faces;
             Debug.WriteLine("DetectAsync started");
@@ -127,7 +134,7 @@ namespace Miriot.Core.Services
             try
             {
                 List<Emotion> emotions;
-                var emotionClient = new EmotionServiceClient(OxfordEmotionKey);
+                var emotionClient = new EmotionServiceClient(_oxfordEmotionKey);
 
                 using (var stream = new MemoryStream(bitmap))
                     emotions = (await emotionClient.RecognizeAsync(stream)).ToList();
@@ -163,7 +170,7 @@ namespace Miriot.Core.Services
         {
             try
             {
-                var faceClient = new FaceServiceClient(OxfordFaceKey);
+                var faceClient = new FaceServiceClient(_oxfordFaceKey);
                 await faceClient.DeletePersonAsync(_miriotPersonGroupId, personId);
                 await faceClient.TrainPersonGroupAsync(_miriotPersonGroupId);
                 return true;
@@ -178,7 +185,7 @@ namespace Miriot.Core.Services
         {
             try
             {
-                var faceClient = new FaceServiceClient(OxfordFaceKey);
+                var faceClient = new FaceServiceClient(_oxfordFaceKey);
 
                 // Create PERSON
                 var newPerson = await faceClient.CreatePersonAsync(_miriotPersonGroupId, name, JsonConvert.SerializeObject(new UserData()));
@@ -203,7 +210,7 @@ namespace Miriot.Core.Services
         {
             try
             {
-                var faceClient = new FaceServiceClient(OxfordFaceKey);
+                var faceClient = new FaceServiceClient(_oxfordFaceKey);
 
                 // Update user's data
                 await faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name, JsonConvert.SerializeObject(user.UserData));
@@ -228,7 +235,7 @@ namespace Miriot.Core.Services
         {
             try
             {
-                var faceClient = new FaceServiceClient(OxfordFaceKey);
+                var faceClient = new FaceServiceClient(_oxfordFaceKey);
 
                 // Update user's data
                 await faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name, JsonConvert.SerializeObject(user.UserData));
