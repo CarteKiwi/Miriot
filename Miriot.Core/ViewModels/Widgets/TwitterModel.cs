@@ -1,13 +1,12 @@
 ﻿using Microsoft.Practices.ServiceLocation;
 using Miriot.Common.Model;
+using Miriot.Common.Model.Widgets.Twitter;
 using Miriot.Core.Services.Interfaces;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Security.Credentials;
 using Windows.Storage;
-using Miriot.Common.Model.Widgets.Twitter;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
@@ -21,7 +20,7 @@ namespace Miriot.Core.ViewModels.Widgets
             set => Set(ref _user, value);
         }
 
-        public TwitterModel()
+        public TwitterModel(Widget widget) : base(widget)
         {
             Title = "Twitter";
         }
@@ -36,9 +35,9 @@ namespace Miriot.Core.ViewModels.Widgets
             return new OAuthWidgetInfo { Token = cred.UserName, TokenSecret = cred.Password, Username = User.ScreenName };
         }
 
-        public override async Task LoadInfos(List<string> infos)
+        public override async Task LoadInfos()
         {
-            var info = infos?.FirstOrDefault();
+            var info = _infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return;
 
             var cred = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info);

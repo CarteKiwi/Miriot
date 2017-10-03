@@ -11,6 +11,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Controls
 {
@@ -18,7 +19,7 @@ namespace Miriot.Controls
     {
         public OAuth2AccessToken AccessToken;
 
-        public WidgetFitbit(Widget widget) : base(widget)
+        public WidgetFitbit(FitbitModel widget) : base(widget)
         {
             InitializeComponent();
             Load();
@@ -110,8 +111,6 @@ namespace Miriot.Controls
             Grid.SetColumn(this, x);
             Grid.SetRow(this, y);
         }
-
-        public Widget OriginalWidget { get; set; }
     }
 
     public class Weights

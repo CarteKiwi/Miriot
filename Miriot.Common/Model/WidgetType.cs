@@ -10,6 +10,9 @@
         Image,
         Calendar,
         Horoscope,
-        Twitter
+        Twitter,
+        Deezer,
+        Radio,
+        Reminder
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.Office365.OutlookServices;
+﻿using Microsoft.Graph;
+using Microsoft.Office365.OutlookServices;
 using Microsoft.Toolkit.Uwp;
-using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
-using Microsoft.Graph;
 
 namespace Miriot.Controls
 {
@@ -20,9 +19,11 @@ namespace Miriot.Controls
         public string Token { get; set; }
         public GraphUser User { get; set; }
 
-        public WidgetCalendar(Widget widget) : base(widget)
+        private readonly CalendarModel _model;
+
+        public WidgetCalendar(CalendarModel model) : base(model)
         {
-            OriginalWidget = widget;
+            _model = model;
 
             InitializeComponent();
 
@@ -31,11 +32,10 @@ namespace Miriot.Controls
 
         private async Task RetrieveData()
         {
-            var calendar = new CalendarModel();
-            await calendar.LoadInfos(OriginalWidget.Infos);
+            await _model.LoadInfos();
 
-            Token = calendar.Token;
-            User = calendar.User;
+            Token = _model.Token;
+            User = _model.User;
         }
 
         public event EventHandler OnInfosChanged;

@@ -30,7 +30,7 @@ namespace Miriot.Core.ViewModels.Widgets
             set => Set(ref _user, value);
         }
 
-        public CalendarModel()
+        public CalendarModel(Widget widget) : base(widget)
         {
             Title = "Calendrier & mails";
         }
@@ -45,9 +45,9 @@ namespace Miriot.Core.ViewModels.Widgets
             return new OAuthWidgetInfo { Token = cred.Password, Username = temp.UserName };
         }
 
-        public override async Task LoadInfos(List<string> infos)
+        public override async Task LoadInfos()
         {
-            var info = infos?.FirstOrDefault();
+            var info = _infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return;
 
             var cred = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info);

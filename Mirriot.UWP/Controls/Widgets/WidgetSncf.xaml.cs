@@ -1,4 +1,5 @@
 ﻿using Miriot.Common.Model;
+using Miriot.Core.ViewModels.Widgets;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ namespace Miriot.Controls
         private DateTime? _nextDepartureDate;
         private bool _isBusy;
 
-        public WidgetSncf(Widget widget) : base(widget)
+        public WidgetSncf(SncfModel widget) : base(widget)
         {
             InitializeComponent();
 

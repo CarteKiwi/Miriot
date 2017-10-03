@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Windows.UI.Xaml;
 using Miriot.Common.Model;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Controls
 {
@@ -33,7 +34,7 @@ namespace Miriot.Controls
             InitializeComponent();
         }
 
-        public WidgetTimer(Widget widget) : base(widget)
+        public WidgetTimer(WidgetModel widget) : base(widget)
         {
             InitializeComponent();
 

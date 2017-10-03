@@ -1,5 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.ProjectOxford.Common;
+using Miriot.Common;
+using Miriot.Controls;
+using Miriot.Core.Messages;
+using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels;
+using Miriot.Core.ViewModels.Widgets;
+using Miriot.Utils;
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -14,17 +23,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.ProjectOxford.Common;
-using Miriot.Common;
-using Miriot.Common.Model;
-using Miriot.Controls;
-using Miriot.Core.Messages;
-using Miriot.Core.Services.Interfaces;
-using Miriot.Core.ViewModels;
-using Miriot.Utils;
-using Newtonsoft.Json;
 
 namespace Miriot
 {
@@ -112,7 +110,7 @@ namespace Miriot
             }
             else if (e.NewItems.Count > 0)
             {
-                LoadWidget((Widget)e.NewItems[0]);
+                LoadWidget((WidgetModel)e.NewItems[0]);
             }
         }
 
@@ -264,10 +262,10 @@ namespace Miriot
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, action);
         }
 
-        private void LoadWidget(Widget widget)
+        private void LoadWidget(WidgetModel model)
         {
-            var t = widget.GetWidgetType();
-            var w = (WidgetBase)Activator.CreateInstance(t, widget);
+            var t = model.GetWidgetType();
+            var w = (WidgetBase)Activator.CreateInstance(t, model);
 
             if (w is IWidgetListener)
                 ((IWidgetListener)w).OnInfosChanged += WidgetInfosChanged;
@@ -280,20 +278,20 @@ namespace Miriot
         {
             var w = sender as WidgetBase;
 
-            if (w.OriginalWidget.Infos == null)
-                w.OriginalWidget.Infos = new List<string>();
-            else
-            {
-                var entry = w.OriginalWidget.Infos.FirstOrDefault(s => JsonConvert.DeserializeObject<OAuthWidgetInfo>(s)?.Token != null);
+            //if (w.OriginalWidget.Infos == null)
+            //    w.OriginalWidget.Infos = new List<string>();
+            //else
+            //{
+            //    var entry = w.OriginalWidget.Infos.FirstOrDefault(s => JsonConvert.DeserializeObject<OAuthWidgetInfo>(s)?.Token != null);
 
-                if (entry != null)
-                    w.OriginalWidget.Infos.Remove(entry);
-            }
+            //    if (entry != null)
+            //        w.OriginalWidget.Infos.Remove(entry);
+            //}
 
-            if (((IWidgetOAuth)w).Token != null)
-            {
-                w.OriginalWidget.Infos.Add(JsonConvert.SerializeObject(new OAuthWidgetInfo { Token = ((IWidgetOAuth)w).Token }));
-            }
+            //if (((IWidgetOAuth)w).Token != null)
+            //{
+            //    w.OriginalWidget.Infos.Add(JsonConvert.SerializeObject(new OAuthWidgetInfo { Token = ((IWidgetOAuth)w).Token }));
+            //}
 
             await Vm.UpdateUserAsync();
         }

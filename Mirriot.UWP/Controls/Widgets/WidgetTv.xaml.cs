@@ -1,6 +1,8 @@
 ﻿using Microsoft.Practices.ServiceLocation;
 using Miriot.Common;
+using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
+using Miriot.Core.ViewModels.Widgets;
 using Miriot.JavascriptHandler;
 using System;
 using System.Collections.Generic;
@@ -11,8 +13,6 @@ using Windows.Foundation.Collections;
 using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Miriot.Core.Services.Interfaces;
-using Miriot.Common.Model;
 
 namespace Miriot.Controls
 {
@@ -47,7 +47,7 @@ namespace Miriot.Controls
 
         public bool IsExclusive { get; set; }
 
-        public WidgetTv(Widget widget, Dictionary<string, string> cachedUrls) : base(widget)
+        public WidgetTv(WidgetModel widget, Dictionary<string, string> cachedUrls) : base(widget)
         {
             InitializeComponent();
 

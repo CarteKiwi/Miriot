@@ -188,6 +188,7 @@
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\Mock\FrameAnalyser.cs" />
+    <Compile Include="Services\Mock\FakeSpeechService.cs" />
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\SpeechService.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
@@ -475,7 +476,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Mock|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Mock\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;CODE_ANALYSIS;MOCK</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>

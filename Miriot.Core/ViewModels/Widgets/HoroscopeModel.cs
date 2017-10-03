@@ -10,9 +10,9 @@ namespace Miriot.Core.ViewModels.Widgets
 {
     public class HoroscopeModel : WidgetModel
     {
-        private Signs _sign;
+        private Signs? _sign;
 
-        public Signs Sign
+        public Signs? Sign
         {
             get { return _sign; }
             set { Set(() => Sign, ref _sign, value); }
@@ -20,7 +20,7 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public List<Signs> Signs { get; set; }
 
-        public HoroscopeModel()
+        public HoroscopeModel(Widget widget) : base(widget)
         {
             Title = "Horoscope";
             Signs = new List<Signs>(Enum.GetValues(typeof(Signs)).Cast<Signs>().ToList());
@@ -28,16 +28,18 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public override WidgetInfo GetInfos()
         {
-            return new HoroscopeWidgetInfo { SignId = (int)Sign };
+            return new HoroscopeWidgetInfo { SignId = (int?)Sign };
         }
 
-        public override Task LoadInfos(List<string> infos)
+        public override Task LoadInfos()
         {
-            var info = infos.FirstOrDefault();
+            var info = _infos.FirstOrDefault();
             if (info == null) return Task.FromResult(0);
 
-            Sign = (Signs)JsonConvert.DeserializeObject<HoroscopeWidgetInfo>(info).SignId;
-            base.LoadInfos(infos);
+            var infoModel = JsonConvert.DeserializeObject<HoroscopeWidgetInfo>(info);
+
+            if (infoModel?.SignId != null)
+                Sign = (Signs)infoModel.SignId;
 
             return Task.FromResult(0);
         }

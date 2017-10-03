@@ -1,16 +1,14 @@
-﻿using Miriot.Common;
-using System.Linq;
-using Windows.ApplicationModel.Appointments;
-using Windows.UI.Xaml.Controls;
-using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
-using Miriot.Common.Model;
+﻿using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
+using Miriot.Common;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
+using System.Linq;
 
 namespace Miriot.Controls
 {
     public sealed partial class WidgetReminder: IWidgetAction
     {
-        public WidgetReminder(Widget widget): base(widget)
+        public WidgetReminder(ReminderModel widget): base(widget)
         {
             InitializeComponent();
         }

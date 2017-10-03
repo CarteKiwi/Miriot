@@ -2,12 +2,13 @@
 using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Controls;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Utils
 {
     public static class WidgetExtensions
     {
-        public static Type GetWidgetType(this Widget widget)
+        public static Type GetWidgetType(this WidgetModel widget)
         {
             switch (widget.Type)
             {
@@ -27,6 +28,12 @@ namespace Miriot.Utils
                     return typeof(WidgetSport);
                 case WidgetType.Twitter:
                     return typeof(WidgetTwitter);
+                case WidgetType.Deezer:
+                    return typeof(WidgetDeezer);
+                case WidgetType.Radio:
+                    return typeof(WidgetRadio);
+                case WidgetType.Reminder:
+                    return typeof(WidgetReminder);
                 default:
                     return null;
             }

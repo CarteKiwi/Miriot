@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Common;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Controls
 {
@@ -20,7 +21,7 @@ namespace Miriot.Controls
 
         public bool IsExclusive { get; set; }
 
-        public WidgetDeezer(Widget widget) : base(widget)
+        public WidgetDeezer(DeezerModel widget) : base(widget)
         {
             InitializeComponent();
             IsExclusive = true;

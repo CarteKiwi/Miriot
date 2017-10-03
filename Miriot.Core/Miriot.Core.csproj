@@ -60,6 +60,7 @@
     <Compile Include="Services\Interfaces\IFaceService.cs" />
     <Compile Include="Services\Interfaces\IFrameAnalyzer.cs" />
     <Compile Include="Services\Interfaces\IConfigurationService.cs" />
+    <Compile Include="Services\Interfaces\ILuisService.cs" />
     <Compile Include="Services\Interfaces\ISpeechService.cs" />
     <Compile Include="Services\Interfaces\ITwitterService.cs" />
     <Compile Include="Services\Interfaces\IVisionService.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Services\Interfaces\IWidgetAction.cs" />
     <Compile Include="Services\Interfaces\IWidgetListener.cs" />
     <Compile Include="Services\Interfaces\IWidgetOAuth.cs" />
+    <Compile Include="Services\LuisService.cs" />
     <Compile Include="Services\VisionService.cs" />
     <Compile Include="Services\FaceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,11 +81,19 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModels\Widgets\ReminderModel.cs" />
+    <Compile Include="ViewModels\Widgets\RadioModel.cs" />
+    <Compile Include="ViewModels\Widgets\DeezerModel.cs" />
+    <Compile Include="ViewModels\Widgets\SportModel.cs" />
+    <Compile Include="ViewModels\Widgets\SncfModel.cs" />
+    <Compile Include="ViewModels\Widgets\TimeModel.cs" />
+    <Compile Include="ViewModels\Widgets\FitbitModel.cs" />
     <Compile Include="ViewModels\Widgets\TwitterModel.cs" />
     <Compile Include="ViewModels\Widgets\CalendarModel.cs" />
     <Compile Include="ViewModels\Widgets\HoroscopeModel.cs" />
     <Compile Include="ViewModels\Widgets\WeatherModel.cs" />
     <Compile Include="ViewModels\Widgets\WidgetModel.cs" />
+    <Compile Include="WidgetExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Miriot.Common\Miriot.Common.csproj">

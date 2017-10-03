@@ -13,6 +13,7 @@ namespace Miriot.Core.ViewModels.Widgets
         private int _y;
         private string _title;
         private bool _isActive;
+        protected List<string> _infos;
         #endregion
 
         #region Properties
@@ -43,12 +44,22 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public string Title
         {
-            get { return string.IsNullOrEmpty(_title) ? WidgetType.ToString() : _title; }
+            get { return string.IsNullOrEmpty(_title) ? Type.ToString() : _title; }
             set { Set(() => Title, ref _title, value); }
         }
 
-        public WidgetType WidgetType { get; set; }
+        public WidgetType Type { get; set; }
+
         #endregion
+
+        public WidgetModel(Widget widgetEntity)
+        {
+            Title = widgetEntity.Title;
+            Type = widgetEntity.Type;
+            X = widgetEntity.X;
+            Y = widgetEntity.Y;
+            _infos = widgetEntity.Infos;
+        }
 
         public Widget ToWidget()
         {
@@ -56,14 +67,14 @@ namespace Miriot.Core.ViewModels.Widgets
             return new Widget
             {
                 Id = Guid.NewGuid(),
-                Type = WidgetType,
+                Type = Type,
                 X = X,
                 Y = Y,
                 Infos = infos == null ? null : new List<string> { JsonConvert.SerializeObject(infos) }
             };
         }
 
-        public virtual Task LoadInfos(List<string> infos)
+        public virtual Task LoadInfos()
         {
             return Task.FromResult(0);
         }

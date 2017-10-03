@@ -2,18 +2,19 @@
 using Windows.UI.Xaml.Controls;
 using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Controls
 {
     public class WidgetBase : UserControl, IWidgetBase
     {
-        public Widget OriginalWidget { get; set; }
+        public WidgetModel OriginalWidget { get; set; }
 
         public WidgetBase()
         {
         }
 
-        public WidgetBase(Widget widget)
+        public WidgetBase(WidgetModel widget)
         {
             Margin = new Thickness(20);
             OriginalWidget = widget;

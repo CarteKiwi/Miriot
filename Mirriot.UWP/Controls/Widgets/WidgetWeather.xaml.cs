@@ -1,4 +1,6 @@
 ﻿using Miriot.Common.Model;
+using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using Windows.UI.Xaml.Controls;
-using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Controls
 {
@@ -14,21 +15,22 @@ namespace Miriot.Controls
     {
         private readonly string _key = "84bc189921c14c7a98fdea2a98aa11ba";
         private string _location = "paris";
+        private WeatherModel _model;
 
-        public WidgetWeather(Widget widget) : base(widget)
+        public WidgetWeather(WeatherModel model) : base(model)
         {
+            _model = model;
+
             InitializeComponent();
 
-            RetrieveData(widget);
+            RetrieveData();
 
             GetWeather();
         }
 
-        private void RetrieveData(Widget widget)
+        private void RetrieveData()
         {
-            var location = widget.Infos?.FirstOrDefault(e => JsonConvert.DeserializeObject<WeatherWidgetInfo>(e).Location != null);
-            if (location != null)
-                _location = JsonConvert.DeserializeObject<WeatherWidgetInfo>(location).Location;
+            _model.LoadInfos();
         }
 
         private async void GetWeather()
@@ -38,7 +40,7 @@ namespace Miriot.Controls
                 using (HttpClient client = new HttpClient())
                 {
                     client.BaseAddress = new Uri("http://api.openweathermap.org/data/2.5/");
-                    var res = await client.GetAsync($"weather?appid={_key}&q={_location}&units=metric");
+                    var res = await client.GetAsync($"weather?appid={_key}&q={_model.Location}&units=metric");
                     var c = await res.Content.ReadAsStringAsync();
 
                     var weather = JsonConvert.DeserializeObject<WeatherResponse>(c);
@@ -106,7 +108,7 @@ namespace Miriot.Controls
             PictoFont.Text = ico;
         }
 
-        public void SetPosition(int x, int y)
+        public override void SetPosition(int x, int y)
         {
             Grid.SetColumn(this, x);
             Grid.SetRow(this, y);
