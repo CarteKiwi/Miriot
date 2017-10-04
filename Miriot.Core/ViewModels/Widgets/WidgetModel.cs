@@ -54,6 +54,8 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public WidgetModel(Widget widgetEntity)
         {
+            if (widgetEntity == null) return;
+
             Title = widgetEntity.Title;
             Type = widgetEntity.Type;
             X = widgetEntity.X;
