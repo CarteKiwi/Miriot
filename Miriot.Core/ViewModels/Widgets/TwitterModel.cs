@@ -12,6 +12,8 @@ namespace Miriot.Core.ViewModels.Widgets
 {
     public class TwitterModel : WidgetModel
     {
+        public override WidgetType Type => WidgetType.Twitter;
+
         private TwitterUser _user;
 
         public TwitterUser User
@@ -66,8 +68,8 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public override void OnDisabled()
         {
-            ServiceLocator.Current.GetInstance<ITwitterService>().Logout();
-            base.OnDisabled();
+            var service = ServiceLocator.Current.GetInstance<ITwitterService>();
+            service.Logout();
         }
 
         private async Task Login()

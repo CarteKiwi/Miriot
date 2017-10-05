@@ -445,10 +445,7 @@ namespace Miriot.Core.ViewModels
 
             foreach (var widget in widgets)
             {
-                var modelType = widget.Type.GetModelType();
-                var model = (WidgetModel)Activator.CreateInstance(modelType, widget);
-
-                Widgets.Add(model);
+                Widgets.Add(widget.ToModel());
 
                 // Wait 100ms to create a better transition effect
                 await Task.Delay(100, _cancellationToken.Token);

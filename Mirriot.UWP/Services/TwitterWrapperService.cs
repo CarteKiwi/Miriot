@@ -1,6 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
 using Miriot.Core.Services.Interfaces;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Security.Credentials;
@@ -33,7 +34,14 @@ namespace Miriot.Services
 
         public void Logout()
         {
-            TwitterService.Instance.Logout();
+            try
+            {
+                TwitterService.Instance.Logout();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         public async Task<TwitterUser> GetUserAsync()

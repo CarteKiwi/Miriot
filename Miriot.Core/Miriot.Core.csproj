@@ -84,6 +84,7 @@
     <Compile Include="ViewModels\Widgets\ReminderModel.cs" />
     <Compile Include="ViewModels\Widgets\RadioModel.cs" />
     <Compile Include="ViewModels\Widgets\DeezerModel.cs" />
+    <Compile Include="ViewModels\Widgets\ImageModel.cs" />
     <Compile Include="ViewModels\Widgets\SportModel.cs" />
     <Compile Include="ViewModels\Widgets\SncfModel.cs" />
     <Compile Include="ViewModels\Widgets\TimeModel.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="ViewModels\Widgets\HoroscopeModel.cs" />
     <Compile Include="ViewModels\Widgets\WeatherModel.cs" />
     <Compile Include="ViewModels\Widgets\WidgetModel.cs" />
-    <Compile Include="WidgetExtensions.cs" />
+    <Compile Include="WidgetMapping.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Miriot.Common\Miriot.Common.csproj">

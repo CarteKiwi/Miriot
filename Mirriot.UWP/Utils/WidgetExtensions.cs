@@ -3,40 +3,32 @@ using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Controls;
 using Miriot.Core.ViewModels.Widgets;
+using System.Collections.Generic;
+using Miriot.Core;
 
 namespace Miriot.Utils
 {
     public static class WidgetExtensions
     {
-        public static Type GetWidgetType(this WidgetModel widget)
+        private static Dictionary<WidgetType, Type> _mapping = new Dictionary<WidgetType, Type>
         {
-            switch (widget.Type)
-            {
-                case WidgetType.Time:
-                    return typeof(WidgetTime);
-                case WidgetType.Fitbit:
-                    return typeof(WidgetFitbit);
-                case WidgetType.Calendar:
-                    return typeof(WidgetCalendar);
-                case WidgetType.Sncf:
-                    return typeof(WidgetSncf);
-                case WidgetType.Weather:
-                    return typeof(WidgetWeather);
-                case WidgetType.Horoscope:
-                    return typeof(WidgetHoroscope);
-                case WidgetType.Sport:
-                    return typeof(WidgetSport);
-                case WidgetType.Twitter:
-                    return typeof(WidgetTwitter);
-                case WidgetType.Deezer:
-                    return typeof(WidgetDeezer);
-                case WidgetType.Radio:
-                    return typeof(WidgetRadio);
-                case WidgetType.Reminder:
-                    return typeof(WidgetReminder);
-                default:
-                    return null;
-            }
+            { WidgetType.Time, typeof(WidgetTime) },
+            { WidgetType.Fitbit, typeof(WidgetFitbit) },
+            { WidgetType.Calendar, typeof(WidgetCalendar) },
+            { WidgetType.Sncf, typeof(WidgetSncf) },
+            { WidgetType.Weather, typeof(WidgetWeather) },
+            { WidgetType.Horoscope, typeof(WidgetHoroscope) },
+            { WidgetType.Sport, typeof(WidgetSport) },
+            { WidgetType.Twitter, typeof(WidgetTwitter) },
+            { WidgetType.Deezer, typeof(WidgetDeezer) },
+            { WidgetType.Radio, typeof(WidgetRadio) },
+            { WidgetType.Reminder, typeof(WidgetReminder) },
+            { WidgetType.Image, typeof(WidgetBase) },
+        };
+
+        public static WidgetBase ToControl(this WidgetModel widget)
+        {
+            return (WidgetBase)Activator.CreateInstance(_mapping[widget.Type], widget);
         }
 
         public static Type GetIntentType(this IntentResponse intent)
@@ -64,7 +56,6 @@ namespace Miriot.Utils
                 case "TurnOff":
                 default:
                     return null;
-                
             }
         }
     }

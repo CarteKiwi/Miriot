@@ -131,7 +131,7 @@ namespace Miriot.Core.ViewModels
 
                 var widgetEntity = User.UserData.Widgets.FirstOrDefault(e => e.Type == wt);
 
-                var widgetModel = (WidgetModel)Activator.CreateInstance(wt.GetModelType(), widgetEntity);
+                var widgetModel = wt.ToModel(widgetEntity);
 
                 if (widgetEntity != null)
                 {

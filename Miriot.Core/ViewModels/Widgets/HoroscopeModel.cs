@@ -15,10 +15,12 @@ namespace Miriot.Core.ViewModels.Widgets
         public Signs? Sign
         {
             get { return _sign; }
-            set { Set(() => Sign, ref _sign, value); }
+            set { Set(ref _sign, value); }
         }
 
         public List<Signs> Signs { get; set; }
+
+        public override WidgetType Type => WidgetType.Horoscope;
 
         public HoroscopeModel(Widget widget) : base(widget)
         {

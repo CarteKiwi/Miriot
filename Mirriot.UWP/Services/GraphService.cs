@@ -1,14 +1,13 @@
-﻿using Miriot.Core.Services.Interfaces;
+﻿using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
+using Miriot.Common.Model.Widgets;
+using Miriot.Core.Services.Interfaces;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Security.Authentication.Web;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
-using Microsoft.Graph;
-using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
-using Miriot.Common.Model.Widgets;
 
 namespace Miriot.Services
 {
@@ -81,7 +80,16 @@ namespace Miriot.Services
 
         public Task LogoutAsync()
         {
-            return MicrosoftGraphService.Instance.LogoutAsync();
+            try
+            {
+                return MicrosoftGraphService.Instance.LogoutAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return Task.FromResult(0);
         }
     }
 }

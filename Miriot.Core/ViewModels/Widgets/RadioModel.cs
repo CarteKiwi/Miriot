@@ -7,5 +7,7 @@ namespace Miriot.Core.ViewModels.Widgets
         public RadioModel(Widget widgetEntity) : base(widgetEntity)
         {
         }
+
+        public override WidgetType Type => WidgetType.Radio;
     }
 }

@@ -7,5 +7,7 @@ namespace Miriot.Core.ViewModels.Widgets
         public FitbitModel(Widget widgetEntity) : base(widgetEntity)
         {
         }
+
+        public override WidgetType Type { get => WidgetType.Fitbit; }
     }
 }

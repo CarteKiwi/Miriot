@@ -7,12 +7,14 @@ namespace Miriot.Core.ViewModels.Widgets
 {
     public class WeatherModel : WidgetModel
     {
+        public override WidgetType Type => WidgetType.Weather;
+
         private string _location;
 
         public string Location
         {
             get { return _location; }
-            set { Set(() => Location, ref _location, value); }
+            set { Set(ref _location, value); }
         }
 
         public WeatherModel(Widget widget) : base(widget)

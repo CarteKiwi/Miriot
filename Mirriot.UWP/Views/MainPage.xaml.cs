@@ -110,7 +110,7 @@ namespace Miriot
             }
             else if (e.NewItems.Count > 0)
             {
-                LoadWidget((WidgetModel)e.NewItems[0]);
+                CreateControl((WidgetModel)e.NewItems[0]);
             }
         }
 
@@ -262,16 +262,15 @@ namespace Miriot
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, action);
         }
 
-        private void LoadWidget(WidgetModel model)
+        private void CreateControl(WidgetModel model)
         {
-            var t = model.GetWidgetType();
-            var w = (WidgetBase)Activator.CreateInstance(t, model);
+            var control = model.ToControl();
 
             if (w is IWidgetListener)
-                ((IWidgetListener)w).OnInfosChanged += WidgetInfosChanged;
+                ((IWidgetListener)control).OnInfosChanged += WidgetInfosChanged;
 
             // Add widget to grid
-            WidgetZone.Children.Add(w);
+            WidgetZone.Children.Add(control);
         }
 
         private async void WidgetInfosChanged(object sender, EventArgs e)

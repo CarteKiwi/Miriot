@@ -2,11 +2,13 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
-    public class WidgetModel : CustomViewModel
+    public abstract class WidgetModel : INotifyPropertyChanged
     {
         #region Variables
         private int _x;
@@ -14,19 +16,21 @@ namespace Miriot.Core.ViewModels.Widgets
         private string _title;
         private bool _isActive;
         protected List<string> _infos;
+
+        public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         #region Properties
         public int X
         {
             get { return _x; }
-            set { Set(() => X, ref _x, value); }
+            set { Set(ref _x, value); }
         }
 
         public int Y
         {
             get { return _y; }
-            set { Set(() => Y, ref _y, value); }
+            set { Set(ref _y, value); }
         }
 
         public bool IsActive
@@ -42,13 +46,13 @@ namespace Miriot.Core.ViewModels.Widgets
             }
         }
 
-        public string Title
+        public virtual string Title
         {
             get { return string.IsNullOrEmpty(_title) ? Type.ToString() : _title; }
-            set { Set(() => Title, ref _title, value); }
+            set { Set(ref _title, value); }
         }
 
-        public WidgetType Type { get; set; }
+        public abstract WidgetType Type { get; }
 
         #endregion
 
@@ -56,8 +60,6 @@ namespace Miriot.Core.ViewModels.Widgets
         {
             if (widgetEntity == null) return;
 
-            Title = widgetEntity.Title;
-            Type = widgetEntity.Type;
             X = widgetEntity.X;
             Y = widgetEntity.Y;
             _infos = widgetEntity.Infos;
@@ -93,5 +95,14 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public virtual void OnActivated() { }
         public virtual void OnDisabled() { }
+
+        protected void Set<T>(ref T field, T value, [CallerMemberName] string name = "")
+        {
+            if (!field.Equals(value))
+            {
+                field = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }
     }
 }
