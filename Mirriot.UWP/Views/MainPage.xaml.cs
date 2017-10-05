@@ -266,7 +266,7 @@ namespace Miriot
         {
             var control = model.ToControl();
 
-            if (w is IWidgetListener)
+            if (control is IWidgetListener)
                 ((IWidgetListener)control).OnInfosChanged += WidgetInfosChanged;
 
             // Add widget to grid

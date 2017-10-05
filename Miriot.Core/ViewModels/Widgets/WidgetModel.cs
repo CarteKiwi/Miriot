@@ -98,7 +98,7 @@ namespace Miriot.Core.ViewModels.Widgets
 
         protected void Set<T>(ref T field, T value, [CallerMemberName] string name = "")
         {
-            if (!field.Equals(value))
+            if (field == null || !field.Equals(value))
             {
                 field = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
