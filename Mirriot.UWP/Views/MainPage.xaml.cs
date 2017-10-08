@@ -63,6 +63,8 @@ namespace Miriot
             Vm.ActionCallback = OnAction;
 
             Vm.PropertyChanged += VmOnPropertyChanged;
+
+            TurnOnLeds();
         }
 
         private void TurnOnLeds()
@@ -71,9 +73,9 @@ namespace Miriot
 
             if (gpio == null) return;
 
-            var pin = gpio.OpenPin(2);
+            var pin = gpio.OpenPin(21);
             pin.SetDriveMode(GpioPinDriveMode.Output);
-            pin.Write(GpioPinValue.High);
+            pin.Write(GpioPinValue.Low);
         }
 
         private void OnAction(ActionMessage msg)

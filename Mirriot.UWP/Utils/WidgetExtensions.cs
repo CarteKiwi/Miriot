@@ -37,7 +37,6 @@ namespace Miriot.Utils
             {
                 case "PlaySong":
                     return typeof(WidgetDeezer);
-               
                 case "TurnOnTv":
                 case "FullScreenTv":
                 case "ReduceScreenTv":
