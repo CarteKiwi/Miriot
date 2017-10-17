@@ -11,7 +11,6 @@ namespace Miriot.Services.Mock
 {
     public class FrameAnalyser<T> : IFrameAnalyzer<T>
     {
-        private ThreadPoolTimer _frameProcessingTimer;
         public event EventHandler OnPreAnalysis;
         public event EventHandler<T> UsersIdentified;
         public event EventHandler NoFaceDetected;
@@ -20,8 +19,7 @@ namespace Miriot.Services.Mock
 
         public Task AttachAsync(ICameraService camera)
         {
-            var timerInterval = TimeSpan.FromMilliseconds(10000); // 15 fps
-            _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
+            ProcessCurrentVideoFrame(null);
             return Task.FromResult(true);
         }
 
@@ -40,8 +38,6 @@ namespace Miriot.Services.Mock
 
         public void Cleanup()
         {
-            _frameProcessingTimer.Cancel();
-            _frameProcessingTimer = null;
         }
 
         public async Task<byte[]> GetFrame()

@@ -7,7 +7,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Miriot.Core.Services;
 
 namespace Miriot.Core.ViewModels
 {
@@ -21,7 +20,7 @@ namespace Miriot.Core.ViewModels
 
         #region Variables
         private readonly IDialogService _dialogService;
-        private readonly FaceService _faceService;
+        private readonly IFaceService _faceService;
         private readonly IDispatcherService _dispatcher;
         private User _user;
         private ObservableCollection<WidgetModel> _widgets;
@@ -42,12 +41,13 @@ namespace Miriot.Core.ViewModels
         #endregion
 
         public SettingsViewModel(
-            IDialogService dialogService, 
-            IDispatcherService dispatcher)
+            IDialogService dialogService,
+            IDispatcherService dispatcher,
+            IFaceService faceService)
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;
-            _faceService = new FaceService();
+            _faceService = faceService;
 
             ActionLoaded = new RelayCommand(OnLoaded);
             ActionSave = new RelayCommand(OnSave);
@@ -92,7 +92,7 @@ namespace Miriot.Core.ViewModels
             // If desactivated
             if (!w.IsActive)
             {
-                var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.WidgetType);
+                var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.Type);
 
                 // Should be existing
                 if (ww != null)
@@ -103,7 +103,7 @@ namespace Miriot.Core.ViewModels
             }
             else // if activated
             {
-                var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.WidgetType);
+                var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.Type);
 
                 // Should not be existing
                 if (ww == null)
@@ -125,48 +125,26 @@ namespace Miriot.Core.ViewModels
 
             Widgets = new ObservableCollection<WidgetModel>();
 
-            foreach (var type in Enum.GetNames(typeof(WidgetType)))
+            foreach (var type in Enum.GetValues(typeof(WidgetType)))
             {
-                var wt = (WidgetType)Enum.Parse(typeof(WidgetType), type);
+                var wt = (WidgetType)type;
 
-                WidgetModel w;
+                var widgetEntity = User.UserData.Widgets.FirstOrDefault(e => e.Type == wt);
 
-                switch (wt)
+                var widgetModel = wt.ToModel(widgetEntity);
+
+                if (widgetEntity != null)
                 {
-                    case WidgetType.Weather:
-                        w = new WeatherModel();
-                        break;
-                    case WidgetType.Calendar:
-                        w = new CalendarModel();
-                        break;
-                    case WidgetType.Horoscope:
-                        w = new HoroscopeModel();
-                        break;
-                    case WidgetType.Twitter:
-                        w = new TwitterModel();
-                        break;
-                    default:
-                        w = new WidgetModel();
-                        break;
-                }
-
-                w.WidgetType = (WidgetType)Enum.Parse(typeof(WidgetType), type);
-                var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.WidgetType);
-
-                if (ww != null)
-                {
-                    w.X = ww.X;
-                    w.Y = ww.Y;
-                    w.LoadInfos(ww.Infos);
-
-                    w.SetActive();
+                    widgetModel.LoadInfos();
+                    widgetModel.SetActive();
                 }
                 else
-                    w.IsActive = false;
+                {
+                    widgetModel.IsActive = false;
+                }
 
-                Widgets.Add(w);
+                Widgets.Add(widgetModel);
             }
         }
     }
-
 }

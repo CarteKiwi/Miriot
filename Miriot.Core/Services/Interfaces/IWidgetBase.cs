@@ -1,4 +1,5 @@
 ﻿using Miriot.Common.Model;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Core.Services.Interfaces
 {
@@ -6,7 +7,7 @@ namespace Miriot.Core.Services.Interfaces
     {
         WidgetStates State { get; set; }
         void SetPosition(int x, int y);
-        Widget OriginalWidget { get; set; }
+        WidgetModel OriginalWidget { get; set; }
     }
 
     public enum WidgetStates

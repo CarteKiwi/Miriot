@@ -2,30 +2,35 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
-    public class WidgetModel : CustomViewModel
+    public abstract class WidgetModel : INotifyPropertyChanged
     {
         #region Variables
         private int _x;
         private int _y;
         private string _title;
         private bool _isActive;
+        protected List<string> _infos;
+
+        public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         #region Properties
         public int X
         {
             get { return _x; }
-            set { Set(() => X, ref _x, value); }
+            set { Set(ref _x, value); }
         }
 
         public int Y
         {
             get { return _y; }
-            set { Set(() => Y, ref _y, value); }
+            set { Set(ref _y, value); }
         }
 
         public bool IsActive
@@ -41,14 +46,24 @@ namespace Miriot.Core.ViewModels.Widgets
             }
         }
 
-        public string Title
+        public virtual string Title
         {
-            get { return string.IsNullOrEmpty(_title) ? WidgetType.ToString() : _title; }
-            set { Set(() => Title, ref _title, value); }
+            get { return string.IsNullOrEmpty(_title) ? Type.ToString() : _title; }
+            set { Set(ref _title, value); }
         }
 
-        public WidgetType WidgetType { get; set; }
+        public abstract WidgetType Type { get; }
+
         #endregion
+
+        public WidgetModel(Widget widgetEntity)
+        {
+            if (widgetEntity == null) return;
+
+            X = widgetEntity.X;
+            Y = widgetEntity.Y;
+            _infos = widgetEntity.Infos;
+        }
 
         public Widget ToWidget()
         {
@@ -56,14 +71,14 @@ namespace Miriot.Core.ViewModels.Widgets
             return new Widget
             {
                 Id = Guid.NewGuid(),
-                Type = WidgetType,
+                Type = Type,
                 X = X,
                 Y = Y,
                 Infos = infos == null ? null : new List<string> { JsonConvert.SerializeObject(infos) }
             };
         }
 
-        public virtual Task LoadInfos(List<string> infos)
+        public virtual Task LoadInfos()
         {
             return Task.FromResult(0);
         }
@@ -80,5 +95,14 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public virtual void OnActivated() { }
         public virtual void OnDisabled() { }
+
+        protected void Set<T>(ref T field, T value, [CallerMemberName] string name = "")
+        {
+            if (field == null || !field.Equals(value))
+            {
+                field = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }
     }
 }

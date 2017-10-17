@@ -9,7 +9,7 @@
         Leo = 4,
         Virgo = 5,
         Libra = 6,
-        SCorpio = 7,
+        Scorpio = 7,
         Sagittarius = 8,
         Capricorn = 9,
         Aquarius = 10,

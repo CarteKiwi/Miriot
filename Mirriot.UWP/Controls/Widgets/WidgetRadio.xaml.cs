@@ -1,6 +1,6 @@
 ﻿using Miriot.Common;
-using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +10,7 @@ namespace Miriot.Controls
 {
     public sealed partial class WidgetRadio : IWidgetAction, IWidgetExclusive
     {
-        public WidgetRadio(Widget widget): base (widget)
+        public WidgetRadio(RadioModel widget): base (widget)
         {
             InitializeComponent();
             IsExclusive = true;

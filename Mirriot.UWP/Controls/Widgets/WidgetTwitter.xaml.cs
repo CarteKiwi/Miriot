@@ -32,9 +32,8 @@ namespace Miriot.Controls
             private set => Set(ref _tweets, value);
         }
 
-        public WidgetTwitter(Widget widget) : base(widget)
+        public WidgetTwitter(TwitterModel widget) : base(widget)
         {
-            OriginalWidget = widget;
             State = WidgetStates.Minimal;
 
             InitializeComponent();
@@ -48,7 +47,8 @@ namespace Miriot.Controls
         {
             try
             {
-                RetrieveData();
+                await OriginalWidget.LoadInfos();
+
                 TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://miriot.suismoi.fr");
 
                 await LoadTweetsAsync();
@@ -58,12 +58,6 @@ namespace Miriot.Controls
             {
                 Debug.WriteLine(ex.Message);
             }
-        }
-
-        private void RetrieveData()
-        {
-            TwitterModel c = new TwitterModel();
-            c.LoadInfos(OriginalWidget.Infos);
         }
 
         public override void OnStateChanged()

@@ -1,23 +1,14 @@
-﻿using Miriot.UWP;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Resources;
+using Miriot.UWP;
 
 namespace Miriot
 {
@@ -30,10 +21,7 @@ namespace Miriot
         private static Locator _locator;
         public static Locator Locator
         {
-            get
-            {
-                return _locator ?? (_locator = new Locator());
-            }
+            get => _locator ?? (_locator = new Locator());
 
             set { _locator = value; }
         }
@@ -44,8 +32,8 @@ namespace Miriot
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
         }
 
         /// <summary>
@@ -55,11 +43,10 @@ namespace Miriot
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Windows.UI.Xaml.Resources.CustomXamlResourceLoader.Current = new LocalizedStrings();
+            CustomXamlResourceLoader.Current = new LocalizedStrings();
 
             Locator = new Locator();
             
-
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.BackgroundColor = Colors.Black;
             titleBar.ForegroundColor = Colors.Black;

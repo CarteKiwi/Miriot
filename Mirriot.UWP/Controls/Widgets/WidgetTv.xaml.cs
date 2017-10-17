@@ -1,6 +1,8 @@
 ﻿using Microsoft.Practices.ServiceLocation;
 using Miriot.Common;
+using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
+using Miriot.Core.ViewModels.Widgets;
 using Miriot.JavascriptHandler;
 using System;
 using System.Collections.Generic;
@@ -11,12 +13,10 @@ using Windows.Foundation.Collections;
 using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Miriot.Core.Services.Interfaces;
-using Miriot.Common.Model;
 
 namespace Miriot.Controls
 {
-    public sealed partial class WidgetTv : IWidgetExclusive
+    public sealed partial class WidgetTv : IWidgetAction, IWidgetExclusive
     {
         //private FFmpegInteropMSS FFmpegMSS;
         private string _urlHub;
@@ -47,7 +47,7 @@ namespace Miriot.Controls
 
         public bool IsExclusive { get; set; }
 
-        public WidgetTv(Widget widget, Dictionary<string, string> cachedUrls) : base(widget)
+        public WidgetTv(WidgetModel widget, Dictionary<string, string> cachedUrls) : base(widget)
         {
             InitializeComponent();
 
@@ -278,6 +278,24 @@ namespace Miriot.Controls
 
             _urlHub = channelUri;
             LoadChannel(key, channelUri);
+        }
+
+        public void DoAction(IntentResponse intent)
+        {
+            if (intent.Intent == "TurnOnTv")
+            {
+                TurnOn(intent);
+            }
+
+            if (intent.Intent == "FullScreenTv")
+            {
+                IsFullscreen = true;
+            }
+
+            if (intent.Intent == "ReduceScreenTv")
+            {
+                IsFullscreen = false;
+            }
         }
     }
 }
