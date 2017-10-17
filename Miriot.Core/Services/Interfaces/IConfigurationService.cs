@@ -5,6 +5,6 @@ namespace Miriot.Core.Services.Interfaces
 {
     public interface IConfigurationService
     {
-        Task<Dictionary<string, string>> GetKeysAsync();
+        Task<Dictionary<string, string>> GetKeysByProviderAsync(string providerName);
     }
 }

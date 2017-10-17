@@ -15,9 +15,9 @@ namespace Miriot.Controls
 
         private async void AddReminder(IntentResponse intent)
         {
-            MicrosoftGraphService mgService = new MicrosoftGraphService();
-            mgService.Initialize("1a383460-c136-44e4-be92-aa8a379f3265");
-            var isConnected = await mgService.LoginAsync();
+            //MicrosoftGraphService mgService = new MicrosoftGraphService();
+            //mgService.Initialize("1a383460-c136-44e4-be92-aa8a379f3265");
+            //var isConnected = await mgService.LoginAsync();
 
             var action = intent.Actions.FirstOrDefault(e => e.Triggered);
 

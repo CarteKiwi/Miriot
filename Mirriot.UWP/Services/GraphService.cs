@@ -18,9 +18,12 @@ namespace Miriot.Services
         public void Initialize()
         {
             // From Azure portal - Cellenza subscription
-            var appClientId = "ca026d51-8d86-4f85-a697-7be9c0a86453";
+            //var appClientId = "ca026d51-8d86-4f85-a697-7be9c0a86453";
+            
+            // From Azure portal - Supinfo subscription
+            var appClientId = "e57bfe1e-a88e-47f3-b47c-c414f8ca244b";
             //var appClientId = "1a383460-c136-44e4-be92-aa8a379f3265";
-            IsInitialized = MicrosoftGraphService.Instance.Initialize(appClientId, MicrosoftGraphEnums.AuthenticationModel.V1);
+            IsInitialized = MicrosoftGraphService.Instance.Initialize(appClientId, MicrosoftGraphEnums.AuthenticationModel.V2);
         }
 
         public async Task<bool> LoginAsync()

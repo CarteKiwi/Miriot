@@ -383,6 +383,9 @@
     <Reference Include="ChakraBridge">
       <HintPath>..\..\..\JsBridge\dist\ChakraBridge.winmd</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Toolkit.Services">
+      <HintPath>..\Libs\Microsoft.Toolkit.Services.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Toolkit.Uwp.Services, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Microsoft.Toolkit.Uwp.Services.dll</HintPath>
@@ -463,7 +466,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Mock|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\ARM\Mock\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;CODE_ANALYSIS;MOCK</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>

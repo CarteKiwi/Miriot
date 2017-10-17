@@ -10,7 +10,7 @@ namespace Miriot.Services
 {
     public class ConfigurationService : IConfigurationService
     {
-        public async Task<Dictionary<string, string>> GetKeysAsync()
+        public async Task<Dictionary<string, string>> GetKeysByProviderAsync(string providerName)
         {
             var uri = new Uri("ms-appx:///Configuration.xml");
             var sampleFile = await StorageFile.GetFileFromApplicationUriAsync(uri);
@@ -20,7 +20,7 @@ namespace Miriot.Services
             var doc = new XmlDocument();
             doc.LoadXml(contents);
 
-            var node = doc.DocumentElement.SelectSingleNode("/api/cs");
+            var node = doc.DocumentElement.SelectSingleNode($"/api/{providerName}");
 
             var l = node?.Attributes.Select(a => new { a.NodeName, a.InnerText });
 

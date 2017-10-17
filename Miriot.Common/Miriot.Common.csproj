@@ -61,6 +61,10 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Model\MiriotNotification.cs" />
     <Compile Include="Model\Scene.cs" />
+    <Compile Include="Model\Widgets\Deezer\Album.cs" />
+    <Compile Include="Model\Widgets\Deezer\Artist.cs" />
+    <Compile Include="Model\Widgets\Deezer\DeezerResponse.cs" />
+    <Compile Include="Model\Widgets\Deezer\DeezerTrack.cs" />
     <Compile Include="Model\Widgets\Horoscope\HoroscopeResponse.cs" />
     <Compile Include="Model\Widgets\Horoscope\Signs.cs" />
     <Compile Include="Model\Widgets\Horoscope\HoroscopeWidgetInfo.cs" />
@@ -105,6 +109,7 @@
       <HintPath>..\..\..\..\Program Files (x86)\Windows Kits\10\References\Windows.Foundation.UniversalApiContract\2.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
