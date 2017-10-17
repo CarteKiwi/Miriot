@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Practices.ServiceLocation;
 using Miriot.Common;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
@@ -13,8 +12,6 @@ namespace Miriot
     {
         static Locator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
             var navigationService = CreateNavigationService();
             SimpleIoc.Default.Register(() => navigationService);
             SimpleIoc.Default.Register<IConfigurationService, ConfigurationService>();

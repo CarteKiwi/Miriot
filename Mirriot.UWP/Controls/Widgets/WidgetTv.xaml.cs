@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
@@ -193,7 +193,7 @@ namespace Miriot.Controls
 
             try
             {
-                var vm = ServiceLocator.Current.GetInstance<MainViewModel>();
+                var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
                 vm.User.UserData.CachedTvUrls = _cachedUrls;
                 Task.Run(async () => await vm.UpdateUserAsync());
             }

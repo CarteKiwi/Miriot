@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common.Model;
 using Miriot.Core.ViewModels;
 using Windows.UI.Xaml.Navigation;
@@ -7,7 +7,7 @@ namespace Miriot.Views
 {
     public sealed partial class SettingsPage
     {
-        public SettingsViewModel Vm { get; } = ServiceLocator.Current.GetInstance<SettingsViewModel>();
+        public SettingsViewModel Vm { get; } = SimpleIoc.Default.GetInstance<SettingsViewModel>();
 
         public SettingsPage()
         {

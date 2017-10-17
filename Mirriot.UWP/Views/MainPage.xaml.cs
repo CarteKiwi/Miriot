@@ -1,5 +1,6 @@
-﻿using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Practices.ServiceLocation;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
+
 using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
 using Miriot.Controls;
@@ -43,7 +44,7 @@ namespace Miriot
             InitializeTransitionHelper();
 
             Loaded += MainPage_Loaded;
-            _frameAnalyzer = ServiceLocator.Current.GetInstance<IFrameAnalyzer<ServiceResponse>>();
+            _frameAnalyzer = SimpleIoc.Default.GetInstance<IFrameAnalyzer<ServiceResponse>>();
         }
 
         #endregion
