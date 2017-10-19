@@ -1,7 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
 using Miriot.Common;
-using Miriot.Common.Model;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,9 +13,8 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Miriot.Core.ViewModels.Widgets;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetTwitter : IWidgetOAuth, IWidgetExclusive, IWidgetAction, INotifyPropertyChanged
     {
@@ -49,7 +48,7 @@ namespace Miriot.Controls
             {
                 await OriginalWidget.LoadInfos();
 
-                TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://miriot.suismoi.fr");
+                TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://Miriot.Win10.suismoi.fr");
 
                 await LoadTweetsAsync();
                 await GetStream();

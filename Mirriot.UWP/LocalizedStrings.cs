@@ -1,7 +1,7 @@
 ﻿using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Resources;
 
-namespace Miriot.UWP
+namespace Miriot.Win10
 {
     public class LocalizedStrings : CustomXamlResourceLoader
     {

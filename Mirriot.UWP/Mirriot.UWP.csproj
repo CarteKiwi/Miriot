@@ -7,8 +7,8 @@
     <ProjectGuid>{EFC31295-A4CE-426C-AE3C-7E1C4999A4BD}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Miriot</RootNamespace>
-    <AssemblyName>Miriot</AssemblyName>
+    <RootNamespace>Miriot.Win10</RootNamespace>
+    <AssemblyName>Miriot.Win10</AssemblyName>
     <DefaultLanguage>fr-FR</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>

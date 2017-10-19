@@ -2,11 +2,11 @@
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Core.Services.Interfaces;
-using Miriot.Services;
-using Miriot.Utils;
-using Miriot.Views;
+using Miriot.Win10.Services;
+using Miriot.Win10.Utils;
+using Miriot.Win10.Views;
 
-namespace Miriot
+namespace Miriot.Win10
 {
     public class Locator
     {

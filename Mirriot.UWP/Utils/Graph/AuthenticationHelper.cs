@@ -10,7 +10,7 @@ using Windows.Security.Authentication.Web.Core;
 using Windows.Security.Credentials;
 using Windows.Storage;
 
-namespace Miriot.Utils.Graph
+namespace Miriot.Win10.Utils.Graph
 {
     internal static class AuthenticationHelper
     {

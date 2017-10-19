@@ -2,7 +2,7 @@
 using Microsoft.Toolkit.Uwp;
 using Miriot.Core.Services.Interfaces;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class PlatformService : IPlatformService
     {

@@ -8,16 +8,14 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Resources;
-using Miriot.UWP;
 
-namespace Miriot
+namespace Miriot.Win10
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
-
         private static Locator _locator;
         public static Locator Locator
         {

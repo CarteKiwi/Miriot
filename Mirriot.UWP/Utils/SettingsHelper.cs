@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Windows.Storage;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public static class SettingsHelper
     {

@@ -167,7 +167,8 @@ namespace Miriot.Core.ViewModels
 
         public void Initialize()
         {
-            _toothbrushingLauncher = new Timer(OnToothTick);
+            _toothbrushingLauncher = new Timer(ToothbrushingLauncher);
+
             _toothbrushingSemaphore = new SemaphoreSlim(1);
             _toothbrushingTimer = new Stopwatch();
 
@@ -177,11 +178,6 @@ namespace Miriot.Core.ViewModels
 
             _speechService.InitializeAsync();
             _speechService.SetCommand(ProceedSpeechCommand);
-        }
-
-        private void OnToothTick(object state)
-        {
-            throw new NotImplementedException();
         }
 
         private void OnNetworkStatusChanged(object sender, NetworkAvailabilityEventArgs e)
@@ -208,7 +204,7 @@ namespace Miriot.Core.ViewModels
             Widgets?.Clear();
             IsLoading = false;
 
-            _toothbrushingLauncher.Dispose();
+            _toothbrushingLauncher.Change(0, Timeout.Infinite);
             IsListeningFirstName = false;
             _isListeningYesNo = false;
             User = null;
@@ -348,7 +344,7 @@ namespace Miriot.Core.ViewModels
             _isListeningYesNo = true;
         }
 
-        private async void ToothbrushingLauncher(object sender, object e)
+        private async void ToothbrushingLauncher(object sender)
         {
             if (!_toothbrushingSemaphore.Wait(0))
                 return;

@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Miriot.Controls.Widgets
+namespace Miriot.Win10.Controls.Widgets
 {
     public class TwitterTemplateSelector : DataTemplateSelector
     {

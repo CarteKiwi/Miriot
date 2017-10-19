@@ -1,5 +1,5 @@
 ﻿using Miriot.Core.Services.Interfaces;
-using Miriot.Utils;
+using Miriot.Win10.Utils;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -17,10 +17,12 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Devices = Windows.Devices;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class CameraControl : ICameraService
+    public sealed partial class CameraControl : UserControl, ICameraService
     {
         #region Variables
         private MediaCapture _mediaCapture;
@@ -103,7 +105,7 @@ namespace Miriot.Controls
                             default:
                                 _cameraId = device.Id;
                                 break;
-                            case Panel.Back:
+                            case Devices.Enumeration.Panel.Back:
                                 break;
                         }
                     }
@@ -329,7 +331,7 @@ namespace Miriot.Controls
             {
                 var decoder = await BitmapDecoder.CreateAsync(inputStream);
 
-                var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpeg", CreationCollisionOption.GenerateUniqueName);
+                var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.Win10.jpeg", CreationCollisionOption.GenerateUniqueName);
 
                 using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {

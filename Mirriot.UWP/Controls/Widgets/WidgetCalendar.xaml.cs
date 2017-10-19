@@ -4,17 +4,18 @@ using Microsoft.Toolkit.Uwp;
 using Miriot.Common.Model.Widgets;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
-using Miriot.Utils.Graph;
+using Miriot.Win10.Utils.Graph;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetCalendar : IWidgetOAuth, IWidgetListener
+    public sealed partial class WidgetCalendar : WidgetBase, IWidgetOAuth, IWidgetListener
     {
         public string Token { get; set; }
         public GraphUser User { get; set; }
@@ -45,17 +46,17 @@ namespace Miriot.Controls
             OnInfosChanged?.Invoke(this, new EventArgs());
         }
 
-        private async void WidgetCalendar_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void WidgetCalendar_Loaded(object sender, RoutedEventArgs e)
         {
             await RetrieveData();
-            NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            NotConnectedMessage.Visibility = Visibility.Collapsed;
 
             if (User != null)
                 Init();
             else
             {
-                Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Loader.Visibility = Visibility.Collapsed;
+                NotConnectedMessage.Visibility = Visibility.Visible;
             }
         }
 
@@ -72,11 +73,11 @@ namespace Miriot.Controls
             {
                 // Something went wrong
                 Debug.WriteLine(ex.Message);
-                NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                NotConnectedMessage.Visibility = Visibility.Visible;
             }
             finally
             {
-                Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Loader.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -88,14 +89,14 @@ namespace Miriot.Controls
                 {
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        Loader.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        Loader.Visibility = Visibility.Visible;
                     });
                 },
                 async () =>
                 {
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        Loader.Visibility = Visibility.Collapsed;
                     });
                 },
                 async ex =>
@@ -106,8 +107,8 @@ namespace Miriot.Controls
                         {
                             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                             {
-                                NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                                Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                                NotConnectedMessage.Visibility = Visibility.Visible;
+                                Loader.Visibility = Visibility.Collapsed;
                                 //await DisplayAuthorizationErrorMessageAsync(ex as ServiceException, "Read user mail");
                             });
                         }
@@ -129,14 +130,14 @@ namespace Miriot.Controls
                 {
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        Loader.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        Loader.Visibility = Visibility.Visible;
                     });
                 },
                 async () =>
                 {
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        Loader.Visibility = Visibility.Collapsed;
                     });
                 },
                 async ex =>
@@ -147,8 +148,8 @@ namespace Miriot.Controls
                         {
                             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                             {
-                                NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                                Loader.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                                NotConnectedMessage.Visibility = Visibility.Visible;
+                                Loader.Visibility = Visibility.Collapsed;
                                 //await DisplayAuthorizationErrorMessageAsync(ex as ServiceException, "Read user mail");
                             });
                         }
@@ -235,7 +236,7 @@ namespace Miriot.Controls
             catch (Exception ex)
             {
                 Token = null;
-                NotConnectedMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                NotConnectedMessage.Visibility = Visibility.Visible;
                 RaiseOnChanged();
                 Debug.WriteLine(string.Format("ERROR retrieving messages: {0}", ex.InnerException.Message));
             }

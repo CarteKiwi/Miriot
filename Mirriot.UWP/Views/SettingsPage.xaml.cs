@@ -1,11 +1,12 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common.Model;
 using Miriot.Core.ViewModels;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Miriot.Views
+namespace Miriot.Win10.Views
 {
-    public sealed partial class SettingsPage
+    public sealed partial class SettingsPage : Page
     {
         public SettingsViewModel Vm { get; } = SimpleIoc.Default.GetInstance<SettingsViewModel>();
 

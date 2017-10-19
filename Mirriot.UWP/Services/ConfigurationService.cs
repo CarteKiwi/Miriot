@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class ConfigurationService : IConfigurationService
     {

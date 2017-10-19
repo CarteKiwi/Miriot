@@ -1,14 +1,13 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-
 using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
-using Miriot.Controls;
+using Miriot.Win10.Controls;
 using Miriot.Core.Messages;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
 using Miriot.Core.ViewModels.Widgets;
-using Miriot.Utils;
+using Miriot.Win10.Utils;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -25,9 +24,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-namespace Miriot
+namespace Miriot.Win10
 {
-    public sealed partial class MainPage
+    public sealed partial class MainPage : Page
     {
         private bool _isProcessing;
         private CoreDispatcher _dispatcher;

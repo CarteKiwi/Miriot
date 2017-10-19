@@ -9,7 +9,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class GraphService : IGraphService
     {

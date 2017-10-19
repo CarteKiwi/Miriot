@@ -1,8 +1,8 @@
 ﻿<Page
-    x:Class="Miriot.MainPage"
+    x:Class="Miriot.Win10.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ctrl="using:Miriot.Controls"
+    xmlns:ctrl="using:Miriot.Win10.Controls"
     RequestedTheme="Dark"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

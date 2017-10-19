@@ -1,9 +1,9 @@
 ﻿<local:WidgetBase
     x:Name="Root"
-    x:Class="Miriot.Controls.WidgetTv"
+    x:Class="Miriot.Win10.Controls.WidgetTv"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Miriot.Controls"
+    xmlns:local="using:Miriot.Win10.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:gif="using:XamlAnimatedGif"

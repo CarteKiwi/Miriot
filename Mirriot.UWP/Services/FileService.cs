@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class FileService : IFileService
     {

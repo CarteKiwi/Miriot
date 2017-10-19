@@ -9,7 +9,7 @@ using Windows.Media.FaceAnalysis;
 using Windows.System.Threading;
 using Miriot.Core.Services.Interfaces;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public class FrameAnalyser<T> : IFrameAnalyzer<T>
     {

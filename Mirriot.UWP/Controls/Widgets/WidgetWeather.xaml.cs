@@ -9,7 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using Windows.UI.Xaml.Controls;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetWeather : IWidgetBase
     {

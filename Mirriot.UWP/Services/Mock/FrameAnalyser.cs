@@ -1,5 +1,5 @@
 ﻿using Miriot.Core.Services.Interfaces;
-using Miriot.Utils;
+using Miriot.Win10.Utils;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -7,7 +7,7 @@ using Windows.ApplicationModel;
 using Windows.Graphics.Imaging;
 using Windows.System.Threading;
 
-namespace Miriot.Services.Mock
+namespace Miriot.Win10.Services.Mock
 {
     public class FrameAnalyser<T> : IFrameAnalyzer<T>
     {

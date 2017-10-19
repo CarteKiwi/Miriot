@@ -8,7 +8,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public static class ImageHelper
     {
@@ -88,7 +88,7 @@ namespace Miriot.Utils
         {
             SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
 
-            var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpg", CreationCollisionOption.ReplaceExisting);
+            var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.Win10.jpg", CreationCollisionOption.ReplaceExisting);
 
             using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {

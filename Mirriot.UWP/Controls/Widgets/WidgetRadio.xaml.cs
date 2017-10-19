@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Media.Streaming.Adaptive;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetRadio : IWidgetAction, IWidgetExclusive
+    public sealed partial class WidgetRadio : WidgetBase, IWidgetAction, IWidgetExclusive
     {
         public WidgetRadio(RadioModel widget): base (widget)
         {

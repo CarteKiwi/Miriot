@@ -1,10 +1,9 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+﻿using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public class WidgetBase : UserControl, IWidgetBase
     {

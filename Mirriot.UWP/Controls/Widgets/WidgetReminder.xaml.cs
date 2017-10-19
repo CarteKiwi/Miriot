@@ -1,10 +1,9 @@
-﻿using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
-using Miriot.Common;
+﻿using Miriot.Common;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
 using System.Linq;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetReminder: IWidgetAction
     {

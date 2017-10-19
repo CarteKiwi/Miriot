@@ -3,7 +3,7 @@ using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class DispatcherService : IDispatcherService
     {

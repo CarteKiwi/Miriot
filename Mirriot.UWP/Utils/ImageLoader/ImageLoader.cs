@@ -12,7 +12,7 @@ using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
 using Windows.UI.Composition;
 
-namespace Miriot.Utils.ImageLoader
+namespace Miriot.Win10.Utils.ImageLoader
 {
     public interface IImageLoader : IDisposable
     {

@@ -1,8 +1,9 @@
 ﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class IotLoader
+    public sealed partial class IotLoader : UserControl
     {
         public double Radius
         {

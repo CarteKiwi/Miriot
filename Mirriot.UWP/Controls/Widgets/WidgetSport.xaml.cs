@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using Miriot.Core.ViewModels.Widgets;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetSport
     {

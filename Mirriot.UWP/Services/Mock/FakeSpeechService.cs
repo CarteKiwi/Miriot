@@ -5,7 +5,7 @@ using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class FakeSpeechService : ISpeechService
     {

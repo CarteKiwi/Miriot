@@ -11,7 +11,7 @@ using Miriot.Common;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Common.Model.Widgets.Deezer;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetDeezer : IWidgetAction, IWidgetExclusive
     {

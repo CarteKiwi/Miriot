@@ -2,7 +2,7 @@
 using System.Globalization;
 using Windows.UI.Xaml.Data;
 
-namespace Miriot.Converters
+namespace Miriot.Win10.Converters
 {
     public class StringFormatConverter : IValueConverter
     {
