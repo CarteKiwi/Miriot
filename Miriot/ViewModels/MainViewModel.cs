@@ -19,6 +19,7 @@ using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Miriot.Core.ViewModels.Widgets;
 using System.Net.NetworkInformation;
+using Miriot.Resources;
 
 namespace Miriot.Core.ViewModels
 {
@@ -238,7 +239,7 @@ namespace Miriot.Core.ViewModels
             }
             else
             {
-                SetMessage(null, "Impossible d'enregistrer le compte");
+                SetMessage(null, Strings.UnableToSaveAccount);
             }
         }
 
