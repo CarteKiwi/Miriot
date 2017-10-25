@@ -19,12 +19,12 @@ namespace Miriot.Win10.Utils
         public event EventHandler NoFaceDetected;
 
         private FaceTracker _faceTracker;
-        private ThreadPoolTimer _frameProcessingTimer;
+        private Timer _frameProcessingTimer;
         private readonly SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         private ICameraService _camera;
         private int _detectedFacesInLastFrame;
 
-        public Func<SoftwareBitmap, Task<T>> AnalysisFunction { get; set; }
+        public Func<byte[], Task<T>> AnalysisFunction { get; set; }
 
         public FrameAnalyser(IFileService fileService)
         {
@@ -35,11 +35,11 @@ namespace Miriot.Win10.Utils
         {
             _camera = camera;
             _faceTracker = await FaceTracker.CreateAsync();
-            var timerInterval = TimeSpan.FromMilliseconds(300);
-            _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
+            _frameProcessingTimer = new Timer((a) => { ProcessCurrentVideoFrame(); });
+            _frameProcessingTimer.Change(0, 300);
         }
 
-        public async void ProcessCurrentVideoFrame(ThreadPoolTimer timer)
+        public async void ProcessCurrentVideoFrame()
         {
             if (!_frameProcessingSemaphore.Wait(0))
             {
@@ -70,7 +70,7 @@ namespace Miriot.Win10.Utils
                 {
                     OnPreAnalysis?.Invoke(this, null);
 
-                    var output = await AnalysisFunction(currentFrame.SoftwareBitmap);
+                    var output = await AnalysisFunction(currentFrame.SoftwareBitmap.ToByteArray());
                     UsersIdentified?.Invoke(this, output);
                 }
 
@@ -93,7 +93,7 @@ namespace Miriot.Win10.Utils
         {
             try
             {
-                return await _camera.GetLatestFrame();
+                return (VideoFrame)await _camera.GetLatestFrame();
             }
             catch (Exception ex)
             {
@@ -104,14 +104,13 @@ namespace Miriot.Win10.Utils
 
         public void Cleanup()
         {
-            _frameProcessingTimer.Cancel();
             _frameProcessingTimer = null;
         }
 
         public async Task<byte[]> GetFrame()
         {
             var frame = await GetVideoFrameSafe();
-            return await _fileService.EncodedBytes(frame?.SoftwareBitmap);
+            return await _fileService.EncodedBytes(frame?.SoftwareBitmap.ToByteArray());
         }
     }
 }

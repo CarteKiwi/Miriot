@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
 
 namespace Miriot.Core.Services.Interfaces
 {
@@ -7,6 +6,6 @@ namespace Miriot.Core.Services.Interfaces
     {
         byte[] GetBytes(string filePath);
 
-        Task<byte[]> EncodedBytes(SoftwareBitmap soft);
+        Task<byte[]> EncodedBytes(byte[] image);
     }
 }

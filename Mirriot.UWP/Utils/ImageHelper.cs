@@ -63,7 +63,7 @@ namespace Miriot.Win10.Utils
                 {
                     stream.Write(byteArray, 0, byteArray.Length);
                     var image = new BitmapImage();
-                    stream.Seek(0,0);
+                    stream.Seek(0, 0);
                     image.SetSource(stream.AsRandomAccessStream());
                     return image;
                 }
@@ -104,7 +104,22 @@ namespace Miriot.Win10.Utils
             return file.Path;
         }
 
-        public static async Task<SoftwareBitmap> ToSoftwareBitmap(this byte[] bytes)
+        public static byte[] ToByteArray(this SoftwareBitmap bitmap)
+        {
+            byte[] bytes;
+            WriteableBitmap newBitmap = new WriteableBitmap(bitmap.PixelWidth, bitmap.PixelHeight);
+            bitmap.CopyToBuffer(newBitmap.PixelBuffer);
+            using (Stream stream = newBitmap.PixelBuffer.AsStream())
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                stream.CopyTo(memoryStream);
+                bytes = memoryStream.ToArray();
+            }
+
+            return bytes;
+        }
+
+        public static async Task<SoftwareBitmap> ToSoftwareBitmapAsync(this byte[] bytes)
         {
             var stream = bytes.AsBuffer().AsStream();
             var decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.PngDecoderId, stream.AsRandomAccessStream());

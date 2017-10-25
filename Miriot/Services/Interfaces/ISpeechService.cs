@@ -1,7 +1,5 @@
-﻿using System.IO;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using System.Threading.Tasks;
-using Windows.Storage.Streams;
 
 namespace Miriot.Core.Services.Interfaces
 {
@@ -12,6 +10,6 @@ namespace Miriot.Core.Services.Interfaces
         Task StartListeningAsync();
         void SetCommand(RelayCommand<string> proceedSpeechCommand);
         bool IsLimited { get; set; }
-        Task<IRandomAccessStream> SynthesizeTextToStreamAsync(string text);
+        Task<object> SynthesizeTextToStreamAsync(string text);
     }
 }

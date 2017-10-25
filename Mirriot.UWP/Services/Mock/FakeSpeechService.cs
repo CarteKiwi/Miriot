@@ -44,7 +44,7 @@ namespace Miriot.Win10.Services
         /// </summary>
         /// <param name="text">Text to be spoken</param>
         /// <returns>nothing</returns>
-        public async Task<IRandomAccessStream> SynthesizeTextToStreamAsync(string text)
+        public async Task<object> SynthesizeTextToStreamAsync(string text)
         {
             return null;
         }

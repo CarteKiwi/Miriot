@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Mobile.Android", "Miriot.Mobile\Miriot.Mobile.Android\Miriot.Mobile.Android.csproj", "{063292A8-E6E4-41A9-9DFC-6BDABD78F973}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Core", "Miriot.Core\Miriot.Core.csproj", "{DE42A784-5E55-4D6C-9E41-55EEE811CA57}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot.Mobile", "Miriot.Mobile\Miriot.Mobile\Miriot.Mobile.csproj", "{D92B67DE-450A-44BE-B9A7-BE18121FB67A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot", "Miriot\Miriot.csproj", "{0C3190C6-066B-4F94-B26D-1496E8E73E43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -269,6 +271,42 @@ Global
 		{D92B67DE-450A-44BE-B9A7-BE18121FB67A}.Release|x64.Build.0 = Release|Any CPU
 		{D92B67DE-450A-44BE-B9A7-BE18121FB67A}.Release|x86.ActiveCfg = Release|Any CPU
 		{D92B67DE-450A-44BE-B9A7-BE18121FB67A}.Release|x86.Build.0 = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|ARM.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|x64.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Debug|x86.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|Any CPU.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|ARM.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|ARM.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|iPhone.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|iPhone.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|x64.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|x64.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|x86.ActiveCfg = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Mock|x86.Build.0 = Debug|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|ARM.ActiveCfg = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|ARM.Build.0 = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|iPhone.Build.0 = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|x64.ActiveCfg = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|x64.Build.0 = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|x86.ActiveCfg = Release|Any CPU
+		{0C3190C6-066B-4F94-B26D-1496E8E73E43}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

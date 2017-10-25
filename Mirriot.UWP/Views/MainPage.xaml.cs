@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage.Streams;
 
 namespace Miriot.Win10
 {
@@ -98,7 +99,7 @@ namespace Miriot.Win10
             {
                 if (Vm.SpeakStream != null)
                 {
-                    MediaElementCtrl.SetSource(Vm.SpeakStream, ((SpeechSynthesisStream)Vm.SpeakStream).ContentType);
+                    MediaElementCtrl.SetSource((IRandomAccessStream)Vm.SpeakStream, ((SpeechSynthesisStream)Vm.SpeakStream).ContentType);
                     MediaElementCtrl.Play();
                 }
             }

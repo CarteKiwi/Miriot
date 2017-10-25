@@ -5,21 +5,16 @@ using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Core.Messages;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
+using Miriot.Resources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-using Windows.Networking.Connectivity;
-using Windows.Storage.Streams;
-using Windows.System.Profile;
-using Windows.UI.Xaml;
-using Miriot.Core.ViewModels.Widgets;
-using System.Net.NetworkInformation;
-using Miriot.Resources;
 
 namespace Miriot.Core.ViewModels
 {
@@ -49,7 +44,7 @@ namespace Miriot.Core.ViewModels
         private SemaphoreSlim _toothbrushingSemaphore;
         private bool _isToothbrushing;
         private bool _isListening;
-        private IRandomAccessStream _speakStream;
+        private object _speakStream;
         #endregion
 
         #region Commands
@@ -63,7 +58,7 @@ namespace Miriot.Core.ViewModels
 
         public Action<ActionMessage> ActionCallback;
 
-        public IRandomAccessStream SpeakStream
+        public object SpeakStream
         {
             get => _speakStream;
             private set
@@ -113,7 +108,7 @@ namespace Miriot.Core.ViewModels
 
         public bool IsConnected => User != null;
 
-        public bool IsMobile => AnalyticsInfo.VersionInfo.DeviceFamily.Contains("Mobile");
+        public bool IsMobile => true;//AnalyticsInfo.VersionInfo.DeviceFamily.Contains("Mobile");
 
         public States CurrentState
         {
@@ -570,7 +565,7 @@ namespace Miriot.Core.ViewModels
             return null;
         }
 
-        public async Task<ServiceResponse> IdentifyFaces(SoftwareBitmap bitmap)
+        public async Task<ServiceResponse> IdentifyFaces(byte[] bitmap)
         {
             _lastFrameShot = await _fileService.EncodedBytes(bitmap);
 

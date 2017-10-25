@@ -188,6 +188,7 @@
     <Compile Include="Services\Mock\FrameAnalyser.cs" />
     <Compile Include="Services\Mock\FakeSpeechService.cs" />
     <Compile Include="Services\PlatformService.cs" />
+    <Compile Include="Services\SecurityService.cs" />
     <Compile Include="Services\SpeechService.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
     <Compile Include="Services\TwitterWrapperService.cs" />

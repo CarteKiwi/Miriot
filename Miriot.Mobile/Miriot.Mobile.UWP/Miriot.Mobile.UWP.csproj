@@ -107,6 +107,11 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\DispatcherService.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\PlatformService.cs" />
+    <Compile Include="Services\TwitterWrapperService.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -134,10 +139,22 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Miriot\Miriot.csproj">
+      <Project>{0C3190C6-066B-4F94-B26D-1496E8E73E43}</Project>
+      <Name>Miriot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Miriot.Mobile\Miriot.Mobile.csproj">
       <Project>{d92b67de-450a-44be-b9a7-be18121fb67a}</Project>
       <Name>Miriot.Mobile</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Toolkit.Services">
+      <HintPath>..\..\Libs\Microsoft.Toolkit.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Toolkit.Uwp.Services">
+      <HintPath>..\..\Libs\Microsoft.Toolkit.Uwp.Services.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

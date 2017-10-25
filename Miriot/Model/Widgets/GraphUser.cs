@@ -1,6 +1,4 @@
-﻿using Windows.UI.Xaml.Media.Imaging;
-
-namespace Miriot.Common.Model.Widgets
+﻿namespace Miriot.Common.Model.Widgets
 {
     public class GraphUser
     {
@@ -11,6 +9,6 @@ namespace Miriot.Common.Model.Widgets
         public string Name { get; set; }
 
         /// <summary>Gets or sets user photo.</summary>
-        public BitmapImage Photo { get; set; }
+        public byte[] Photo { get; set; }
     }
 }

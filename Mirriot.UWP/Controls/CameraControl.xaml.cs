@@ -347,7 +347,7 @@ namespace Miriot.Win10.Controls
             }
         }
 
-        public async Task<VideoFrame> GetLatestFrame()
+        public async Task<object> GetLatestFrame()
         {
             if (!_isInitialized)
             {

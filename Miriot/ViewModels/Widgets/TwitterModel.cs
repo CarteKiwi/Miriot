@@ -2,16 +2,17 @@
 using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets.Twitter;
 using Miriot.Core.Services.Interfaces;
+using Miriot.Services.Interfaces;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Security.Credentials;
-using Windows.Storage;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
     public class TwitterModel : WidgetModel
     {
+        public override string Title => "Twitter";
+
         public override WidgetType Type => WidgetType.Twitter;
 
         private TwitterUser _user;
@@ -24,17 +25,12 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public TwitterModel(Widget widget) : base(widget)
         {
-            Title = "Twitter";
         }
 
         public override WidgetInfo GetInfos()
         {
-            var vault = new PasswordVault();
-            var passwordCredentials = vault.RetrieveAll();
-            var temp = passwordCredentials.FirstOrDefault(c => c.Resource == "TwitterAccessToken");
-            var cred = vault.Retrieve(temp.Resource, temp.UserName);
-
-            return new OAuthWidgetInfo { Token = cred.UserName, TokenSecret = cred.Password, Username = User.ScreenName };
+            var sec = SimpleIoc.Default.GetInstance<ISecurityService>();
+            return sec.GetSecureData("TwitterAccessToken");
         }
 
         public override async Task LoadInfos()
@@ -46,9 +42,9 @@ namespace Miriot.Core.ViewModels.Widgets
 
             if (!string.IsNullOrEmpty(cred.Token) || !string.IsNullOrEmpty(cred.TokenSecret))
             {
-                var vault = new PasswordVault();
-                var passwordCredential = new PasswordCredential("TwitterAccessToken", cred.Token, cred.TokenSecret);
-                vault.Add(passwordCredential);
+                //var vault = new PasswordVault();
+                //var passwordCredential = new PasswordCredential("TwitterAccessToken", cred.Token, cred.TokenSecret);
+                //vault.Add(passwordCredential);
                 //ApplicationData.Current.LocalSettings.Values["TwitterScreenName"] = cred.Username;
             }
 

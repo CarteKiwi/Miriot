@@ -1,5 +1,4 @@
 ﻿using Miriot.Core.Services.Interfaces;
-using Miriot.Win10.Utils;
 using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -16,12 +15,12 @@ namespace Miriot.Win10.Services
             return File.ReadAllBytes(filePath);
         }
 
-        public async Task<byte[]> EncodedBytes(byte[] bitmapArray)
+        public async Task<byte[]> EncodedBytes(SoftwareBitmap softwareBitmap)
         {
-            if (bitmapArray == null)
+            if (softwareBitmap == null)
                 return null;
 
-            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(await bitmapArray.ToSoftwareBitmapAsync(), BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
             
             byte[] array = null;
 
