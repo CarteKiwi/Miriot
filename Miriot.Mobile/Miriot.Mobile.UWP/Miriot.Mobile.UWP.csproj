@@ -103,24 +103,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CameraControl.xaml.cs">
-      <DependentUpon>CameraControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Face.cs" />
-    <Compile Include="Controls\FaceHelper.cs" />
-    <Compile Include="Controls\HiddenCamControl.xaml.cs">
-      <DependentUpon>HiddenCamControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\IotLoader.xaml.cs">
-      <DependentUpon>IotLoader.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Lights.xaml.cs">
-      <DependentUpon>Lights.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\SettingsHelper.cs" />
-    <Compile Include="Controls\UIHelper.cs" />
     <Compile Include="Controls\Widgets\TwitterTemplateSelector.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
+    <Compile Include="Locator.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -132,10 +118,6 @@
     <Compile Include="Services\RomeService.cs" />
     <Compile Include="Services\TwitterWrapperService.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
-    <Compile Include="Utils\Graph\AuthenticationHelper.cs" />
-    <Compile Include="Utils\Graph\GraphHelper.cs" />
-    <Compile Include="Utils\Graph\HttpHelper.cs" />
-    <Compile Include="Utils\Graph\HttpHelperBase.cs" />
     <Compile Include="Utils\ImageHelper.cs" />
     <Compile Include="Utils\SettingsHelper.cs" />
   </ItemGroup>
@@ -158,22 +140,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\CameraControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\HiddenCamControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\IotLoader.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Lights.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

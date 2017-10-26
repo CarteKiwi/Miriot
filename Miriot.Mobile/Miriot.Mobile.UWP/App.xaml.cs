@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Miriot.Win10;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,14 @@ namespace Miriot.Mobile.UWP
     /// </summary>
     sealed partial class App : Application
     {
+        private static Locator _locator;
+        public static Locator Locator
+        {
+            get => _locator ?? (_locator = new Locator());
+
+            set { _locator = value; }
+        }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -39,6 +48,8 @@ namespace Miriot.Mobile.UWP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            Locator = new Locator();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

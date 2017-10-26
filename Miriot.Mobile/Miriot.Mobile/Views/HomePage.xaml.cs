@@ -3,6 +3,7 @@ using Miriot.Common;
 using Miriot.Core;
 using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
+using Miriot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,32 +13,26 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Miriot.Standard.Views
+namespace Miriot.Mobile.Views
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class HomePage : ContentPage
 	{
+        public ConnectViewModel Vm => SimpleIoc.Default.GetInstance<ConnectViewModel>();
+
         public HomePage ()
 		{
 			InitializeComponent ();
-            BindingContext = SimpleIoc.Default.GetInstance<MainViewModel>();
-
-
+            BindingContext = Vm;
         }
 
-        private void OnStartingIdentification(object sender, EventArgs e)
+        protected override async void OnAppearing()
         {
-            throw new NotImplementedException();
-        }
+            base.OnAppearing();
 
-        private void OnNoFaceDetected(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+            List.ItemsSource = Vm.RemoteSystems;
 
-        private void OnUsersIdentified(object sender, ServiceResponse e)
-        {
-            throw new NotImplementedException();
+            await Vm.InitializeAsync();
         }
     }
 }

@@ -19,15 +19,22 @@ namespace Miriot.Mobile.UWP.Services
 
         public Action<RomeRemoteSystem> Added { get; set; }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             // store filter list
-            List<IRemoteSystemFilter> listOfFilters = MakeFilterList();
+            //List<IRemoteSystemFilter> listOfFilters = MakeFilterList();
 
-            // construct watcher with the list
-            _remoteSystemWatcher = RemoteSystem.CreateWatcher(listOfFilters);
-            _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcherOnRemoteSystemAdded;
-            _remoteSystemWatcher.Start();
+            RemoteSystemAccessStatus accessStatus = await RemoteSystem.RequestAccessAsync();
+
+            if (accessStatus == RemoteSystemAccessStatus.Allowed)
+            {
+                _remoteSystems = new List<RomeRemoteSystem>();
+
+                // construct watcher with the list
+                _remoteSystemWatcher = RemoteSystem.CreateWatcher();
+                _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcherOnRemoteSystemAdded;
+                _remoteSystemWatcher.Start();
+            }
         }
 
         private void RemoteSystemWatcherOnRemoteSystemAdded(RemoteSystemWatcher watcher, RemoteSystemAddedEventArgs args)
@@ -77,12 +84,6 @@ namespace Miriot.Mobile.UWP.Services
 
             // return the list
             return localListOfFilters;
-        }
-
-        public Task InitializeAsync()
-        {
-            Initialize();
-            return null;
         }
 
         public Task<bool> RemoteLaunchUri(RomeRemoteSystem remoteSystem, Uri uri)
