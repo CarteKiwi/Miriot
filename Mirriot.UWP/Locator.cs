@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Services;
 using Miriot.Win10.Services;
-using Miriot.Win10.Utils;
 using Miriot.Win10.Views;
 
 namespace Miriot.Win10
@@ -12,6 +11,8 @@ namespace Miriot.Win10
     {
         static Locator()
         {
+            Cognitive.Bootstrap.Load();
+
             var navigationService = CreateNavigationService();
             SimpleIoc.Default.Register(() => navigationService);
             SimpleIoc.Default.Register<IConfigurationService, ConfigurationService>();

@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Common;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Common.Model.Widgets.Deezer;

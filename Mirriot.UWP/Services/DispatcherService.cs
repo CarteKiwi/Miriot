@@ -1,4 +1,4 @@
-﻿using Miriot.Core.Services.Interfaces;
+﻿using Miriot.Services;
 using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;

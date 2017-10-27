@@ -1,12 +1,9 @@
-﻿using Miriot.Core.Services.Interfaces;
-using Miriot.Win10.Utils;
+﻿using Miriot.Services;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Graphics.Imaging;
-using Windows.System.Threading;
 
 namespace Miriot.Win10.Services.Mock
 {

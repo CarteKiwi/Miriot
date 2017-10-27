@@ -1,7 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
 using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

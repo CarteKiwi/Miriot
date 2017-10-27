@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Core.ViewModels;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.JavascriptHandler;

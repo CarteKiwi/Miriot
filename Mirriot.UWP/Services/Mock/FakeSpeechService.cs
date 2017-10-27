@@ -1,9 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using System.Threading.Tasks;
 using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
-using Windows.Storage.Streams;
 
 namespace Miriot.Win10.Services
 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Miriot.Services;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -6,8 +7,6 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.FaceAnalysis;
-using Windows.System.Threading;
-using Miriot.Core.Services.Interfaces;
 
 namespace Miriot.Win10.Utils
 {

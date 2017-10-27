@@ -1,5 +1,5 @@
 ﻿using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Core.ViewModels.Widgets;
 using System;
 using System.Linq;

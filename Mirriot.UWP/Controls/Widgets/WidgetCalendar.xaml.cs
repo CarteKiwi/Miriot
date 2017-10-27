@@ -2,8 +2,8 @@
 using Microsoft.Office365.OutlookServices;
 using Microsoft.Toolkit.Uwp;
 using Miriot.Common.Model.Widgets;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using Miriot.Win10.Utils.Graph;
 using System;
 using System.Diagnostics;

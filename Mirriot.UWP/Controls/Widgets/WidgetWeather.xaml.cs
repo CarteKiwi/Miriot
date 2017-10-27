@@ -1,6 +1,6 @@
 ﻿using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

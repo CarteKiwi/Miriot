@@ -1,5 +1,5 @@
-﻿using Miriot.Core.Services.Interfaces;
-using Miriot.Core.ViewModels.Widgets;
+﻿using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

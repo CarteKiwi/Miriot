@@ -1,6 +1,6 @@
 ﻿using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using System.Linq;
 
 namespace Miriot.Win10.Controls

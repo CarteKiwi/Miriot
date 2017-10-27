@@ -353,6 +353,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Miriot.Cognitive\Miriot.Cognitive.csproj">
+      <Project>{56693705-0d1f-4cec-b492-57465ce1af84}</Project>
+      <Name>Miriot.Cognitive</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Miriot.JavascriptHandler\Miriot.JavascriptHandler.csproj">
       <Project>{f264ae09-e519-4f11-b7fc-b2dcaf065efd}</Project>
       <Name>Miriot.JavascriptHandler</Name>

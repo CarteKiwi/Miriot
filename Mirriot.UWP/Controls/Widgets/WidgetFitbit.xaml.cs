@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Win10.Controls

@@ -2,11 +2,10 @@
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
-using Miriot.Win10.Controls;
-using Miriot.Core.Messages;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
+using Miriot.Win10.Controls;
 using Miriot.Win10.Utils;
 using System;
 using System.Collections.Specialized;
@@ -16,6 +15,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Gpio;
 using Windows.Foundation;
 using Windows.Media.SpeechSynthesis;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -23,7 +23,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.Storage.Streams;
 
 namespace Miriot.Win10
 {
@@ -79,9 +78,9 @@ namespace Miriot.Win10
             pin.Write(GpioPinValue.Low);
         }
 
-        private void OnAction(ActionMessage msg)
+        private void OnAction(IntentResponse intent)
         {
-            DoAction(msg.Intent);
+            DoAction(intent);
         }
 
         private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -166,7 +165,7 @@ namespace Miriot.Win10
             });
         }
 
-        private void SetToothZone(Rectangle userFaceRectangle)
+        private void SetToothZone(System.Drawing.Rectangle userFaceRectangle)
         {
             Canvas.SetTop(ToothIndicator, userFaceRectangle.Top);
             Canvas.SetLeft(ToothIndicator, userFaceRectangle.Left);

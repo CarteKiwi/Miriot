@@ -1,10 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Windows.Security.Credentials;
 using TwitterUser = Miriot.Common.Model.Widgets.Twitter.TwitterUser;
 
 namespace Miriot.Win10.Services
