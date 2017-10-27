@@ -1,4 +1,4 @@
-﻿using Miriot.Core.Services.Interfaces;
+﻿using Miriot.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

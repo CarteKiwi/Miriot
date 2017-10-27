@@ -1,6 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using Miriot.Core.Services;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
 
 namespace Miriot.Core
@@ -9,11 +7,6 @@ namespace Miriot.Core
     {
         static ViewModelLocator()
         {
-            SimpleIoc.Default.Register<ILuisService, LuisService>();
-            SimpleIoc.Default.Register<IFaceService, FaceService>();
-            SimpleIoc.Default.Register<IVisionService, VisionService>();
-
-            // View Models
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ConnectViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();

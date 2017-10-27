@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets.Twitter;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Services.Interfaces;
 using Newtonsoft.Json;
 using System.Linq;

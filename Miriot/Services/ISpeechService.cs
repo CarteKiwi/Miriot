@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using System.Threading.Tasks;
 
-namespace Miriot.Core.Services.Interfaces
+namespace Miriot.Services
 {
     public interface ISpeechService
     {

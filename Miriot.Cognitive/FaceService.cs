@@ -4,7 +4,7 @@ using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
 using Miriot.Common;
 using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,9 +12,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Rectangle = Microsoft.ProjectOxford.Common.Rectangle;
 
-namespace Miriot.Core.Services
+namespace Miriot.Cognitive
 {
     public class FaceService : IFaceService
     {
@@ -127,12 +126,12 @@ namespace Miriot.Core.Services
                     Id = person.PersonId,
                     Name = person.Name,
                     UserData = data,
-                    FaceRectangle = new Rectangle
+                    FaceRectangle = new System.Drawing.Rectangle
                     {
                         Height = face.FaceRectangle.Height,
                         Width = face.FaceRectangle.Width,
-                        Top = face.FaceRectangle.Top,
-                        Left = face.FaceRectangle.Left
+                        Y = face.FaceRectangle.Top,
+                        X = face.FaceRectangle.Left
                     },
                     Picture = bitmap
                 };

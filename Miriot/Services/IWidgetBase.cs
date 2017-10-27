@@ -1,7 +1,7 @@
 ﻿using Miriot.Common.Model;
 using Miriot.Core.ViewModels.Widgets;
 
-namespace Miriot.Core.Services.Interfaces
+namespace Miriot.Services
 {
     public interface IWidgetBase
     {

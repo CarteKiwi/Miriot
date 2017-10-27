@@ -8,7 +8,7 @@
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
 
-            <ListView x:Name="List" ItemsSource="{Binding Vm.RemoteSystems}">
+            <ListView x:Name="List" ItemsSource="{Binding RemoteSystems}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextCell Text="{Binding DisplayMember}"/>

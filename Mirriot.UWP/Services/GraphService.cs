@@ -1,7 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
 using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using System;
 using System.Diagnostics;
 using System.IO;

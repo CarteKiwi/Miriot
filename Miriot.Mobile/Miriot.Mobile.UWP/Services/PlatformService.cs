@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Toolkit.Uwp;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 
 namespace Miriot.Win10.Services
 {

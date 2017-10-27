@@ -6,9 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.1" />
-    <PackageReference Include="Microsoft.ProjectOxford.Emotion" Version="1.0.336" />
-    <PackageReference Include="Microsoft.ProjectOxford.Face.DotNetStandard" Version="1.0.0" />
-    <PackageReference Include="Microsoft.ProjectOxford.Vision" Version="1.0.393" />
+    <PackageReference Include="Microsoft.ProjectOxford.Common.DotNetStandard" Version="1.0.0" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.0.1-alpha" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿using Miriot.Common.Model.Widgets.Twitter;
 using System.Threading.Tasks;
 
-namespace Miriot.Core.Services.Interfaces
+namespace Miriot.Services
 {
     public interface ITwitterService
     {

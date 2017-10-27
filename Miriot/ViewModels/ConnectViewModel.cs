@@ -4,7 +4,7 @@ using Miriot.Model;
 using Miriot.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 
 namespace Miriot
 {

@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.ProjectOxford.Vision.Contract;
 using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 
-namespace Miriot.Core.Services
+namespace Miriot.Cognitive
 {
     public class VisionService : IVisionService
     {
@@ -23,7 +23,7 @@ namespace Miriot.Core.Services
                 var vision = await client.GetTagsAsync(stream);
 
                 scene.IsToothbrushing = IsToothBrushing(vision);
-                scene.Faces = vision.Faces;
+                //scene.Faces = vision.Faces;
             }
 
             return scene;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Miriot.Core.Services.Interfaces
+namespace Miriot.Services
 {
     public interface IWidgetListener
     {

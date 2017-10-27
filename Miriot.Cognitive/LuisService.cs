@@ -1,11 +1,11 @@
 ﻿using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Miriot.Core.Services
+namespace Miriot.Cognitive
 {
     public class LuisService : ILuisService
     {

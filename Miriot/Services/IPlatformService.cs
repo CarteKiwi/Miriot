@@ -1,4 +1,4 @@
-﻿namespace Miriot.Core.Services.Interfaces
+﻿namespace Miriot.Services
 {
     public interface IPlatformService
     {

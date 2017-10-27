@@ -1,6 +1,4 @@
-﻿using Microsoft.ProjectOxford.Vision.Contract;
-
-namespace Miriot.Common.Model
+﻿namespace Miriot.Common.Model
 {
     public class Scene
     {
@@ -8,6 +6,6 @@ namespace Miriot.Common.Model
 
         public string[] Tags { get; set; }
 
-        public Face[] Faces { get; set; }
+        //public Face[] Faces { get; set; }
     }
 }

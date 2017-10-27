@@ -1,6 +1,6 @@
 ﻿using Miriot.Common;
 
-namespace Miriot.Core.Services.Interfaces
+namespace Miriot.Services
 {
     public interface IWidgetAction
     {

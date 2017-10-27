@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common;
 using Miriot.Core;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Core.ViewModels;
 using Miriot;
 using System;
@@ -30,9 +30,7 @@ namespace Miriot.Mobile.Views
         {
             base.OnAppearing();
 
-            List.ItemsSource = Vm.RemoteSystems;
-
-            await Vm.InitializeAsync();
+            await Vm.InitializeAsync().ConfigureAwait(false);
         }
     }
 }

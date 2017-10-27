@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Core.ViewModels.Widgets;
 using System;
 using System.Collections.ObjectModel;

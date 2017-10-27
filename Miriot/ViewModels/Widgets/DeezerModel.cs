@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 using Miriot.Common.Model.Widgets.Deezer;
 using System.Linq;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 
 namespace Miriot.Core.ViewModels.Widgets
 {

@@ -7,7 +7,7 @@ using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.FaceAnalysis;
 using Windows.System.Threading;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 
 namespace Miriot.Win10.Utils
 {

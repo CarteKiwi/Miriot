@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Win10.Services;
 using Miriot.Win10.Utils;
 using Miriot.Win10.Views;

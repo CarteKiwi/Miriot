@@ -1,12 +1,10 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.ProjectOxford.Face;
 using Miriot.Common;
 using Miriot.Common.Model;
-using Miriot.Core.Messages;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Resources;
+using Miriot.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -56,7 +54,7 @@ namespace Miriot.Core.ViewModels
         public RelayCommand ToggleLedsCommand { get; private set; }
         #endregion
 
-        public Action<ActionMessage> ActionCallback;
+        public Action<IntentResponse> ActionCallback;
 
         public object SpeakStream
         {
@@ -304,7 +302,7 @@ namespace Miriot.Core.ViewModels
                 {
                     if (intent != null)
                     {
-                        ActionCallback.Invoke(new ActionMessage(intent));
+                        ActionCallback.Invoke(intent);
                     }
 
                     SetMessage(string.Empty, string.Empty);
@@ -550,13 +548,13 @@ namespace Miriot.Core.ViewModels
 
                 return users;
             }
-            catch (FaceAPIException ex)
-            {
-                if (ex.ErrorCode == "RateLimitExceeded")
-                {
-                    Debug.WriteLine($"GetUserAsync: RateLimitExceeded: {ex.Message}");
-                }
-            }
+            //catch (FaceAPIException ex)
+            //{
+            //    if (ex.ErrorCode == "RateLimitExceeded")
+            //    {
+            //        Debug.WriteLine($"GetUserAsync: RateLimitExceeded: {ex.Message}");
+            //    }
+            //}
             catch (Exception ex)
             {
                 Debug.WriteLine($"GetUserAsync: {ex.Message}");

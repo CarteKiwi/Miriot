@@ -1,5 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using System;
 using System.Diagnostics;
 using System.Linq;

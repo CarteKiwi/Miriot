@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Miriot.Common;
 using Miriot.Common.Model;
 
-namespace Miriot.Core.Services.Interfaces
+namespace Miriot.Services
 {
     public interface IFaceService
     {
