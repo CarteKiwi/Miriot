@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Miriot.Model;
 
 namespace Miriot.Mobile.Views
 {
@@ -30,7 +31,12 @@ namespace Miriot.Mobile.Views
         {
             base.OnAppearing();
 
-            await Vm.InitializeAsync().ConfigureAwait(false);
+            await Vm.InitializeAsync();
+        }
+
+        public void RemoteSystemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            Vm.SelectCommand.Execute((RomeRemoteSystem)e.SelectedItem);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.ConnectedDevices;
+﻿using Android.OS;
+using Microsoft.ConnectedDevices;
 using Miriot.Model;
 using Miriot.Services.Interfaces;
 using System;
@@ -12,6 +13,7 @@ namespace Miriot.Mobile.Droid.Services
     {
         private RemoteSystemWatcher _remoteSystemWatcher;
         private List<RomeRemoteSystem> _remoteSystems;
+        private AppServiceConnection _appServiceClientConnection;
 
         public bool IsInitialized { get; set; }
 
@@ -21,14 +23,14 @@ namespace Miriot.Mobile.Droid.Services
 
         public async Task InitializeAsync()
         {
-            RemoteSystem.RequestAccessAsync();
-
             _remoteSystems = new List<RomeRemoteSystem>();
 
-            // construct watcher with the list
-            _remoteSystemWatcher = RemoteSystem.CreateWatcher();
-            _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcherOnRemoteSystemAdded;
-            _remoteSystemWatcher.Start();
+            if (_remoteSystemWatcher == null)
+            {
+                _remoteSystemWatcher = RemoteSystem.CreateWatcher();
+                _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcherOnRemoteSystemAdded;
+                _remoteSystemWatcher.Start();
+            }
 
             await Task.FromResult(0);
         }
@@ -57,9 +59,52 @@ namespace Miriot.Mobile.Droid.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
+        public async Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
         {
-            throw new NotImplementedException();
+            //   return RemoteLaunchUri(remoteSystem, new Uri(command));
+            if (_appServiceClientConnection == null)
+            {
+                var system = (RemoteSystem)remoteSystem.NativeObject;
+                var connectionRequest = new RemoteSystemConnectionRequest(system);
+
+                // Construct an AppServiceClientConnection 
+                _appServiceClientConnection =
+                    new AppServiceConnection("", "", connectionRequest);
+
+                try
+                {
+                    AppServiceConnectionStatus status = await _appServiceClientConnection.OpenRemoteAsync();
+                    if (status != AppServiceConnectionStatus.Success)
+                    {
+                        _appServiceClientConnection = null;
+                        return false;
+                    }
+                }
+                catch (ConnectedDevicesException e)
+                {
+                    _appServiceClientConnection = null;
+                    return false;
+                }
+            }
+
+            var message = new Bundle();
+            message.PutString("Command", command);
+            try
+            {
+                var response = await _appServiceClientConnection.SendMessageAsync(message);
+
+                if (response.Status == AppServiceResponseStatus.Success)
+                {
+                    // Get the data that the service returned:
+                    var result = response.Message.GetString("Command");
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

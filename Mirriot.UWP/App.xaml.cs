@@ -1,6 +1,12 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Views;
+using Miriot.Services;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
+using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -134,6 +140,52 @@ namespace Miriot.Win10
                 e.Handled = true;
                 rootFrame.GoBack();
             }
+        }
+
+        private AppServiceConnection _appServiceConnection;
+        private BackgroundTaskDeferral appServiceDeferral;
+        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        {
+            base.OnBackgroundActivated(args);
+            IBackgroundTaskInstance taskInstance = args.TaskInstance;
+            AppServiceTriggerDetails appService = taskInstance.TriggerDetails as AppServiceTriggerDetails;
+            appServiceDeferral = taskInstance.GetDeferral();
+            taskInstance.Canceled += OnAppServicesCanceled;
+            _appServiceConnection = appService.AppServiceConnection;
+            _appServiceConnection.RequestReceived += OnAppServiceRequestReceived;
+            _appServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
+        }
+
+        private async void OnAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            AppServiceDeferral messageDeferral = args.GetDeferral();
+            ValueSet message = args.Request.Message;
+            string text = message["Command"] as string;
+
+            if ("Hello" == text)
+            {
+                var di = SimpleIoc.Default.GetInstance<IDispatcherService>();
+                var d = SimpleIoc.Default.GetInstance<IDialogService>();
+                di.Invoke(async () =>
+                {
+                    await d.ShowMessage(text, "From remote");
+                });
+
+                ValueSet returnMessage = new ValueSet();
+                returnMessage.Add("Result", "True");
+                await args.Request.SendResponseAsync(returnMessage);
+            }
+            messageDeferral.Complete();
+        }
+
+        private void OnAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            appServiceDeferral.Complete();
+        }
+
+        private void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        {
+            appServiceDeferral.Complete();
         }
     }
 }

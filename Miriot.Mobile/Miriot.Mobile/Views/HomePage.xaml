@@ -8,13 +8,20 @@
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
 
-            <ListView x:Name="List" ItemsSource="{Binding RemoteSystems}">
+            <ListView x:Name="List" 
+                      ItemsSource="{Binding RemoteSystems}"
+                      ItemSelected="RemoteSystemSelected">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextCell Text="{Binding DisplayMember}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Button Command="{Binding SendCommand}" 
+                    Text="{Binding SelectedRemoteSystem.DisplayName}"
+                    CommandParameter="Hello">
+                  
+            </Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

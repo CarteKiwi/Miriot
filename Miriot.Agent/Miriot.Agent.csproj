@@ -112,13 +112,14 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SettingsBackgroundTask.cs" />
     <Compile Include="PhoneBackgroundTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Miriot.Common\Miriot.Common.csproj">
-      <Project>{342667A9-E42E-4EC7-BA7D-7CD0996D2472}</Project>
-      <Name>Miriot.Common</Name>
+    <ProjectReference Include="..\Miriot\Miriot.csproj">
+      <Project>{b89dc383-614a-49b2-a745-b7681441e4b7}</Project>
+      <Name>Miriot</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

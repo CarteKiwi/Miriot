@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 using Windows.System.RemoteSystems;
 
 namespace Miriot.Mobile.UWP.Services
@@ -91,9 +93,52 @@ namespace Miriot.Mobile.UWP.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
+        public async Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
         {
-            throw new NotImplementedException();
+            // Set up a new app service connection. The app service name and package family name that
+            // are used here correspond to the AppServices UWP sample.
+            AppServiceConnection connection = new AppServiceConnection
+            {
+                AppServiceName = "com.gdm.miriot.agent",
+                PackageFamilyName = "Miriot_0yq8da09mhzv6"
+            };
+
+            // a valid RemoteSystem object is needed before going any further
+            if (remoteSystem == null)
+            {
+                return false;
+            }
+
+            // Create a remote system connection request for the given remote device
+            RemoteSystemConnectionRequest connectionRequest = new RemoteSystemConnectionRequest((RemoteSystem)remoteSystem.NativeObject);
+
+            // "open" the AppServiceConnection using the remote request
+            AppServiceConnectionStatus status = await connection.OpenRemoteAsync(connectionRequest);
+
+            // only continue if the connection opened successfully
+            if (status != AppServiceConnectionStatus.Success)
+            {
+                return false;
+            }
+
+            // create the command input
+            ValueSet inputs = new ValueSet();
+
+            // min_value and max_value vars are obtained somewhere else in the program
+            inputs.Add("Command", command);
+
+            // send input and receive output in a variable
+            AppServiceResponse response = await connection.SendMessageAsync(inputs);
+
+            string result = "";
+            // check that the service successfully received and processed the message
+            if (response.Status == AppServiceResponseStatus.Success)
+            {
+                // Get the data that the service returned:
+                result = response.Message["Result"] as string;
+            }
+
+            return true;
         }
     }
 }
