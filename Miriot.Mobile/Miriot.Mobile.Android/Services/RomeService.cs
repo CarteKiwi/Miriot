@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Miriot.Common.Model;
 
 namespace Miriot.Mobile.Droid.Services
 {
@@ -105,6 +106,11 @@ namespace Miriot.Mobile.Droid.Services
             }
 
             return true;
+        }
+
+        public Task<User> GetRemoteUserAsync(RomeRemoteSystem remoteSystem)
+        {
+            throw new NotImplementedException();
         }
     }
 }

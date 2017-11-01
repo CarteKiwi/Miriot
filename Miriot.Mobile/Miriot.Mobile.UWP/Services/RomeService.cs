@@ -1,4 +1,5 @@
-﻿using Miriot.Model;
+﻿using Miriot.Common.Model;
+using Miriot.Model;
 using Miriot.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,15 @@ namespace Miriot.Mobile.UWP.Services
     {
         private RemoteSystemWatcher _remoteSystemWatcher;
         private List<RomeRemoteSystem> _remoteSystems;
+        private AppServiceConnection _appServiceConnection;
 
         public bool IsInitialized { get; set; }
 
         public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
 
         public Action<RomeRemoteSystem> Added { get; set; }
+
+        public AppServiceConnectionStatus Status { get; private set; }
 
         public async Task InitializeAsync()
         {
@@ -93,52 +97,84 @@ namespace Miriot.Mobile.UWP.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
+        private async Task<bool> ConnectAsync(RomeRemoteSystem remoteSystem)
         {
-            // Set up a new app service connection. The app service name and package family name that
-            // are used here correspond to the AppServices UWP sample.
-            AppServiceConnection connection = new AppServiceConnection
+            if (_appServiceConnection == null)
             {
-                AppServiceName = "com.gdm.miriot.agent",
-                PackageFamilyName = "Miriot_0yq8da09mhzv6"
-            };
+                // Set up a new app service connection. The app service name and package family name that
+                // are used here correspond to the AppServices UWP sample.
+                _appServiceConnection = new AppServiceConnection
+                {
+                    AppServiceName = "com.gdm.miriot.agent",
+                    PackageFamilyName = "Miriot_0yq8da09mhzv6"
+                };
 
-            // a valid RemoteSystem object is needed before going any further
-            if (remoteSystem == null)
-            {
-                return false;
-            }
+                // a valid RemoteSystem object is needed before going any further
+                if (remoteSystem == null)
+                {
+                    return false;
+                }
 
-            // Create a remote system connection request for the given remote device
-            RemoteSystemConnectionRequest connectionRequest = new RemoteSystemConnectionRequest((RemoteSystem)remoteSystem.NativeObject);
+                // Create a remote system connection request for the given remote device
+                RemoteSystemConnectionRequest connectionRequest = new RemoteSystemConnectionRequest((RemoteSystem)remoteSystem.NativeObject);
 
-            // "open" the AppServiceConnection using the remote request
-            AppServiceConnectionStatus status = await connection.OpenRemoteAsync(connectionRequest);
+                // "open" the AppServiceConnection using the remote request
+                AppServiceConnectionStatus status = await _appServiceConnection.OpenRemoteAsync(connectionRequest);
 
-            // only continue if the connection opened successfully
-            if (status != AppServiceConnectionStatus.Success)
-            {
-                return false;
-            }
+                Status = status;
 
-            // create the command input
-            ValueSet inputs = new ValueSet();
-
-            // min_value and max_value vars are obtained somewhere else in the program
-            inputs.Add("Command", command);
-
-            // send input and receive output in a variable
-            AppServiceResponse response = await connection.SendMessageAsync(inputs);
-
-            string result = "";
-            // check that the service successfully received and processed the message
-            if (response.Status == AppServiceResponseStatus.Success)
-            {
-                // Get the data that the service returned:
-                result = response.Message["Result"] as string;
+                // only continue if the connection opened successfully
+                if (status != AppServiceConnectionStatus.Success)
+                {
+                    _appServiceConnection = null;
+                    return false;
+                }
             }
 
             return true;
+        }
+
+        public async Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
+        {
+            if (await ConnectAsync(remoteSystem))
+            {
+                ValueSet inputs = new ValueSet();
+                inputs.Add("Command", command);
+
+                AppServiceResponse response = await _appServiceConnection.SendMessageAsync(inputs);
+
+                string result = "";
+
+                // check that the service successfully received and processed the message
+                if (response.Status == AppServiceResponseStatus.Success)
+                {
+                    // Get the data that the service returned:
+                    result = response.Message["Result"] as string;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<User> GetRemoteUserAsync(RomeRemoteSystem remoteSystem)
+        {
+            if (await ConnectAsync(remoteSystem))
+            {
+                ValueSet inputs = new ValueSet();
+                inputs.Add("Command", "GetUser");
+
+                AppServiceResponse response = await _appServiceConnection.SendMessageAsync(inputs);
+
+                // check that the service successfully received and processed the message
+                if (response.Status == AppServiceResponseStatus.Success)
+                {
+                    return response.Message["Result"] as User;
+                }
+            }
+
+            return null;
         }
     }
 }

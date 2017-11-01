@@ -11,12 +11,19 @@ namespace Miriot
 {
     public class ConnectViewModel : CustomViewModel
     {
+        private string _message;
+
+        public string Message
+        {
+            get { return _message; }
+            set { Set(ref _message, value); }
+        }
+
+
+
         public RomeRemoteSystem SelectedRemoteSystem
         {
-            get
-            {
-                return _selectedSystem;
-            }
+            get { return _selectedSystem; }
             set { Set(ref _selectedSystem, value); }
         }
 
@@ -27,6 +34,16 @@ namespace Miriot
             {
                 if (_selectCommand == null) _selectCommand = new RelayCommand<RomeRemoteSystem>(OnSelect);
                 return _selectCommand;
+            }
+        }
+
+        private RelayCommand _connectCommand;
+        public RelayCommand ConnectCommand
+        {
+            get
+            {
+                if (_connectCommand == null) _connectCommand = new RelayCommand(OnConnect);
+                return _connectCommand;
             }
         }
 
@@ -75,6 +92,18 @@ namespace Miriot
         private void OnCommand(string obj)
         {
             _romeService.SendCommandAsync(SelectedRemoteSystem, obj);
+        }
+
+        private async void OnConnect()
+        {
+            Message = "Connecting...";
+
+            var user = await _romeService.GetRemoteUserAsync(SelectedRemoteSystem);
+
+            if (user == null)
+                Message = "Unable to retrieve user";
+            else
+                Message = "Retrieved " + user.Name;
         }
     }
 }

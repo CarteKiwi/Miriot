@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
+using Miriot.Core.ViewModels;
 using Miriot.Services;
 using System;
 using Windows.ApplicationModel;
@@ -162,7 +163,7 @@ namespace Miriot.Win10
             ValueSet message = args.Request.Message;
             string text = message["Command"] as string;
 
-            if ("Hello" == text)
+            if ("GetUser" == text)
             {
                 var di = SimpleIoc.Default.GetInstance<IDispatcherService>();
                 var d = SimpleIoc.Default.GetInstance<IDialogService>();
@@ -171,8 +172,10 @@ namespace Miriot.Win10
                     await d.ShowMessage(text, "From remote");
                 });
 
+                var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
+               
                 ValueSet returnMessage = new ValueSet();
-                returnMessage.Add("Result", "True");
+                returnMessage.Add("Result", vm.User);
                 await args.Request.SendResponseAsync(returnMessage);
             }
             messageDeferral.Complete();
