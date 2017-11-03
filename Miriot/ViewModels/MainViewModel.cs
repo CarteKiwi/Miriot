@@ -1,8 +1,10 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Model;
 using Miriot.Resources;
 using Miriot.Services;
 using System;
@@ -172,6 +174,16 @@ namespace Miriot.Core.ViewModels
 
             _speechService.InitializeAsync();
             _speechService.SetCommand(ProceedSpeechCommand);
+
+            Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
+        }
+
+        private void OnDeviceConnected(DeviceConnectedMessage obj)
+        {
+            _dispatcherService.Invoke(() =>
+            {
+                SubTitle = "Connecté avec " + obj.Name;
+            });
         }
 
         private void OnNetworkStatusChanged(object sender, NetworkAvailabilityEventArgs e)

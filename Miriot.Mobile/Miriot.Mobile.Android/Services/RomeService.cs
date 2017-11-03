@@ -112,5 +112,10 @@ namespace Miriot.Mobile.Droid.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> ConnectAsync(RomeRemoteSystem remoteSystem)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

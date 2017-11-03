@@ -1,7 +1,10 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Core.ViewModels;
+using Miriot.Model;
 using Miriot.Services;
+using Newtonsoft.Json;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -165,17 +168,12 @@ namespace Miriot.Win10
 
             if ("GetUser" == text)
             {
-                var di = SimpleIoc.Default.GetInstance<IDispatcherService>();
-                var d = SimpleIoc.Default.GetInstance<IDialogService>();
-                di.Invoke(async () =>
-                {
-                    await d.ShowMessage(text, "From remote");
-                });
+                Messenger.Default.Send(new DeviceConnectedMessage("toto"));
 
                 var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
                
                 ValueSet returnMessage = new ValueSet();
-                returnMessage.Add("Result", vm.User);
+                returnMessage.Add("Result", JsonConvert.SerializeObject(vm.User));
                 await args.Request.SendResponseAsync(returnMessage);
             }
             messageDeferral.Complete();

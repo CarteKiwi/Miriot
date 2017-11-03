@@ -1,6 +1,7 @@
 ﻿using Miriot.Common.Model;
 using Miriot.Model;
 using Miriot.Services.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,6 @@ namespace Miriot.Mobile.UWP.Services
 
         public Action<RomeRemoteSystem> Added { get; set; }
 
-        public AppServiceConnectionStatus Status { get; private set; }
-
         public async Task InitializeAsync()
         {
             // store filter list
@@ -38,12 +37,30 @@ namespace Miriot.Mobile.UWP.Services
 
                 // construct watcher with the list
                 _remoteSystemWatcher = RemoteSystem.CreateWatcher();
-                _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcherOnRemoteSystemAdded;
+                _remoteSystemWatcher.RemoteSystemAdded += OnRemoteSystemAdded;
+                _remoteSystemWatcher.RemoteSystemRemoved += OnRemoteSystemRemoved;
+                _remoteSystemWatcher.RemoteSystemUpdated += OnRemoteSystemUpdated;
                 _remoteSystemWatcher.Start();
             }
         }
 
-        private void RemoteSystemWatcherOnRemoteSystemAdded(RemoteSystemWatcher watcher, RemoteSystemAddedEventArgs args)
+        private void OnRemoteSystemUpdated(RemoteSystemWatcher sender, RemoteSystemUpdatedEventArgs args)
+        {
+            var system = _remoteSystems.First(x => x.Id == args.RemoteSystem.Id);
+            _remoteSystems.Remove(system);
+            _remoteSystems.Add(ToRomeRemoteSystem(args.RemoteSystem));
+        }
+
+        private void OnRemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
+        {
+            var system = _remoteSystems.FirstOrDefault(s => s.Id == args.RemoteSystemId);
+            if (system != null)
+            {
+                _remoteSystems.Remove(system);
+            }
+        }
+
+        private void OnRemoteSystemAdded(RemoteSystemWatcher watcher, RemoteSystemAddedEventArgs args)
         {
             var system = ToRomeRemoteSystem(args.RemoteSystem);
 
@@ -97,7 +114,7 @@ namespace Miriot.Mobile.UWP.Services
             throw new NotImplementedException();
         }
 
-        private async Task<bool> ConnectAsync(RomeRemoteSystem remoteSystem)
+        public async Task<bool> ConnectAsync(RomeRemoteSystem remoteSystem)
         {
             if (_appServiceConnection == null)
             {
@@ -120,8 +137,6 @@ namespace Miriot.Mobile.UWP.Services
 
                 // "open" the AppServiceConnection using the remote request
                 AppServiceConnectionStatus status = await _appServiceConnection.OpenRemoteAsync(connectionRequest);
-
-                Status = status;
 
                 // only continue if the connection opened successfully
                 if (status != AppServiceConnectionStatus.Success)
@@ -170,7 +185,8 @@ namespace Miriot.Mobile.UWP.Services
                 // check that the service successfully received and processed the message
                 if (response.Status == AppServiceResponseStatus.Success)
                 {
-                    return response.Message["Result"] as User;
+                    var res = response.Message["Result"];
+                    return JsonConvert.DeserializeObject<User>(res.ToString());
                 }
             }
 

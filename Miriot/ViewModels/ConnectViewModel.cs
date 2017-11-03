@@ -1,11 +1,12 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
+using Miriot.Common;
 using Miriot.Core.ViewModels;
 using Miriot.Model;
+using Miriot.Services;
 using Miriot.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Miriot.Services;
-using GalaSoft.MvvmLight.Command;
 
 namespace Miriot
 {
@@ -61,26 +62,39 @@ namespace Miriot
 
         private IRomeService _romeService;
         private readonly IDispatcherService _dispatcherService;
+        private readonly INavigationService _navigationService;
         private RomeRemoteSystem _selectedSystem;
 
-        public ConnectViewModel(IRomeService romeService, IDispatcherService dispatcherService)
+        public ConnectViewModel(
+            IRomeService romeService, 
+            IDispatcherService dispatcherService,
+            INavigationService navigationService)
         {
             _romeService = romeService;
             _dispatcherService = dispatcherService;
+            _navigationService = navigationService;
             RemoteSystems = new ObservableCollection<RomeRemoteSystem>();
         }
 
         public async Task InitializeAsync()
         {
-            _romeService.Added = Refresh;
+            _romeService.Added = OnAdded;
             await _romeService.InitializeAsync();
         }
 
-        private void Refresh(RomeRemoteSystem obj)
+        private void OnAdded(RomeRemoteSystem obj)
         {
             _dispatcherService.Invoke(() =>
             {
                 RemoteSystems.Add(obj);
+            });
+        }
+
+        private void OnRemoved(RomeRemoteSystem obj)
+        {
+            _dispatcherService.Invoke(() =>
+            {
+                RemoteSystems.Remove(obj);
             });
         }
 
@@ -98,12 +112,25 @@ namespace Miriot
         {
             Message = "Connecting...";
 
-            var user = await _romeService.GetRemoteUserAsync(SelectedRemoteSystem);
+            var success = await _romeService.ConnectAsync(SelectedRemoteSystem);
 
-            if (user == null)
-                Message = "Unable to retrieve user";
+            if (success)
+            {
+                Message = "Retrieving user...";
+
+                var user = await _romeService.GetRemoteUserAsync(SelectedRemoteSystem);
+
+                if (user == null)
+                    Message = "Unable to retrieve user";
+                else
+                {
+                    _navigationService.NavigateTo(PageKeys.Settings, user);
+                }
+            }
             else
-                Message = "Retrieved " + user.Name;
+            {
+                Message = "Unable to connect";
+            }
         }
     }
 }

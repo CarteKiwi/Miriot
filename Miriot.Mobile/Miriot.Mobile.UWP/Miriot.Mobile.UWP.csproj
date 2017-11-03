@@ -103,6 +103,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EllipseViewRenderer.cs" />
     <Compile Include="Controls\SettingsHelper.cs" />
     <Compile Include="Controls\Widgets\TwitterTemplateSelector.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
