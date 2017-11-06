@@ -4,10 +4,21 @@
              x:Class="Miriot.Mobile.Views.HomePage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
 
+            <Image Source="Searching.gif" HeightRequest="150"
+                   HorizontalOptions="Center"/>
+            
+            <Label Text="Recherche des miroirs à proximité..."
+                   Font="Segoe UI"
+                   VerticalOptions="CenterAndExpand" 
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="Selectionnez le miroir que vous souhaitez paramétrer"
+                   Font="Segoe UI"
+                   FontSize="Small"
+                   VerticalOptions="CenterAndExpand" 
+                   HorizontalOptions="CenterAndExpand" />
+            
             <ListView x:Name="List" 
                       ItemsSource="{Binding RemoteSystems}"
                       ItemSelected="RemoteSystemSelected">

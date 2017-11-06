@@ -20,8 +20,6 @@ namespace Miriot
             set { Set(ref _message, value); }
         }
 
-
-
         public RomeRemoteSystem SelectedRemoteSystem
         {
             get { return _selectedSystem; }
