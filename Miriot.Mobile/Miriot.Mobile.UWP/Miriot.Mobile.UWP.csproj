@@ -91,7 +91,6 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Searching.gif" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
@@ -135,6 +134,7 @@
     <Content Include="Controls\Widgets\Templates\WeatherTemplate.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="slideout.png" />
+    <Content Include="step1.png" />
     <Content Include="xamarin_logo.png" />
   </ItemGroup>
   <ItemGroup>

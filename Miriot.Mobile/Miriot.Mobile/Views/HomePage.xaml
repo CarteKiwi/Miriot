@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Miriot.Mobile.Views.HomePage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout VerticalOptions="FillAndExpand">
 
-            <Image Source="Searching.gif" HeightRequest="150"
+            <Image Source="step1.png" 
+                   HeightRequest="180"
+                   Margin="0,20"
                    HorizontalOptions="Center"/>
             
             <Label Text="Recherche des miroirs à proximité..."
@@ -20,6 +22,8 @@
                    HorizontalOptions="CenterAndExpand" />
             
             <ListView x:Name="List" 
+                      Margin="0,20"
+                      HorizontalOptions="FillAndExpand"
                       ItemsSource="{Binding RemoteSystems}"
                       ItemSelected="RemoteSystemSelected">
                 <ListView.ItemTemplate>
@@ -28,16 +32,18 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            
+
+            <Label Text="{Binding Message}"
+                   HorizontalOptions="CenterAndExpand"/>
+
             <Button Command="{Binding ConnectCommand}" 
-                    Text="Connect...">
-            </Button>
+                    BackgroundColor="#4b6c90"
+                    TextColor="White"
+                    HeightRequest="45"
+                    HorizontalOptions="StartAndExpand"
+                    VerticalOptions="End"
+                    Text="Continuer"/>
             
-            <Label Text="{Binding Message}"/>
-            
-            <Button Command="{Binding SendCommand}" 
-                    Text="{Binding SelectedRemoteSystem.DisplayName}"
-                    CommandParameter="Hello"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
