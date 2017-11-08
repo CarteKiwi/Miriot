@@ -5,30 +5,80 @@
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand">
 
-            <Image Source="step1.png" 
-                   HeightRequest="180"
-                   Margin="0,20"
-                   HorizontalOptions="Center"/>
-            
+            <RelativeLayout Margin="0,15" HorizontalOptions="Center">
+                <Image Source="Resources/mirror.png" 
+                       x:Name="Panda"
+                       HeightRequest="230"
+                       HorizontalOptions="Center"/>
+
+                <Grid RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Width,Factor=.7, Constant=0}"
+                      RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Height,Factor=.7, Constant=0}">
+                    <Image Source="Resources/badge_bg.png" 
+                           x:Name="Badge"
+                           HeightRequest="60"
+                           HorizontalOptions="Center"/>
+                    <Image Source="Resources/magnif.png" 
+                           x:Name="Magnif"
+                           HeightRequest="40"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"/>
+                </Grid>
+            </RelativeLayout>
+
             <Label Text="Recherche des miroirs à proximité..."
                    Font="Segoe UI"
-                   VerticalOptions="CenterAndExpand" 
+                   FontSize="Small"
+                   TextColor="#4b6c90"
+                   LineBreakMode="WordWrap"
+                   VerticalOptions="Start" 
                    HorizontalOptions="CenterAndExpand" />
 
-            <Label Text="Selectionnez le miroir que vous souhaitez paramétrer"
+            <Label Text="Sélectionnez dans la liste le miroir que vous souhaitez paramétrer"
                    Font="Segoe UI"
-                   FontSize="Small"
-                   VerticalOptions="CenterAndExpand" 
+                   FontSize="Micro"
+                   TextColor="#4b6c90"
+                   LineBreakMode="WordWrap"
+                   VerticalOptions="Start" 
                    HorizontalOptions="CenterAndExpand" />
-            
+
+            <Grid VerticalOptions="CenterAndExpand"
+                    IsVisible="{Binding HasAtLeastOneRemoteSystem, Converter={StaticResource InvertBoolConverter}}">
+                <Image Source="Resources/badge_bg.png" 
+                        x:Name="BadgeLoading"
+                        HeightRequest="60"
+                        HorizontalOptions="Center"/>
+                <Image Source="Resources/magnif.png" 
+                        x:Name="MagnifLoading"
+                        HeightRequest="40"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"/>
+            </Grid>
+
             <ListView x:Name="List" 
                       Margin="0,20"
-                      HorizontalOptions="FillAndExpand"
+                      HorizontalOptions="Fill"
+                      IsVisible="{Binding HasAtLeastOneRemoteSystem}"
                       ItemsSource="{Binding RemoteSystems}"
                       ItemSelected="RemoteSystemSelected">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding DisplayMember}"/>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout HorizontalOptions="Fill"
+                                             VerticalOptions="Center"
+                                             HeightRequest="35"
+                                             Orientation="Horizontal">
+                                    <Image Source="Resources/mirror_only.png"
+                                           Margin="0,0,5,0"
+                                           HeightRequest="25"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="EndAndExpand"/>
+                                    <Label Text="{Binding DisplayName}" TextColor="#4b6c90" 
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="StartAndExpand"/>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -40,10 +90,10 @@
                     BackgroundColor="#4b6c90"
                     TextColor="White"
                     HeightRequest="45"
-                    HorizontalOptions="StartAndExpand"
+                    HorizontalOptions="Fill"
                     VerticalOptions="End"
                     Text="Continuer"/>
-            
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

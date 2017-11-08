@@ -6,12 +6,15 @@ using Miriot.Model;
 using Miriot.Services;
 using Miriot.Services.Interfaces;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Miriot
 {
     public class ConnectViewModel : CustomViewModel
     {
+        public bool HasAtLeastOneRemoteSystem => RemoteSystems.Any();
+
         private string _message;
 
         public string Message
@@ -64,7 +67,7 @@ namespace Miriot
         private RomeRemoteSystem _selectedSystem;
 
         public ConnectViewModel(
-            IRomeService romeService, 
+            IRomeService romeService,
             IDispatcherService dispatcherService,
             INavigationService navigationService)
         {
@@ -76,6 +79,7 @@ namespace Miriot
 
         public async Task InitializeAsync()
         {
+            Message = "Aucun appareil disponible.";
             _romeService.Added = OnAdded;
             await _romeService.InitializeAsync();
         }
@@ -85,6 +89,7 @@ namespace Miriot
             _dispatcherService.Invoke(() =>
             {
                 RemoteSystems.Add(obj);
+                RaisePropertyChanged(nameof(HasAtLeastOneRemoteSystem));
             });
         }
 
@@ -93,6 +98,7 @@ namespace Miriot
             _dispatcherService.Invoke(() =>
             {
                 RemoteSystems.Remove(obj);
+                RaisePropertyChanged(nameof(HasAtLeastOneRemoteSystem));
             });
         }
 

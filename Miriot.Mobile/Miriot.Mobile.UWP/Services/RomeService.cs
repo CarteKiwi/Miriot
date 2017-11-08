@@ -27,7 +27,7 @@ namespace Miriot.Mobile.UWP.Services
         public async Task InitializeAsync()
         {
             // store filter list
-            //List<IRemoteSystemFilter> listOfFilters = MakeFilterList();
+            List<IRemoteSystemFilter> listOfFilters = MakeFilterList();
 
             RemoteSystemAccessStatus accessStatus = await RemoteSystem.RequestAccessAsync();
 
@@ -36,7 +36,7 @@ namespace Miriot.Mobile.UWP.Services
                 _remoteSystems = new List<RomeRemoteSystem>();
 
                 // construct watcher with the list
-                _remoteSystemWatcher = RemoteSystem.CreateWatcher();
+                _remoteSystemWatcher = RemoteSystem.CreateWatcher(listOfFilters);
                 _remoteSystemWatcher.RemoteSystemAdded += OnRemoteSystemAdded;
                 _remoteSystemWatcher.RemoteSystemRemoved += OnRemoteSystemRemoved;
                 _remoteSystemWatcher.RemoteSystemUpdated += OnRemoteSystemUpdated;
@@ -102,7 +102,7 @@ namespace Miriot.Mobile.UWP.Services
 
             // add the 3 filters to the listL
             localListOfFilters.Add(discoveryFilter);
-            localListOfFilters.Add(kindFilter);
+            //localListOfFilters.Add(kindFilter);
             localListOfFilters.Add(statusFilter);
 
             // return the list

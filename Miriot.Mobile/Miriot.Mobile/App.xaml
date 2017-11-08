@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:conv="clr-namespace:Miriot.Mobile.Converters"
              x:Class="Miriot.Mobile.App">
   <Application.Resources>
         <ResourceDictionary>
@@ -17,6 +18,7 @@
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
 
+            <conv:InvertBoolConverter x:Key="InvertBoolConverter"/>
         </ResourceDictionary>
 
     </Application.Resources>

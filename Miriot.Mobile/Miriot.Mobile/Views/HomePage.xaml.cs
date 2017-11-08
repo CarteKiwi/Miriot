@@ -31,6 +31,8 @@ namespace Miriot.Mobile.Views
         {
             base.OnAppearing();
 
+            await Badge.RotateTo(980, 10000);
+
             await Vm.InitializeAsync();
         }
 

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot.Mobile", "Miriot.Mob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot", "Miriot\Miriot.csproj", "{0C3190C6-066B-4F94-B26D-1496E8E73E43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Cognitive", "Miriot.Cognitive\Miriot.Cognitive.csproj", "{BF1C43BD-495E-4FD7-B390-0444FF450B82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot.Cognitive", "Miriot.Cognitive\Miriot.Cognitive.csproj", "{BF1C43BD-495E-4FD7-B390-0444FF450B82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -120,6 +120,8 @@ Global
 		{EB350075-0F96-438A-9E27-729F226DE6A3}.Release|x64.ActiveCfg = Release|iPhone
 		{EB350075-0F96-438A-9E27-729F226DE6A3}.Release|x86.ActiveCfg = Release|iPhone
 		{B5377782-F1CA-4738-BE9F-952030988A5D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B5377782-F1CA-4738-BE9F-952030988A5D}.Debug|Any CPU.Build.0 = Debug|x86
+		{B5377782-F1CA-4738-BE9F-952030988A5D}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{B5377782-F1CA-4738-BE9F-952030988A5D}.Debug|ARM.ActiveCfg = Debug|ARM
 		{B5377782-F1CA-4738-BE9F-952030988A5D}.Debug|ARM.Build.0 = Debug|ARM
 		{B5377782-F1CA-4738-BE9F-952030988A5D}.Debug|ARM.Deploy.0 = Debug|ARM
