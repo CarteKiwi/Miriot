@@ -41,7 +41,7 @@
                    VerticalOptions="Start" 
                    HorizontalOptions="CenterAndExpand" />
 
-            <Grid VerticalOptions="CenterAndExpand"
+            <Grid VerticalOptions="StartAndExpand"
                     IsVisible="{Binding HasAtLeastOneRemoteSystem, Converter={StaticResource InvertBoolConverter}}">
                 <Image Source="Resources/badge_bg.png" 
                         x:Name="BadgeLoading"
@@ -57,7 +57,6 @@
             <ListView x:Name="List" 
                       Margin="0,20"
                       HorizontalOptions="Fill"
-                      IsVisible="{Binding HasAtLeastOneRemoteSystem}"
                       ItemsSource="{Binding RemoteSystems}"
                       ItemSelected="RemoteSystemSelected">
                 <ListView.ItemTemplate>

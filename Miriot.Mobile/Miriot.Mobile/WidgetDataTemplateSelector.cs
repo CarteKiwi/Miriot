@@ -14,6 +14,7 @@ namespace Miriot.Mobile
         {
             string xmlTemplatePath;
 
+                return DefaultTemplate;
             if (item is WeatherModel)
                 xmlTemplatePath = "/Templates/WeatherTemplate.xml";
             else if (item is HoroscopeModel)

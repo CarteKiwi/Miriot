@@ -1,4 +1,5 @@
-﻿using Miriot.Win10;
+﻿using GalaSoft.MvvmLight.Threading;
+using Miriot.Win10;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Diagnostics;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -48,6 +50,7 @@ namespace Miriot.Mobile.UWP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            DispatcherHelper.Initialize();
             Locator = new Locator();
 
             Frame rootFrame = Window.Current.Content as Frame;
@@ -79,6 +82,7 @@ namespace Miriot.Mobile.UWP
                 // parameter
                 rootFrame.Navigate(typeof(MainPage), e.Arguments);
             }
+
             // Ensure the current window is active
             Window.Current.Activate();
         }

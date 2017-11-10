@@ -2,83 +2,86 @@
 <ContentPage
     x:Class="Miriot.Mobile.Views.SettingsPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="using:Miriot.Mobile.Views"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:core="using:Miriot.Core.ViewModels.Widgets"
     xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
-    xmlns:sel="clr-namespace:Miriot.Mobile"
-    mc:Ignorable="d">
+    xmlns:sel="clr-namespace:Miriot.Mobile">
 
     <ContentPage.Resources>
-        <Style x:Key="ToggleSwitchSubtitleStyle" TargetType="Label">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="HorizontalOptions" Value="LayoutOptions.FillAndExpand"/>
-        </Style>
+        <ResourceDictionary>
+            <Style x:Key="ToggleSwitchSubtitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="HorizontalOptions" Value="LayoutOptions.FillAndExpand"/>
+            </Style>
 
-        <DataTemplate x:Key="DefaultTemplate" x:DataType="core:WidgetModel">
-            <Grid Margin="0,0,0,40">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+            <DataTemplate x:Key="DefaultTemplate">
+                <ViewCell>
+                    <ViewCell.View>
+                        <Grid Margin="0,0,0,40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-                <Label Text="{Binding Title}"
+                            <Label Text="{Binding Title}"
                        FontSize="16"
                        VerticalOptions="Center"
                        FontAttributes="Italic"/>
 
-                <Switch Margin="0,0,0,0" 
+                            <Switch Margin="0,0,0,0" 
                               HorizontalOptions="End"
                               Grid.Column="1" 
                               IsToggled="{Binding IsActive, Mode=TwoWay}">
-                </Switch>
+                            </Switch>
 
-                <StackLayout Orientation="Horizontal"
+                            <StackLayout Orientation="Horizontal"
                             Grid.Row="1"
                             Grid.ColumnSpan="2"
                             Margin="0,-10,0,0">
 
-                    <Label Text="Positionnement (x:"
+                                <Label Text="Positionnement (x:"
                                HorizontalOptions="Start" VerticalOptions="Center"
                                FontSize="15"
                                Margin="0,0,0,0"/>
 
-                    <Label Text="{Binding X, Mode=TwoWay}"
+                                <Label Text="{Binding X, Mode=TwoWay}"
                            BackgroundColor="Transparent"
                              TextColor="White"
                              MinimumWidthRequest="30"
                              HorizontalOptions="Start" VerticalOptions="Center"
                              FontSize="18"/>
 
-                    <Label Text="y:"
+                                <Label Text="y:"
                                HorizontalOptions="Start" VerticalOptions="Center"
                                FontSize="15"
                                Margin="0,0,0,0"/>
 
-                    <Label Text="{Binding Y, Mode=TwoWay}"
+                                <Label Text="{Binding Y, Mode=TwoWay}"
                              HorizontalOptions="Start" VerticalOptions="Center"
                              FontSize="18"
                              MinimumWidthRequest="30"
                              BackgroundColor="Transparent"
                              Margin="0,0,0,0"/>
 
-                    <Label Text=")"
+                                <Label Text=")"
                                HorizontalOptions="Start" VerticalOptions="Center"
                                FontSize="15"
                                Margin="0,0,0,0"/>
-                </StackLayout>
-            </Grid>
-        </DataTemplate>
+                            </StackLayout>
+                        </Grid>
+                    </ViewCell.View>
+                </ViewCell>
+            </DataTemplate>
 
-        <!--Template Selector-->
-        <sel:WidgetTemplateSelector x:Key="WidgetTemplateSelector" 
-                                     DefaultTemplate="{StaticResource DefaultTemplate}"/>
+            <!--Template Selector-->
+            <sel:WidgetTemplateSelector x:Key="WidgetTemplateSelector" 
+                                    DefaultTemplate="{StaticResource DefaultTemplate}"/>
+        </ResourceDictionary>
     </ContentPage.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
@@ -87,7 +90,7 @@
         <Frame HorizontalOptions="FillAndExpand" VerticalOptions="Start">
             <Grid>
                 <Grid Margin="0,0,0,0"
-                      Height="30"
+                      HeightRequest="30"
                       VerticalOptions="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -110,11 +113,11 @@
             </Grid>
         </Frame>
 
-        <StackLayout VerticalOptions="Start" Height="56" Margin="0,31,0,0">
-            <Grid BackgroundColor="{StaticResource SystemChromeHighColor}" Opacity=".1"/>
+        <StackLayout VerticalOptions="Start" HeightRequest="56" Margin="0,31,0,0">
+            <Grid BackgroundColor="Honeydew" Opacity=".1"/>
         </StackLayout>
 
-        <StackLayout VerticalOptions="Start" Height="2" Margin="0,85,0,0">
+        <StackLayout VerticalOptions="Start" HeightRequest="2" Margin="0,85,0,0">
             <Grid BackgroundColor="PowderBlue"/>
         </StackLayout>
 
@@ -142,8 +145,8 @@
                     </Grid.ColumnDefinitions>
 
                     <ctrl:EllipseView Fill="Transparent"
-                             Height="30"
-                             Width="30"
+                             HeightRequest="30"
+                             WidthRequest="30"
                              Stroke="White"
                              Margin="10,0,10,0"
                              HorizontalOptions="Center"
@@ -165,10 +168,10 @@
                              HorizontalOptions="End"
                              BackgroundColor="#0c0d18"
                              Text="{Binding Vm.User.Name, Mode=TwoWay}" 
-                             Width="200"/>
+                             WidthRequest="200"/>
                 </Grid>
 
-                <Grid BackgroundColor="White" Height=".5" VerticalOptions="Start"/>
+                <Grid BackgroundColor="White" HeightRequest=".5" VerticalOptions="Start"/>
 
                 <!--Widgets title-->
                 <Grid Margin="15,12">
@@ -179,8 +182,8 @@
                     </Grid.ColumnDefinitions>
 
                     <ctrl:EllipseView Fill="Transparent"
-                     Height="30"
-                     Width="30"
+                     HeightRequest="30"
+                     WidthRequest="30"
                      Stroke="White"
                      Margin="10,0,10,0"
                      HorizontalAlignment="Center"
@@ -205,7 +208,7 @@
                       ItemTemplate="{StaticResource WidgetTemplateSelector}">
                 </ListView>
 
-                <Grid BackgroundColor="White" Height=".5" VerticalOptions="Start"/>
+                <Grid BackgroundColor="White" HeightRequest=".5" VerticalOptions="Start"/>
 
                 <!--Delete option-->
                 <Grid Grid.Row="3" Margin="15,12">
@@ -216,8 +219,8 @@
                     </Grid.ColumnDefinitions>
 
                     <ctrl:EllipseView Fill="Transparent"
-                             Height="30"
-                             Width="30"
+                             HeightRequest="30"
+                             WidthRequest="30"
                              Stroke="White"
                              Margin="10,0,10,0"
                              HorizontalAlignment="Center"
@@ -243,7 +246,7 @@
                             Margin="0,0,20,0"/>
                 </Grid>
 
-                <Grid BackgroundColor="White" Height=".5" VerticalOptions="Start"/>
+                <Grid BackgroundColor="White" HeightRequest=".5" VerticalOptions="Start"/>
 
             </StackLayout>
         </ScrollView>

@@ -14,6 +14,7 @@ using GalaSoft.MvvmLight.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Miriot.Model;
+using Miriot.Common.Model;
 
 namespace Miriot.Mobile.Views
 {
@@ -22,24 +23,17 @@ namespace Miriot.Mobile.Views
     {
         public SettingsViewModel Vm { get; } = SimpleIoc.Default.GetInstance<SettingsViewModel>();
 
-        public SettingsPage()
+        public SettingsPage(User user)
         {
             InitializeComponent();
-            //BindingContext = Vm;
+            BindingContext = Vm;
+            Vm.User = user;
+            Vm.ActionLoaded.Execute(null);
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
-            var b = BindingContext;
-            //var nav = SimpleIoc.Default.GetInstance<INavigationService>();
-            //var o = nav.GetAndRemoveParameters();
-
-            //if (o != null)
-            //{
-            //    Vm.User = o as User;
-            //}
-
             Vm.ActionLoaded.Execute(null);
         }
     }

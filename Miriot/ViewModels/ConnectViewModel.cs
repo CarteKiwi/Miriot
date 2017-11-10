@@ -1,10 +1,13 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
+using Miriot.Common.Model;
 using Miriot.Core.ViewModels;
 using Miriot.Model;
 using Miriot.Services;
 using Miriot.Services.Interfaces;
+using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -79,9 +82,29 @@ namespace Miriot
 
         public async Task InitializeAsync()
         {
-            Message = "Aucun appareil disponible.";
             _romeService.Added = OnAdded;
             await _romeService.InitializeAsync();
+            _navigationService.NavigateTo(PageKeys.Settings, new User
+            {
+                Id = Guid.NewGuid(),
+                Name = "Guillaume Test",
+                UserData = new UserData
+                {
+                    Widgets = new System.Collections.Generic.List<Widget>()
+                    {
+                        new Widget(){
+                            Id = Guid.NewGuid(),
+                            Title = "Widget 1",
+                            X = 2,
+                            Y = 0,
+                            Type = WidgetType.Weather,
+                            Infos = new System.Collections.Generic.List<string>{
+                                JsonConvert.SerializeObject(new WeatherWidgetInfo { Location = "Asnières sur Seine" })
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         private void OnAdded(RomeRemoteSystem obj)

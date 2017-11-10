@@ -1,4 +1,7 @@
-﻿using Miriot.Core;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Views;
+using Miriot.Common;
+using Miriot.Core;
 using Miriot.Mobile.Views;
 
 using Xamarin.Forms;
@@ -21,12 +24,26 @@ namespace Miriot.Mobile
         {
             InitializeComponent();
 
-            Locator = new ViewModelLocator();
+            var nav = InitializeNavigationService();
 
+            Locator = new ViewModelLocator();
+            
             if (Device.RuntimePlatform == Device.iOS)
                 MainPage = new HomePage();
             else
                 MainPage = new NavigationPage(new HomePage());
+
+            nav.Initialize((NavigationPage)MainPage);
+        }
+
+        private NavigationService InitializeNavigationService()
+        {
+            var nav = new NavigationService();
+            nav.Configure(PageKeys.Main, typeof(HomePage));
+            nav.Configure(PageKeys.Settings, typeof(SettingsPage));
+            SimpleIoc.Default.Register<INavigationService>(() => nav);
+
+            return nav;
         }
     }
 }

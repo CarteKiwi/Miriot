@@ -42,12 +42,10 @@ namespace Miriot.Core.ViewModels
 
         public SettingsViewModel(
             IDialogService dialogService,
-            IDispatcherService dispatcher,
-            IFaceService faceService)
+            IDispatcherService dispatcher)
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;
-            _faceService = faceService;
 
             ActionLoaded = new RelayCommand(OnLoaded);
             ActionSave = new RelayCommand(OnSave);
@@ -56,7 +54,7 @@ namespace Miriot.Core.ViewModels
 
         private async Task OnDelete()
         {
-            var isSuccess = await _faceService.DeletePerson(User.Id);
+            var isSuccess = false; // await _faceService.DeletePerson(User.Id);
 
             if (isSuccess)
                 _dispatcher.Invoke(async () => await _dialogService.ShowMessage("Utilisateur supprimé", "Information"));
@@ -84,7 +82,7 @@ namespace Miriot.Core.ViewModels
 
         private async Task<bool> UpdateUserAsync()
         {
-            return await _faceService.UpdatePerson(User, User.Picture);
+            return false; //await _faceService.UpdatePerson(User, User.Picture);
         }
 
         private void AddRemoveWidget(WidgetModel w)
