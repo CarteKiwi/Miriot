@@ -2,7 +2,6 @@
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Common.Model;
-using Miriot.Core.ViewModels;
 using Miriot.Model;
 using Miriot.Services;
 using Miriot.Services.Interfaces;
@@ -52,16 +51,6 @@ namespace Miriot.Core.ViewModels
             }
         }
 
-        private RelayCommand<string> _sendCommand;
-        public RelayCommand<string> SendCommand
-        {
-            get
-            {
-                if (_sendCommand == null) _sendCommand = new RelayCommand<string>(OnCommand);
-                return _sendCommand;
-            }
-        }
-
         public ObservableCollection<RomeRemoteSystem> RemoteSystems { get; set; }
 
         private IRomeService _romeService;
@@ -84,6 +73,7 @@ namespace Miriot.Core.ViewModels
         {
             _romeService.Added = OnAdded;
             await _romeService.InitializeAsync();
+
             _navigationService.NavigateTo(PageKeys.Settings, new User
             {
                 Id = Guid.NewGuid(),
@@ -130,11 +120,6 @@ namespace Miriot.Core.ViewModels
             SelectedRemoteSystem = sys;
         }
 
-        private void OnCommand(string obj)
-        {
-            _romeService.SendCommandAsync(SelectedRemoteSystem, obj);
-        }
-
         private async void OnConnect()
         {
             Message = "Connecting...";
@@ -145,7 +130,7 @@ namespace Miriot.Core.ViewModels
             {
                 Message = "Retrieving user...";
 
-                var user = await _romeService.GetRemoteUserAsync(SelectedRemoteSystem);
+                var user = await _romeService.CommandAsync<User>("GetUser");
 
                 if (user == null)
                     Message = "Unable to retrieve user";

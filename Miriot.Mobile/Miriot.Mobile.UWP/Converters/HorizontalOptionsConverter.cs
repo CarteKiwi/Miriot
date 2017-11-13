@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using Xamarin.Forms;
 
-namespace Miriot.Mobile.UWP.Controls
+namespace Miriot.Mobile.UWP.Converters
 {
     public class HorizontalOptionsConverter : Windows.UI.Xaml.Data.IValueConverter
     {

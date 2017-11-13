@@ -1,9 +1,9 @@
-﻿using Miriot.Common.Model;
-using Miriot.Model;
+﻿using Miriot.Model;
 using Miriot.Services.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
@@ -17,6 +17,7 @@ namespace Miriot.Mobile.UWP.Services
         private RemoteSystemWatcher _remoteSystemWatcher;
         private List<RomeRemoteSystem> _remoteSystems;
         private AppServiceConnection _appServiceConnection;
+        private RomeRemoteSystem _connectedRemoteSystem;
 
         public bool IsInitialized { get; set; }
 
@@ -144,41 +145,23 @@ namespace Miriot.Mobile.UWP.Services
                     _appServiceConnection = null;
                     return false;
                 }
+
+                _connectedRemoteSystem = remoteSystem;
             }
 
             return true;
         }
 
-        public async Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
+        public async Task<T> CommandAsync<T>(string command)
         {
-            if (await ConnectAsync(remoteSystem))
+            if (_connectedRemoteSystem == null)
+            {
+                Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
+            }
+            else if (await ConnectAsync(_connectedRemoteSystem))
             {
                 ValueSet inputs = new ValueSet();
                 inputs.Add("Command", command);
-
-                AppServiceResponse response = await _appServiceConnection.SendMessageAsync(inputs);
-
-                string result = "";
-
-                // check that the service successfully received and processed the message
-                if (response.Status == AppServiceResponseStatus.Success)
-                {
-                    // Get the data that the service returned:
-                    result = response.Message["Result"] as string;
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public async Task<User> GetRemoteUserAsync(RomeRemoteSystem remoteSystem)
-        {
-            if (await ConnectAsync(remoteSystem))
-            {
-                ValueSet inputs = new ValueSet();
-                inputs.Add("Command", "GetUser");
 
                 AppServiceResponse response = await _appServiceConnection.SendMessageAsync(inputs);
 
@@ -186,11 +169,28 @@ namespace Miriot.Mobile.UWP.Services
                 if (response.Status == AppServiceResponseStatus.Success)
                 {
                     var res = response.Message["Result"];
-                    return JsonConvert.DeserializeObject<User>(res.ToString());
+                    return JsonConvert.DeserializeObject<T>(res.ToString());
                 }
             }
 
-            return null;
+            return default(T);
+        }
+
+        public async Task CommandAsync(string command)
+        {
+            if (_connectedRemoteSystem == null)
+            {
+                Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
+            }
+            else if (await ConnectAsync(_connectedRemoteSystem))
+            {
+                ValueSet inputs = new ValueSet();
+                inputs.Add("Command", command);
+
+                await _appServiceConnection.SendMessageAsync(inputs);
+            }
+
+            return;
         }
     }
 }

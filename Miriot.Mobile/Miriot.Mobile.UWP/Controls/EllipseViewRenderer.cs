@@ -1,5 +1,6 @@
 ﻿using Miriot.Mobile.Controls;
 using Miriot.Mobile.UWP.Controls;
+using Miriot.Mobile.UWP.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Shapes;

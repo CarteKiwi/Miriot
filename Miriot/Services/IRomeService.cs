@@ -14,7 +14,7 @@ namespace Miriot.Services.Interfaces
         Task InitializeAsync();
         Task<bool> ConnectAsync(RomeRemoteSystem remoteSystem);
         Task<bool> RemoteLaunchUri(RomeRemoteSystem remoteSystem, Uri uri);
-        Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command);
-        Task<User> GetRemoteUserAsync(RomeRemoteSystem remoteSystem);
+        Task CommandAsync(string command);
+        Task<T> CommandAsync<T>(string command);
     }
 }

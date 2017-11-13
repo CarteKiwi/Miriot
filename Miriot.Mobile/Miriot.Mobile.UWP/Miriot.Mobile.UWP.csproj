@@ -104,7 +104,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\EllipseViewRenderer.cs" />
-    <Compile Include="Controls\HorizontalOptionsConverter.cs" />
+    <Compile Include="Converters\ByteArrayToImageConverter.cs" />
+    <Compile Include="Converters\HorizontalOptionsConverter.cs" />
     <Compile Include="Controls\SettingsHelper.cs" />
     <Compile Include="Controls\Widgets\TwitterTemplateSelector.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />

@@ -21,8 +21,8 @@ namespace Miriot.Mobile
             //    xmlTemplatePath = "HoroscopeTemplate.xml";
             //else if (item is TwitterModel)
             //    xmlTemplatePath = "TwitterTemplate.xml";
-            //else if (item is CalendarModel)
-            //    xmlTemplatePath = "CalendarMailTemplate.xml";
+            else if (item is CalendarModel)
+                xmlTemplatePath = "CalendarMailTemplate.xml";
             else
                 return DefaultTemplate;
 
@@ -30,7 +30,7 @@ namespace Miriot.Mobile
 
             var templateXml = XDocument.Load(path + xmlTemplatePath);
 
-            var page = XamlReader.Load<Xamarin.Forms.ContentPage>(templateXml.ToString());
+            var page = XamlReader.Load<ContentPage>(templateXml.ToString());
             var template = page.Resources["DefaultTemplate"] as DataTemplate;
             
             return template;

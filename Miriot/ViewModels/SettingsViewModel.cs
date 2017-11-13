@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Miriot.Services.Interfaces;
 
 namespace Miriot.Core.ViewModels
 {
@@ -21,6 +22,7 @@ namespace Miriot.Core.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IFaceService _faceService;
         private readonly IDispatcherService _dispatcher;
+        private readonly IRomeService _romeService;
         private User _user;
         private ObservableCollection<WidgetModel> _widgets;
         #endregion
@@ -41,10 +43,12 @@ namespace Miriot.Core.ViewModels
 
         public SettingsViewModel(
             IDialogService dialogService,
-            IDispatcherService dispatcher)
+            IDispatcherService dispatcher,
+            IRomeService romeService)
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;
+            _romeService = romeService;
 
             ActionSave = new RelayCommand(OnSave);
             ActionDelete = new RelayCommand(async () => await OnDelete());

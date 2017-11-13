@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Miriot.Common.Model;
+using Newtonsoft.Json;
 
 namespace Miriot.Mobile.Droid.Services
 {
@@ -60,7 +61,7 @@ namespace Miriot.Mobile.Droid.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> SendCommandAsync(RomeRemoteSystem remoteSystem, string command)
+        public async Task<T> CommandAsync<T>(RomeRemoteSystem remoteSystem, string command)
         {
             //   return RemoteLaunchUri(remoteSystem, new Uri(command));
             if (_appServiceClientConnection == null)
@@ -78,13 +79,13 @@ namespace Miriot.Mobile.Droid.Services
                     if (status != AppServiceConnectionStatus.Success)
                     {
                         _appServiceClientConnection = null;
-                        return false;
+                        return default(T);
                     }
                 }
                 catch (ConnectedDevicesException e)
                 {
                     _appServiceClientConnection = null;
-                    return false;
+                    return default(T);
                 }
             }
 
@@ -96,21 +97,16 @@ namespace Miriot.Mobile.Droid.Services
 
                 if (response.Status == AppServiceResponseStatus.Success)
                 {
-                    // Get the data that the service returned:
-                    var result = response.Message.GetString("Command");
+                    var res = response.Message.GetString("Result");
+                    return JsonConvert.DeserializeObject<T>(res.ToString());
                 }
             }
             catch (Exception e)
             {
-                return false;
+                return default(T);
             }
 
-            return true;
-        }
-
-        public Task<User> GetRemoteUserAsync(RomeRemoteSystem remoteSystem)
-        {
-            throw new NotImplementedException();
+            return default(T);
         }
 
         public Task<bool> ConnectAsync(RomeRemoteSystem remoteSystem)
