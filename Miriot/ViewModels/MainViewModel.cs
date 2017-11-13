@@ -29,6 +29,7 @@ namespace Miriot.Core.ViewModels
         private readonly IFaceService _faceService;
         private readonly IVisionService _visionService;
         private readonly ISpeechService _speechService;
+        private readonly IGraphService _graphService;
         private readonly ILuisService _luisService;
         private string _title;
         private string _subTitle;
@@ -146,6 +147,7 @@ namespace Miriot.Core.ViewModels
             IFaceService faceService,
             IVisionService visionService,
             ISpeechService speechService,
+            IGraphService graphService,
             ILuisService luisService)
         {
             _luisService = luisService;
@@ -157,6 +159,7 @@ namespace Miriot.Core.ViewModels
             _faceService = faceService;
             _visionService = visionService;
             _speechService = speechService;
+            _graphService = graphService;
 
             SetCommands();
         }
@@ -176,6 +179,27 @@ namespace Miriot.Core.ViewModels
             _speechService.SetCommand(ProceedSpeechCommand);
 
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
+            Messenger.Default.Register<GraphServiceMessage>(this, OnGraphServiceMessageReceived);
+        }
+
+        private async void OnGraphServiceMessageReceived(GraphServiceMessage message)
+        {
+            if (message.IsAuthenticated)
+            {
+                _dispatcherService.Invoke(() =>
+                {
+                    SubTitle = "Authentication complete";
+                });
+            }
+            else
+            {
+                var code = _graphService.GetCodeAsync();
+
+                _dispatcherService.Invoke(() =>
+                {
+                    SubTitle = "Code : " + code;
+                });
+            }
         }
 
         private void OnDeviceConnected(DeviceConnectedMessage obj)

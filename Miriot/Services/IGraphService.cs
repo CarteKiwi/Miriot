@@ -16,6 +16,8 @@ namespace Miriot.Services
 
         Task LogoutAsync();
 
+        Task<string> GetCodeAsync();
+
         Task AuthenticateForDeviceAsync();
     }
 }

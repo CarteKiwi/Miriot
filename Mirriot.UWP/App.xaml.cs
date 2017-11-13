@@ -168,7 +168,7 @@ namespace Miriot.Win10
 
             if ("GetUser" == text)
             {
-                Messenger.Default.Send(new DeviceConnectedMessage("toto"));
+                Messenger.Default.Send(new DeviceConnectedMessage(""));
 
                 var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
                
@@ -176,6 +176,30 @@ namespace Miriot.Win10
                 returnMessage.Add("Result", JsonConvert.SerializeObject(vm.User));
                 await args.Request.SendResponseAsync(returnMessage);
             }
+
+            if ("GraphService_Initialize" == text)
+            {
+                Messenger.Default.Send(new GraphServiceMessage(false));
+
+                ValueSet returnMessage = new ValueSet();
+                returnMessage.Add("Result", "OK");
+                await args.Request.SendResponseAsync(returnMessage);
+            }
+
+            if ("GraphService_GetUser" == text)
+            {
+                Messenger.Default.Send(new GraphServiceMessage(true));
+
+                var _graphService = SimpleIoc.Default.GetInstance<IGraphService>();
+
+                await _graphService.LoginAsync();
+                var user = await _graphService.GetUserAsync();
+
+                ValueSet returnMessage = new ValueSet();
+                returnMessage.Add("Result", JsonConvert.SerializeObject(user));
+                await args.Request.SendResponseAsync(returnMessage);
+            }
+
             messageDeferral.Complete();
         }
 

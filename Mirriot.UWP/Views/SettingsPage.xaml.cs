@@ -21,8 +21,7 @@ namespace Miriot.Win10.Views
             {
                 Vm.User = e.Parameter as User;
             }
-
-            Vm.ActionLoaded.Execute(null);
+            Vm.Initialize();
             base.OnNavigatedTo(e);
         }
     }

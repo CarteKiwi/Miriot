@@ -43,15 +43,10 @@ namespace Miriot.Win10.Services
             IsInitialized = MicrosoftGraphService.Instance.Initialize(appClientId, MicrosoftGraphEnums.AuthenticationModel.V1);
         }
 
-        public async Task GetCodeAsync()
+        public async Task<string> GetCodeAsync()
         {
-            // Login via Azure Active Directory
-            //if (!await MicrosoftGraphService.Instance.GetCodeAsync())
-            //{
-            //    var error = new MessageDialog("Impossible de s'authentifier auprès d'Office 365");
-            //    await error.ShowAsync();
-            //    return false;
-            //}
+            await MicrosoftGraphService.Instance.InitializeForDeviceCodeAsync();
+            return MicrosoftGraphService.Instance.UserCode;
         }
 
         public async Task<bool> LoginAsync()
@@ -125,6 +120,11 @@ namespace Miriot.Win10.Services
             }
 
             return Task.FromResult(0);
+        }
+
+        public Task AuthenticateForDeviceAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -118,5 +118,11 @@ namespace Miriot.Win10.Services
 
             return Task.FromResult(0);
         }
+
+        public async Task<string> GetCodeAsync()
+        {
+            await MicrosoftGraphService.Instance.InitializeForDeviceCodeAsync();
+            return MicrosoftGraphService.Instance.UserCode;
+        }
     }
 }
