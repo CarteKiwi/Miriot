@@ -161,7 +161,7 @@ namespace Miriot.Core.ViewModels
             SetCommands();
         }
 
-        public void Initialize()
+        protected override async Task InitializeAsync()
         {
             _toothbrushingLauncher = new Timer(ToothbrushingLauncher);
 
@@ -172,7 +172,7 @@ namespace Miriot.Core.ViewModels
             NetworkChange.NetworkAvailabilityChanged += OnNetworkStatusChanged;
             IsInternetAvailable = _platformService.IsInternetAvailable;
 
-            _speechService.InitializeAsync();
+            await _speechService.InitializeAsync();
             _speechService.SetCommand(ProceedSpeechCommand);
 
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);

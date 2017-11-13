@@ -1,91 +1,85 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-              x:Key="DefaultTemplate">
-  <Grid Margin="0,0,0,40">
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition/>
-      <ColumnDefinition/>
-    </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition/>
-      <RowDefinition/>
-      <RowDefinition/>
-    </Grid.RowDefinitions>
+<ContentPage x:Class="Miriot.Mobile.Views.SettingsPage"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <DataTemplate x:Key="DefaultTemplate">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+          </Grid.RowDefinitions>
 
-    <TextBlock Text="{Binding Title}"
-                   FontSize="16"
-                   VerticalAlignment="Center"
-                   FontStyle="Italic"/>
+          <Label Text="{Binding Title}"
+                 FontSize="16"
+                 VerticalOptions="Center"/>
 
-    <ToggleSwitch Margin="0,0,0,0"
-                  BorderThickness="0"
-                  HorizontalAlignment="Right"
-                  Grid.Column="1" Foreground="White"
-                  OffContent="Off"
-                  OnContent="On"
-                  IsOn="{Binding IsActive, Mode=TwoWay}">
-    </ToggleSwitch>
+          <Switch Margin="0,0,0,0"
+                  HorizontalOptions="End"
+                  Grid.Column="1"
+                  IsToggled="{Binding IsActive, Mode=TwoWay}">
+          </Switch>
 
-    <StackPanel Orientation="Horizontal"
-                Grid.Row="1"
-                Grid.ColumnSpan="2"
-                Margin="0,-10,0,0">
+          <StackLayout Orientation="Horizontal"
+                       Grid.Row="1"
+                       Grid.ColumnSpan="2"
+                       Margin="0,-10,0,0">
 
-      <TextBlock Text="Positionnement: (x:"
-                 HorizontalAlignment="Left" VerticalAlignment="Center"
-                 FontSize="15"
-                 Margin="0,0,0,0"/>
+            <Label Text="Positionnement: (x:"
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
 
-      <TextBox Text="{Binding X, Mode=TwoWay}"
-               BorderThickness="0,0,0,1"
-               BorderBrush="#0c0d18"
-               Background="Transparent"
-               Foreground="White"
-               MinWidth="30"
-               HorizontalAlignment="Left" VerticalAlignment="Center"
-               FontSize="18"/>
+            <Entry Text="{Binding X, Mode=TwoWay}"
+                   TextColor="White"
+                   MinimumWidthRequest="30"
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="18"/>
 
-      <TextBlock Text="y:"
-                 HorizontalAlignment="Left" VerticalAlignment="Center"
-                 FontSize="15"
-                 Margin="0,0,0,0"/>
+            <Label Text="y:"
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
 
-      <TextBox Text="{Binding Y, Mode=TwoWay}"
-               HorizontalAlignment="Left" VerticalAlignment="Center"
-               FontSize="18"
-               MinWidth="30"
-               BorderBrush="#0c0d18"
-               Background="Transparent"
-               BorderThickness="0,0,0,1"
-               Margin="0,0,0,0"/>
+            <Entry Text="{Binding Y, Mode=TwoWay}"
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="18"
+                   MinimumWidthRequest="30"
+                   Margin="0,0,0,0"/>
 
-      <TextBlock Text=")"
-                 HorizontalAlignment="Left" VerticalAlignment="Center"
-                 FontSize="15"
-                 Margin="0,0,0,0"/>
-    </StackPanel>
+            <Label Text=")"
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
+          </StackLayout>
 
-    <StackPanel Orientation="Horizontal"
-                Grid.Row="2"
-                Grid.ColumnSpan="2"
-                Margin="0,-10,0,0">
+          <StackLayout Orientation="Horizontal"
+                      Grid.Row="2"
+                      Grid.ColumnSpan="2"
+                      Margin="0,-10,0,0">
 
-      <TextBlock Text="Ville"
-                 HorizontalAlignment="Left" VerticalAlignment="Center"
-                 FontSize="15"
-                 Margin="0,0,0,0"/>
+            <Label Text="Ville"
+                       HorizontalOptions="Start" VerticalOptions="Center"
+                       FontSize="15"
+                       Margin="0,0,0,0"/>
 
-      <TextBox Text="{Binding Location, Mode=TwoWay}"
-               Grid.Row="2"
-               Grid.Column="1"
-               BorderThickness="0,0,0,1"
-               BorderBrush="#0c0d18"
-               Background="Transparent"
-               HorizontalAlignment="Right" VerticalAlignment="Center"
-               FontSize="15" Width="250"
-               Margin="0,0,0,0"/>
-    </StackPanel>
+            <Entry Text="{Binding Location, Mode=TwoWay}"
+                     Grid.Row="2"
+                     Grid.Column="1"
+                     BackgroundColor="Transparent"
+                     HorizontalOptions="End" VerticalOptions="Center"
+                     FontSize="15" WidthRequest="250"
+                     Margin="0,0,0,0"/>
+          </StackLayout>
 
-  </Grid>
-</DataTemplate>
+        </Grid>
+      </DataTemplate>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+</ContentPage>

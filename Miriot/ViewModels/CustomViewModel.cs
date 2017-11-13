@@ -1,9 +1,15 @@
 ﻿using GalaSoft.MvvmLight;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels
 {
-    public class CustomViewModel : ViewModelBase
+    public abstract class CustomViewModel : ViewModelBase
     {
+        private object _parameter;
+        protected object Parameter => _parameter;
+
         private bool _isLoading;
         public bool IsLoading
         {
@@ -23,6 +29,20 @@ namespace Miriot.Core.ViewModels
             {
                 _isLoadingMessage = value;
                 RaisePropertyChanged(() => IsLoadingMessage);
+            }
+        }
+
+        protected abstract Task InitializeAsync();
+
+        public async void Initialize(object parameter = null)
+        {
+            try
+            {
+                await InitializeAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
             }
         }
     }

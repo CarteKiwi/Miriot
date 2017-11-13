@@ -12,7 +12,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Miriot
+namespace Miriot.Core.ViewModels
 {
     public class ConnectViewModel : CustomViewModel
     {
@@ -80,7 +80,7 @@ namespace Miriot
             RemoteSystems = new ObservableCollection<RomeRemoteSystem>();
         }
 
-        public async Task InitializeAsync()
+        protected override async Task InitializeAsync()
         {
             _romeService.Added = OnAdded;
             await _romeService.InitializeAsync();

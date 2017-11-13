@@ -1,4 +1,5 @@
 ﻿using Miriot.Core.ViewModels.Widgets;
+using System.IO;
 using System.Xml.Linq;
 using Xamarin.Forms;
 
@@ -14,29 +15,24 @@ namespace Miriot.Mobile
         {
             string xmlTemplatePath;
 
-                return DefaultTemplate;
             if (item is WeatherModel)
-                xmlTemplatePath = "/Templates/WeatherTemplate.xml";
-            else if (item is HoroscopeModel)
-                xmlTemplatePath = "/Templates/HoroscopeTemplate.xml";
-            else if (item is TwitterModel)
-                xmlTemplatePath = "/Templates/TwitterTemplate.xml";
-            else if (item is CalendarModel)
-                xmlTemplatePath = "/Templates/CalendarMailTemplate.xml";
+                xmlTemplatePath = "WeatherTemplate.xml";
+            //else if (item is HoroscopeModel)
+            //    xmlTemplatePath = "HoroscopeTemplate.xml";
+            //else if (item is TwitterModel)
+            //    xmlTemplatePath = "TwitterTemplate.xml";
+            //else if (item is CalendarModel)
+            //    xmlTemplatePath = "CalendarMailTemplate.xml";
             else
                 return DefaultTemplate;
 
-            var templateXml = XDocument.Load(xmlTemplatePath);
+            var path = $"{Directory.GetCurrentDirectory()}\\Controls\\Widgets\\Templates\\";
 
-            var page = new ContentPage();
-            var xaml = page.LoadFromXaml(templateXml.ToString());
+            var templateXml = XDocument.Load(path + xmlTemplatePath);
 
-            var template = xaml.Resources["DefaultTemplate"] as DataTemplate;
-            //var res = Xamarin.Forms.Xaml.Extensions.LoadFromXaml(templateXml.ToString(), typeof(DataTemplate));
-            //var template = (DataTemplate)res;
-
-
-            //var template = (DataTemplate)XamlReader.Load(templateXml.ToString());
+            var page = XamlReader.Load<Xamarin.Forms.ContentPage>(templateXml.ToString());
+            var template = page.Resources["DefaultTemplate"] as DataTemplate;
+            
             return template;
         }
     }

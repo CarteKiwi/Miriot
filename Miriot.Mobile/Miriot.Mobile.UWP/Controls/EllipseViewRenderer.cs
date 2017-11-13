@@ -18,7 +18,7 @@ namespace Miriot.Mobile.UWP.Controls
             ellipse.DataContext = Element;
             ellipse.SetBinding(Ellipse.FillProperty, new Binding() { Path = new PropertyPath("Fill"), Converter = new ColorConverter() });
             ellipse.SetBinding(Ellipse.StrokeProperty, new Binding() { Path = new PropertyPath("Stroke"), Converter = new ColorConverter() });
-            ellipse.SetBinding(Ellipse.HorizontalAlignmentProperty, new Binding() { Path = new PropertyPath("HorizontalOptions"), Converter = new HorizontalTextAlignmentConverter() });
+            ellipse.SetBinding(Ellipse.HorizontalAlignmentProperty, new Binding() { Path = new PropertyPath("HorizontalOptions"), Converter = new HorizontalOptionsConverter() });
             ellipse.SetBinding(Ellipse.StrokeThicknessProperty, new Binding() { Path = new PropertyPath("StrokeThickness") });
 
             this.SetNativeControl(ellipse);

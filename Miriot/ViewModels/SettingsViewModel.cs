@@ -13,7 +13,6 @@ namespace Miriot.Core.ViewModels
     public class SettingsViewModel : CustomViewModel
     {
         #region Commands
-        public RelayCommand ActionLoaded { get; set; }
         public RelayCommand ActionSave { get; set; }
         public RelayCommand ActionDelete { get; set; }
         #endregion
@@ -47,9 +46,10 @@ namespace Miriot.Core.ViewModels
             _dialogService = dialogService;
             _dispatcher = dispatcher;
 
-            ActionLoaded = new RelayCommand(OnLoaded);
             ActionSave = new RelayCommand(OnSave);
             ActionDelete = new RelayCommand(async () => await OnDelete());
+
+            Widgets = new ObservableCollection<WidgetModel>();
         }
 
         private async Task OnDelete()
@@ -116,12 +116,12 @@ namespace Miriot.Core.ViewModels
             }
         }
 
-        private void OnLoaded()
+        protected override async Task InitializeAsync()
         {
             if (User == null)
                 return;
 
-            Widgets = new ObservableCollection<WidgetModel>();
+            Widgets.Clear();
 
             foreach (var type in Enum.GetValues(typeof(WidgetType)))
             {
@@ -133,7 +133,7 @@ namespace Miriot.Core.ViewModels
 
                 if (widgetEntity != null)
                 {
-                    widgetModel.LoadInfos();
+                    await widgetModel.LoadInfos();
                     widgetModel.SetActive();
                 }
                 else
