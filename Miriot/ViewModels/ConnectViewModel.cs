@@ -107,7 +107,11 @@ namespace Miriot.Core.ViewModels
 
         protected override async Task InitializeAsync()
         {
-            TcpIpService.Broadcast();
+            SocketService sock = new SocketService();
+            sock.Added = OnAdded;
+            sock.Client();
+
+            //TcpIpService.Broadcast();
 
             //_romeService.Added = OnAdded;
             //await _romeService.InitializeAsync();

@@ -139,16 +139,21 @@ namespace Miriot.Services
             UdpClient udpClient = new UdpClient(11000);
             try
             {
-                udpClient.Connect("www.contoso.com", 11000);
-
+                udpClient.Connect("127.0.0.1", 11000);
+                //Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                //IPEndPoint iep1 = new IPEndPoint(IPAddress.Broadcast, 9050);
+                ////IP Broadcast Range using Port 9050 
+                //IPEndPoint iep2 = new IPEndPoint(IPAddress.Parse("192.168.100.255"), 9050);
+                //byte[] data = Encoding.ASCII.GetBytes("12");
+                
                 // Sends a message to the host to which you have connected.
                 Byte[] sendBytes = Encoding.ASCII.GetBytes("Is anybody there?");
 
                 udpClient.Send(sendBytes, sendBytes.Length);
 
                 // Sends a message to a different host using optional hostname and port parameters.
-                UdpClient udpClientB = new UdpClient();
-                udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
+                //UdpClient udpClientB = new UdpClient();
+                //udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
 
                 //IPEndPoint object will allow us to read datagrams sent from any source.
                 IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -166,7 +171,7 @@ namespace Miriot.Services
                                             RemoteIpEndPoint.Port.ToString());
 
                 udpClient.Close();
-                udpClientB.Close();
+                //udpClientB.Close();
 
             }
             catch (Exception e)

@@ -188,7 +188,8 @@ namespace Miriot.Core.ViewModels
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
             Messenger.Default.Register<GraphServiceMessage>(this, OnGraphServiceMessageReceived);
 
-            TcpIpService.Listen();
+            SocketService sock = new SocketService();
+            sock.Receiver();
         }
 
         private async void OnGraphServiceMessageReceived(GraphServiceMessage message)
