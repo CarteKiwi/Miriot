@@ -159,7 +159,7 @@
         </Canvas>
 
         <ctrl:Lights DataContext="{x:Bind Vm}"/>
-        
+
         <!--Info panel-->
         <StackPanel Margin="10,35"
                     x:Name="InfoUnknownPanel"
@@ -261,6 +261,13 @@
                             Visibility="{x:Bind Vm.IsLoading, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}"/>
 
             <Grid Grid.Column="2">
+                <TextBlock Text="&#xE8EA;"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Right"
+                           FontFamily="Segoe MDL2 Assets"
+                           FontSize="38"
+                           Visibility="{x:Bind Vm.IsConnectedToMobile, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}"   
+                           />
                 <Image VerticalAlignment="Bottom"
                        HorizontalAlignment="Right"
                        Margin="10"

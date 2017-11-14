@@ -113,5 +113,20 @@ namespace Miriot.Mobile.Droid.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<RomeRemoteSystem> GetDeviceByAddressAsync(string ipAddress)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CommandAsync(string command)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> CommandAsync<T>(string command)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

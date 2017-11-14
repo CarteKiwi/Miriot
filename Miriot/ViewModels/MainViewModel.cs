@@ -36,6 +36,7 @@ namespace Miriot.Core.ViewModels
         private bool _isListeningYesNo;
         private User _user;
         private ObservableCollection<WidgetModel> _widgets;
+        private bool _isConnectedToMobile;
         private bool _isInternetAvailable;
         private States _currentState;
         private CancellationTokenSource _cancellationToken;
@@ -93,6 +94,12 @@ namespace Miriot.Core.ViewModels
         {
             get => _widgets;
             private set => Set(() => Widgets, ref _widgets, value);
+        }
+
+        public bool IsConnectedToMobile
+        {
+            get => _isConnectedToMobile;
+            private set => Set(ref _isConnectedToMobile, value);
         }
 
         public bool IsInternetAvailable
@@ -180,6 +187,8 @@ namespace Miriot.Core.ViewModels
 
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
             Messenger.Default.Register<GraphServiceMessage>(this, OnGraphServiceMessageReceived);
+
+            TcpIpService.Listen();
         }
 
         private async void OnGraphServiceMessageReceived(GraphServiceMessage message)
@@ -188,12 +197,12 @@ namespace Miriot.Core.ViewModels
             {
                 _dispatcherService.Invoke(() =>
                 {
-                    SubTitle = "Authentication complete";
+                    SubTitle = "Authentication terminée";
                 });
             }
             else
             {
-                var code = _graphService.GetCodeAsync();
+                var code = await _graphService.GetCodeAsync();
 
                 _dispatcherService.Invoke(() =>
                 {
@@ -206,6 +215,7 @@ namespace Miriot.Core.ViewModels
         {
             _dispatcherService.Invoke(() =>
             {
+                IsConnectedToMobile = true;
                 SubTitle = "Connecté avec " + obj.Name;
             });
         }
@@ -425,8 +435,11 @@ namespace Miriot.Core.ViewModels
                 {
                     await LoadUser(user);
                     await UpdateUser(user);
-
+#if MOCK
+                    _toothbrushingLauncher.Change(0, Timeout.Infinite);
+#else
                     _toothbrushingLauncher.Change(0, 3);
+#endif
                 }
                 catch (TaskCanceledException ex)
                 {

@@ -47,6 +47,12 @@ namespace Miriot.Win10.Controls
                     var response = await client.GetAsync("coverage/sncf/stop_areas/stop_area:" + gareId + "/departures?datetime=" + DateTime.Now.ToUniversalTime());
                     var r = response.IsSuccessStatusCode ? (await response.Content.ReadAsStringAsync()) : null;
 
+                    if(r == null)
+                    {
+                        Debug.WriteLine("Widget Sncf: " + response.ReasonPhrase);
+                        return;
+                    }
+
                     var stopAsnieres = JsonConvert.DeserializeObject<SncfResponse>(r);
                     var trainToParis = stopAsnieres.departures.Where(e => e.display_informations.direction.Contains("Paris")).Take(2);
 
@@ -59,7 +65,7 @@ namespace Miriot.Win10.Controls
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Widget Sncf:" + ex.Message);
+                Debug.WriteLine("Widget Sncf: " + ex.Message);
             }
 
             _isBusy = false;

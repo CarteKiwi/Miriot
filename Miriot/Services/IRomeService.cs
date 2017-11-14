@@ -13,6 +13,7 @@ namespace Miriot.Services.Interfaces
         IReadOnlyList<RomeRemoteSystem> RemoteSystems { get; }
         Task InitializeAsync();
         Task<bool> ConnectAsync(RomeRemoteSystem remoteSystem);
+        Task<RomeRemoteSystem> GetDeviceByAddressAsync(string ipAddress);
         Task<bool> RemoteLaunchUri(RomeRemoteSystem remoteSystem, Uri uri);
         Task CommandAsync(string command);
         Task<T> CommandAsync<T>(string command);

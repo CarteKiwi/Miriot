@@ -61,7 +61,70 @@ namespace Miriot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Impossible de sauvegarder le compte.
+        ///   Looks up a localized string similar to Connecting....
+        /// </summary>
+        public static string Connecting {
+            get {
+                return ResourceManager.GetString("Connecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting to {0} ....
+        /// </summary>
+        public static string ConnectingTo {
+            get {
+                return ResourceManager.GetString("ConnectingTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try using the device&apos;s IP Address to connect..
+        /// </summary>
+        public static string ConnectionByIp {
+            get {
+                return ResourceManager.GetString("ConnectionByIp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection failed..
+        /// </summary>
+        public static string ConnectionFailed {
+            get {
+                return ResourceManager.GetString("ConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something is taking longer than expected..
+        /// </summary>
+        public static string ConnectionTimeout {
+            get {
+                return ResourceManager.GetString("ConnectionTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieving user....
+        /// </summary>
+        public static string RetrievingUser {
+            get {
+                return ResourceManager.GetString("RetrievingUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to retrieve user..
+        /// </summary>
+        public static string RetrievingUserFailed {
+            get {
+                return ResourceManager.GetString("RetrievingUserFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to save account..
         /// </summary>
         public static string UnableToSaveAccount {
             get {

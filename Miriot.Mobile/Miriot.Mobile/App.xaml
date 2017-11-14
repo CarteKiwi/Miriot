@@ -14,7 +14,7 @@
             <Color x:Key="LightTextColor">#999999</Color>
 
             <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="Red" />
+                <Setter Property="BarBackgroundColor" Value="White" />
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
 

@@ -48,7 +48,7 @@
                    HorizontalOptions="CenterAndExpand" />
 
             <Grid VerticalOptions="StartAndExpand"
-                    IsVisible="{Binding HasAtLeastOneRemoteSystem, Converter={StaticResource InvertBoolConverter}}">
+                  IsVisible="{Binding HasAtLeastOneRemoteSystem, Converter={StaticResource InvertBoolConverter}}">
                 <Image Source="Resources/badge_bg.png" 
                         x:Name="BadgeLoading"
                         HeightRequest="60"
@@ -88,7 +88,33 @@
                 </ListView.ItemTemplate>
             </ListView>
 
+            <StackLayout Orientation="Vertical"
+                         IsVisible="{Binding HasTimedOut, Mode=OneWay}">
+                <Label Text="{Binding Message, Mode=OneWay}"
+                       Font="Segoe UI"
+                       FontSize="Micro"
+                       TextColor="#4b6c90"
+                       LineBreakMode="WordWrap"
+                       VerticalOptions="Start" 
+                       HorizontalOptions="CenterAndExpand" />
+                
+                <Label Text="{Binding MessageTimeout, Mode=OneWay}"
+                       Font="Segoe UI"
+                       FontSize="Micro"
+                       TextColor="#4b6c90"
+                       LineBreakMode="WordWrap"
+                       VerticalOptions="Start" 
+                       HorizontalOptions="CenterAndExpand" />
+
+                <Entry Text="{Binding IpAddress, Mode=TwoWay}"
+                       WidthRequest="200"/>
+            </StackLayout>
+
             <Label Text="{Binding Message}"
+                   Font="Segoe UI"
+                   FontSize="Micro"
+                   TextColor="#4b6c90"
+                   IsVisible="{Binding HasTimedOut, Mode=OneWay, Converter={StaticResource InvertBoolConverter}}"
                    HorizontalOptions="CenterAndExpand"/>
 
             <Button Command="{Binding ConnectCommand}" 

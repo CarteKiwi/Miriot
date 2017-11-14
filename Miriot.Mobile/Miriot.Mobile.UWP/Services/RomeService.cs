@@ -88,6 +88,9 @@ namespace Miriot.Mobile.UWP.Services
             // construct a discovery type filter that only allows "proximal" connections:
             RemoteSystemDiscoveryTypeFilter discoveryFilter = new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal);
 
+            var authorizationKindFilter = new RemoteSystemAuthorizationKindFilter(RemoteSystemAuthorizationKind.Anonymous);
+
+
             // construct a device type filter that only allows desktop and mobile devices:
             // For this kind of filter, we must first create an IIterable of strings representing the device types to allow.
             // These strings are stored as static read-only properties of the RemoteSystemKinds class.
@@ -105,6 +108,7 @@ namespace Miriot.Mobile.UWP.Services
             localListOfFilters.Add(discoveryFilter);
             //localListOfFilters.Add(kindFilter);
             localListOfFilters.Add(statusFilter);
+            localListOfFilters.Add(authorizationKindFilter);
 
             // return the list
             return localListOfFilters;
@@ -130,6 +134,7 @@ namespace Miriot.Mobile.UWP.Services
                 // a valid RemoteSystem object is needed before going any further
                 if (remoteSystem == null)
                 {
+                    _appServiceConnection = null;
                     return false;
                 }
 
@@ -150,6 +155,20 @@ namespace Miriot.Mobile.UWP.Services
             }
 
             return true;
+        }
+
+        public async Task<RomeRemoteSystem> GetDeviceByAddressAsync(string ipAddress)
+        {
+            // construct a HostName object
+            Windows.Networking.HostName deviceHost = new Windows.Networking.HostName(ipAddress);
+
+            // create a RemoteSystem object with the HostName
+            RemoteSystem remotesys = await RemoteSystem.FindByHostNameAsync(deviceHost);
+
+            if (remotesys != null)
+                return ToRomeRemoteSystem(remotesys);
+
+            return null;
         }
 
         public async Task<T> CommandAsync<T>(string command)

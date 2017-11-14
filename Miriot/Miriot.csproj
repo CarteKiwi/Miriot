@@ -4,10 +4,15 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;MOCK</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.1" />
     <PackageReference Include="Microsoft.ProjectOxford.Common.DotNetStandard" Version="1.0.0" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.0.1-alpha" />
+    <PackageReference Include="System.Net.Sockets" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings.fr.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>

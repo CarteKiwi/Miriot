@@ -75,7 +75,7 @@ namespace Miriot.Core.ViewModels.Widgets
                     var auth = SimpleIoc.Default.GetInstance<IGraphService>();
 
                     // Tell the mirror to display code
-                    var code = await rome.CommandAsync<string>("GraphService_Initialize");
+                    await rome.CommandAsync("GraphService_Initialize");
 
                     // Redirect the user to the login page
                     await auth.AuthenticateForDeviceAsync();

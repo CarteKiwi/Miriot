@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Connecting" xml:space="preserve">
-    <value>Connecting...</value>
+    <value>Connexion en cours...</value>
   </data>
   <data name="ConnectingTo" xml:space="preserve">
-    <value>Connecting to {0} ...</value>
+    <value>Connexion à {0} en cours...</value>
   </data>
   <data name="ConnectionByIp" xml:space="preserve">
-    <value>Try using the device's IP Address to connect.</value>
+    <value>Essayez de vous connecter en utilisant l'adresse IP du miroir.</value>
   </data>
   <data name="ConnectionFailed" xml:space="preserve">
-    <value>Connection failed.</value>
+    <value>Connexion impossible.</value>
   </data>
   <data name="ConnectionTimeout" xml:space="preserve">
-    <value>Something is taking longer than expected.</value>
+    <value>Il semblerait que ce soit plus long que prévu.</value>
   </data>
   <data name="RetrievingUser" xml:space="preserve">
-    <value>Retrieving user...</value>
+    <value>Récupération de l'utilisateur...</value>
   </data>
   <data name="RetrievingUserFailed" xml:space="preserve">
-    <value>Unable to retrieve user.</value>
+    <value>Impossible de récupérer l'utilisateur.</value>
   </data>
   <data name="UnableToSaveAccount" xml:space="preserve">
-    <value>Unable to save account.</value>
+    <value>Impossible de sauvegarder le compte</value>
   </data>
 </root>
