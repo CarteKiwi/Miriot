@@ -1,13 +1,28 @@
-﻿using System;
+﻿using Miriot.Model;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Miriot.Services
 {
-    public static class TcpIpService
+    public class TcpIpService
     {
+        private List<RomeRemoteSystem> _remoteSystems;
+        public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
+
+        public Action<RomeRemoteSystem> Added { get; set; }
+
+        public TcpIpService()
+        {
+            _remoteSystems = new List<RomeRemoteSystem>();
+        }
+
         public static void Connect(String server, String message)
         {
             try
@@ -133,51 +148,100 @@ namespace Miriot.Services
             Console.Read();
         }
 
-        public static void Broadcast()
+        public static void BroadcastListener()
         {
-            // This constructor arbitrarily assigns the local port number.
+            bool done = false;
+
             UdpClient udpClient = new UdpClient(11000);
+            IPEndPoint remoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+
             try
             {
-                udpClient.Connect("127.0.0.1", 11000);
-                //Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                //IPEndPoint iep1 = new IPEndPoint(IPAddress.Broadcast, 9050);
-                ////IP Broadcast Range using Port 9050 
-                //IPEndPoint iep2 = new IPEndPoint(IPAddress.Parse("192.168.100.255"), 9050);
-                //byte[] data = Encoding.ASCII.GetBytes("12");
-                
-                // Sends a message to the host to which you have connected.
-                Byte[] sendBytes = Encoding.ASCII.GetBytes("Is anybody there?");
+                while (!done)
+                {
+                    Debug.WriteLine("Waiting for broadcast");
 
-                udpClient.Send(sendBytes, sendBytes.Length);
+                    byte[] receiveBytes = udpClient.Receive(ref remoteIpEndPoint);
 
-                // Sends a message to a different host using optional hostname and port parameters.
-                //UdpClient udpClientB = new UdpClient();
-                //udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
+                    string returnData = Encoding.ASCII.GetString(receiveBytes);
 
-                //IPEndPoint object will allow us to read datagrams sent from any source.
-                IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                    // Uses the IPEndPoint object to determine which of these two hosts responded.
+                    Debug.WriteLine("This is the message you received " +
+                                                 returnData.ToString());
+                    Debug.WriteLine("This message was sent from " +
+                                                remoteIpEndPoint.Address.ToString() +
+                                                " on their port number " +
+                                                remoteIpEndPoint.Port.ToString());
 
-                // Blocks until a message returns on this socket from a remote host.
-                Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                string returnData = Encoding.ASCII.GetString(receiveBytes);
-
-                // Uses the IPEndPoint object to determine which of these two hosts responded.
-                Console.WriteLine("This is the message you received " +
-                                             returnData.ToString());
-                Console.WriteLine("This message was sent from " +
-                                            RemoteIpEndPoint.Address.ToString() +
-                                            " on their port number " +
-                                            RemoteIpEndPoint.Port.ToString());
-
-                udpClient.Close();
-                //udpClientB.Close();
-
+                    Byte[] sendBytes = Encoding.ASCII.GetBytes(Environment.MachineName);
+                    udpClient.Send(sendBytes, sendBytes.Length, remoteIpEndPoint);
+                }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Debug.WriteLine(e.ToString());
             }
+            finally
+            {
+                udpClient.Close();
+            }
+        }
+
+        private static bool IsLocalIp(IPAddress address)
+        {
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+
+            foreach (var ip in ipHostInfo.AddressList)
+            {
+                if (ip.ToString() == address.ToString())
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void BroadcastAndListen()
+        {
+            try
+            {
+                var timer = new Timer(OnBroadcast, null, 1000, 10000);
+
+                Debug.WriteLine("Message sent to the broadcast address");
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+        }
+        private void OnBroadcast(object state)
+        {
+            var udpClient = new UdpClient();
+            var requestData = Encoding.ASCII.GetBytes("Miriot ?");
+            var serverEp = new IPEndPoint(IPAddress.Any, 0);
+
+            udpClient.EnableBroadcast = true;
+            udpClient.Send(requestData, requestData.Length, new IPEndPoint(IPAddress.Broadcast, 11000));
+
+            var serverResponseData = udpClient.Receive(ref serverEp);
+            var serverResponse = Encoding.ASCII.GetString(serverResponseData);
+            Debug.WriteLine("Recived {0} from {1}", serverResponse, serverEp.Address.ToString());
+
+            var alreadyExist = _remoteSystems.FirstOrDefault(r => r.Id == serverEp.Address.ToString());
+
+            if (alreadyExist == null)
+            {
+                var system = new RomeRemoteSystem(null)
+                {
+                    DisplayName = serverResponse,
+                    Id = serverEp.Address.ToString()
+                };
+
+                _remoteSystems.Add(system);
+                Added?.Invoke(system);
+            }
+
+            udpClient.Close();
         }
     }
 }

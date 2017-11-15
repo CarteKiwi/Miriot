@@ -91,7 +91,7 @@ namespace Miriot.Core.ViewModels
             _dispatcherService = dispatcherService;
             _navigationService = navigationService;
             _timer = new Timer(OnTimeout, null, 10000, Timeout.Infinite);
-            
+
             RemoteSystems = new ObservableCollection<RomeRemoteSystem>();
         }
 
@@ -107,11 +107,9 @@ namespace Miriot.Core.ViewModels
 
         protected override async Task InitializeAsync()
         {
-            SocketService sock = new SocketService();
-            sock.Added = OnAdded;
-            sock.Client();
-
-            //TcpIpService.Broadcast();
+            var tcp = new TcpIpService();
+            tcp.Added = OnAdded;
+            Task.Run(() => tcp.BroadcastAndListen());
 
             //_romeService.Added = OnAdded;
             //await _romeService.InitializeAsync();

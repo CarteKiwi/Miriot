@@ -24,6 +24,7 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="internetClientServer" />
     <uap3:Capability Name="remoteSystem" />
   </Capabilities>
 </Package>

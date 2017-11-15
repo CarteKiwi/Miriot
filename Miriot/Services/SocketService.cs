@@ -44,27 +44,29 @@ namespace Miriot.Services
             var port = 11011;
             var address = "127.0.0.1";
 
-            var client = new UdpSocketClient();
-
-            // convert our greeting message into a byte array
-            var msg = "HELLO WORLD";
-            var msgBytes = Encoding.UTF8.GetBytes(msg);
-
-            // send to address:port, 
-            // no guarantee that anyone is there 
-            // or that the message is delivered.
-            await client.SendToAsync(msgBytes, address, port);
-
-            client.MessageReceived += (s, args) =>
+            using (var client = new UdpSocketClient())
             {
-                var add = args.RemoteAddress;
-                var name = Encoding.UTF8.GetString(args.ByteData, 0, args.ByteData.Length);
+                // convert our greeting message into a byte array
+                var msg = "HELLO WORLD";
+                var msgBytes = Encoding.UTF8.GetBytes(msg);
+                //var t = await Sockets.Plugin.CommsInterface.GetAllInterfacesAsync();
+                
+                // send to address:port, 
+                // no guarantee that anyone is there 
+                // or that the message is delivered.
+                await client.SendToAsync(msgBytes, address, port);
 
-                Added?.Invoke(new RomeRemoteSystem(null)
+                client.MessageReceived += (s, args) =>
                 {
-                    DisplayName = name
-                });
-            };
+                    var add = args.RemoteAddress;
+                    var name = Encoding.UTF8.GetString(args.ByteData, 0, args.ByteData.Length);
+
+                    Added?.Invoke(new RomeRemoteSystem(null)
+                    {
+                        DisplayName = name
+                    });
+                };
+            }
         }
     }
 }
