@@ -5,11 +5,7 @@ using Miriot.Common.Model;
 using Miriot.Model;
 using Miriot.Resources;
 using Miriot.Services;
-using Miriot.Services.Interfaces;
-using Newtonsoft.Json;
-using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,9 +14,9 @@ namespace Miriot.Core.ViewModels
 {
     public class ConnectViewModel : CustomViewModel
     {
-        private IRomeService _romeService;
         private readonly IDispatcherService _dispatcherService;
         private readonly INavigationService _navigationService;
+        private readonly RemoteService _remoteService;
         private RomeRemoteSystem _selectedSystem;
         private Timer _timer;
         private string _message;
@@ -83,13 +79,13 @@ namespace Miriot.Core.ViewModels
         public ObservableCollection<RomeRemoteSystem> RemoteSystems { get; set; }
 
         public ConnectViewModel(
-            IRomeService romeService,
             IDispatcherService dispatcherService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            RemoteService remoteService)
         {
-            _romeService = romeService;
             _dispatcherService = dispatcherService;
             _navigationService = navigationService;
+            _remoteService = remoteService;
             _timer = new Timer(OnTimeout, null, 10000, Timeout.Infinite);
 
             RemoteSystems = new ObservableCollection<RomeRemoteSystem>();
@@ -107,13 +103,9 @@ namespace Miriot.Core.ViewModels
 
         protected override async Task InitializeAsync()
         {
-            var tcp = new TcpIpService();
-            tcp.Added = OnAdded;
-            Task.Run(() => tcp.BroadcastAndListen());
-
-            //_romeService.Added = OnAdded;
-            //await _romeService.InitializeAsync();
-
+            _remoteService.Added = OnAdded;
+            _remoteService.Discover();
+           
             //_navigationService.NavigateTo(PageKeys.Settings, new User
             //{
             //    Id = Guid.NewGuid(),
@@ -169,16 +161,16 @@ namespace Miriot.Core.ViewModels
             else
             {
                 Message = string.Format(Strings.ConnectingTo, IpAddress);
-                SelectedRemoteSystem = await _romeService.GetDeviceByAddressAsync(IpAddress);
+                //SelectedRemoteSystem = await _socketService.GetDeviceByAddressAsync(IpAddress);
             }
 
-            var success = await _romeService.ConnectAsync(SelectedRemoteSystem);
+            var success = await _remoteService.ConnectAsync(SelectedRemoteSystem);
 
             if (success)
             {
                 Message = Strings.RetrievingUser;
 
-                var user = await _romeService.CommandAsync<User>("GetUser");
+                var user = await _remoteService.CommandAsync<User>(RemoteCommands.GetUser);
 
                 if (user == null)
                 {

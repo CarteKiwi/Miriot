@@ -71,17 +71,17 @@ namespace Miriot.Core.ViewModels.Widgets
                 var dispatcher = SimpleIoc.Default.GetInstance<IDispatcherService>();
                 dispatcher.Invoke(async () =>
                 {
-                    var rome = SimpleIoc.Default.GetInstance<IRomeService>();
+                    var remoteService = SimpleIoc.Default.GetInstance<RemoteService>();
                     var auth = SimpleIoc.Default.GetInstance<IGraphService>();
 
                     // Tell the mirror to display code
-                    await rome.CommandAsync("GraphService_Initialize");
-
+                    remoteService.Command(Model.RemoteCommands.GraphService_Initialize);
+                    
                     // Redirect the user to the login page
                     await auth.AuthenticateForDeviceAsync();
 
                     // Tell the mirror to retrieve user
-                    User = await rome.CommandAsync<GraphUser>("GraphService_GetUser");
+                    User = await remoteService.CommandAsync<GraphUser>(Model.RemoteCommands.GraphService_GetUser);
                 });
             }
         }

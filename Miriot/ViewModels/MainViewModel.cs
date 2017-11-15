@@ -31,6 +31,7 @@ namespace Miriot.Core.ViewModels
         private readonly ISpeechService _speechService;
         private readonly IGraphService _graphService;
         private readonly ILuisService _luisService;
+        private readonly RemoteService _remoteService;
         private string _title;
         private string _subTitle;
         private bool _isListeningYesNo;
@@ -155,9 +156,11 @@ namespace Miriot.Core.ViewModels
             IVisionService visionService,
             ISpeechService speechService,
             IGraphService graphService,
-            ILuisService luisService)
+            ILuisService luisService,
+            RemoteService remoteService)
         {
             _luisService = luisService;
+            _remoteService = remoteService;
             _fileService = fileService;
             _platformService = platformService;
             _dispatcherService = dispatcherService;
@@ -188,10 +191,7 @@ namespace Miriot.Core.ViewModels
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
             Messenger.Default.Register<GraphServiceMessage>(this, OnGraphServiceMessageReceived);
 
-            Task.Run(() => TcpIpService.BroadcastListener());
-
-            //SocketService sock = new SocketService();
-            //sock.Receiver();
+            _remoteService.Listen();
         }
 
         private async void OnGraphServiceMessageReceived(GraphServiceMessage message)
