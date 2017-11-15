@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,6 +51,7 @@ namespace Miriot.Services
 
         internal Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
         {
+            _socketService.StopBroadcasting();
             _connectedRemoteSystem = selectedRemoteSystem;
 
             return Task.FromResult(true);
