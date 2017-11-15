@@ -22,7 +22,7 @@ namespace Miriot.Core.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IFaceService _faceService;
         private readonly IDispatcherService _dispatcher;
-        private readonly IRomeService _romeService;
+        private readonly RemoteService _remoteService;
         private User _user;
         private ObservableCollection<WidgetModel> _widgets;
         #endregion
@@ -44,11 +44,11 @@ namespace Miriot.Core.ViewModels
         public SettingsViewModel(
             IDialogService dialogService,
             IDispatcherService dispatcher,
-            IRomeService romeService)
+            RemoteService remoteService)
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;
-            _romeService = romeService;
+            _remoteService = remoteService;
 
             ActionSave = new RelayCommand(OnSave);
             ActionDelete = new RelayCommand(async () => await OnDelete());

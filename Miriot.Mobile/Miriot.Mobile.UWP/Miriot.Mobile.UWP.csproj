@@ -157,7 +157,6 @@
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\GraphService.cs" />
     <Compile Include="Services\PlatformService.cs" />
-    <Compile Include="Services\RomeService.cs" />
     <Compile Include="Services\SecurityService.cs" />
     <Compile Include="Services\TwitterWrapperService.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
