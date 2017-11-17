@@ -25,13 +25,13 @@
                            HorizontalOptions="Center"/>
                     <Image Source="Resources/magnif.png" 
                            x:Name="Magnif"
-                           HeightRequest="40"
+                           HeightRequest="30"
                            VerticalOptions="Center"
                            HorizontalOptions="Center"/>
                 </Grid>
             </RelativeLayout>
 
-            <Label Text="Recherche des miroirs à proximité..."
+            <Label Text="{sel:LocalizedStrings DetectingMiriot}"
                    Font="Segoe UI"
                    FontSize="Small"
                    TextColor="#4b6c90"
@@ -39,7 +39,7 @@
                    VerticalOptions="Start" 
                    HorizontalOptions="CenterAndExpand" />
 
-            <Label Text="Sélectionnez dans la liste le miroir que vous souhaitez paramétrer"
+            <Label Text="{sel:LocalizedStrings SelectMiriot}"
                    Font="Segoe UI"
                    FontSize="Micro"
                    TextColor="#4b6c90"
@@ -49,15 +49,12 @@
 
             <Grid VerticalOptions="StartAndExpand"
                   IsVisible="{Binding HasAtLeastOneRemoteSystem, Converter={StaticResource InvertBoolConverter}}">
-                <Image Source="Resources/badge_bg.png" 
-                        x:Name="BadgeLoading"
-                        HeightRequest="60"
-                        HorizontalOptions="Center"/>
-                <Image Source="Resources/magnif.png" 
-                        x:Name="MagnifLoading"
-                        HeightRequest="40"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Center"/>
+                <Label Text="{sel:LocalizedStrings NoMirrorDetected}"
+                       Font="Segoe UI"
+                       FontSize="Micro"
+                       TextColor="#4b6c90"
+                       VerticalOptions="Center"
+                       HorizontalOptions="CenterAndExpand"/>
             </Grid>
 
             <ListView x:Name="List" 
@@ -89,6 +86,8 @@
             </ListView>
 
             <StackLayout Orientation="Vertical"
+                         Margin="20,0,20,20"
+                         HorizontalOptions="CenterAndExpand"
                          IsVisible="{Binding HasTimedOut, Mode=OneWay}">
                 <Label Text="{Binding Message, Mode=OneWay}"
                        Font="Segoe UI"
@@ -97,17 +96,14 @@
                        LineBreakMode="WordWrap"
                        VerticalOptions="Start" 
                        HorizontalOptions="CenterAndExpand" />
-                
+
                 <Label Text="{Binding MessageTimeout, Mode=OneWay}"
                        Font="Segoe UI"
-                       FontSize="Micro"
+                       FontSize="12"
                        TextColor="#4b6c90"
                        LineBreakMode="WordWrap"
                        VerticalOptions="Start" 
                        HorizontalOptions="CenterAndExpand" />
-
-                <Entry Text="{Binding IpAddress, Mode=TwoWay}"
-                       WidthRequest="200"/>
             </StackLayout>
 
             <Label Text="{Binding Message}"
@@ -118,6 +114,7 @@
                    HorizontalOptions="CenterAndExpand"/>
 
             <Button Command="{Binding ConnectCommand}" 
+                    IsEnabled="{Binding HasAtLeastOneRemoteSystem, Mode=OneWay}"
                     BackgroundColor="#4b6c90"
                     TextColor="White"
                     HeightRequest="45"

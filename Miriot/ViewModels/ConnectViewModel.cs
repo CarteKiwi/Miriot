@@ -22,7 +22,6 @@ namespace Miriot.Core.ViewModels
         private string _message;
         private string _messageTimeout;
         private bool _hasTimedOut;
-        private string _ipAddress;
         private RelayCommand _connectCommand;
         private RelayCommand<RomeRemoteSystem> _selectCommand;
 
@@ -44,12 +43,6 @@ namespace Miriot.Core.ViewModels
         {
             get { return _messageTimeout; }
             set { Set(ref _messageTimeout, value); }
-        }
-
-        public string IpAddress
-        {
-            get { return _ipAddress; }
-            set { Set(ref _ipAddress, value); }
         }
 
         public RomeRemoteSystem SelectedRemoteSystem
@@ -98,14 +91,14 @@ namespace Miriot.Core.ViewModels
 
             HasTimedOut = true;
             Message = Strings.ConnectionTimeout;
-            MessageTimeout = Strings.ConnectionByIp;
+            MessageTimeout = Strings.CheckConnection;
         }
 
         protected override async Task InitializeAsync()
         {
             _remoteService.Added = OnAdded;
             _remoteService.Discover();
-           
+
             //_navigationService.NavigateTo(PageKeys.Settings, new User
             //{
             //    Id = Guid.NewGuid(),
@@ -154,15 +147,7 @@ namespace Miriot.Core.ViewModels
 
         private async void OnConnect()
         {
-            if (string.IsNullOrEmpty(IpAddress))
-            {
-                Message = Strings.Connecting;
-            }
-            else
-            {
-                Message = string.Format(Strings.ConnectingTo, IpAddress);
-                //SelectedRemoteSystem = await _socketService.GetDeviceByAddressAsync(IpAddress);
-            }
+            Message = Strings.Connecting;
 
             var success = await _remoteService.ConnectAsync(SelectedRemoteSystem);
 

@@ -117,14 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CheckConnection" xml:space="preserve">
+    <value>Check your internet connection. Miriot and Miriot Remote both must be connected to the same wifi.</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Connecting...</value>
   </data>
   <data name="ConnectingTo" xml:space="preserve">
     <value>Connecting to {0} ...</value>
-  </data>
-  <data name="ConnectionByIp" xml:space="preserve">
-    <value>Try using the device's IP Address to connect.</value>
   </data>
   <data name="ConnectionFailed" xml:space="preserve">
     <value>Connection failed.</value>
@@ -132,11 +132,20 @@
   <data name="ConnectionTimeout" xml:space="preserve">
     <value>Something is taking longer than expected.</value>
   </data>
+  <data name="DetectingMiriot" xml:space="preserve">
+    <value>Looking for mirror on the active network...</value>
+  </data>
+  <data name="NoMirrorDetected" xml:space="preserve">
+    <value>No mirror detected yet</value>
+  </data>
   <data name="RetrievingUser" xml:space="preserve">
     <value>Retrieving user...</value>
   </data>
   <data name="RetrievingUserFailed" xml:space="preserve">
     <value>Unable to retrieve user.</value>
+  </data>
+  <data name="SelectMiriot" xml:space="preserve">
+    <value>Select the mirror you want to configure</value>
   </data>
   <data name="UnableToSaveAccount" xml:space="preserve">
     <value>Unable to save account.</value>

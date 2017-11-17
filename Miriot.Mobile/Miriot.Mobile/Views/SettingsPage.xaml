@@ -4,6 +4,7 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:TypeArguments="viewModels:SettingsViewModel"
+    xmlns:a="clr-namespace:Xamarin.Forms.Alias;assembly=Xamarin.Forms.Alias"
     xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
     xmlns:core="using:Miriot.Core.ViewModels.Widgets"
     xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
@@ -44,9 +45,9 @@
                            FontAttributes="Italic"/>
 
                     <Switch Margin="0,0,0,0" 
-                              HorizontalOptions="End"
-                              Grid.Column="1"
-                              IsToggled="{Binding IsActive, Mode=TwoWay}">
+                            HorizontalOptions="End"
+                            Grid.Column="1"
+                            IsToggled="{Binding IsActive, Mode=TwoWay}">
                     </Switch>
 
                     <StackLayout Orientation="Horizontal"
@@ -122,9 +123,9 @@
             </Grid>
         </Frame>
 
-        <StackLayout VerticalOptions="Start" HeightRequest="56" Margin="0,31,0,0">
+        <a:StackPanel VerticalOptions="Start" HeightRequest="56" Margin="0,31,0,0">
             <Grid BackgroundColor="Honeydew" Opacity=".1"/>
-        </StackLayout>
+        </a:StackPanel>
 
         <StackLayout VerticalOptions="Start" HeightRequest="2" Margin="0,85,0,0">
             <Grid BackgroundColor="PowderBlue"/>

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="2.4.0.38779" />
+    <PackageReference Include="Xamarin.Forms.Alias" Version="2.5.1.87875" />
     <PackageReference Include="Xamarin.Forms.Dynamic" Version="0.1.18-pre" />
   </ItemGroup>
 

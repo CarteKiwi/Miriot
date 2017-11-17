@@ -117,14 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CheckConnection" xml:space="preserve">
+    <value>Vérifiez votre connexion: Miriot &amp; Miriot Remote doivent être connecté au même réseau Wifi.</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Connexion en cours...</value>
   </data>
   <data name="ConnectingTo" xml:space="preserve">
     <value>Connexion à {0} en cours...</value>
-  </data>
-  <data name="ConnectionByIp" xml:space="preserve">
-    <value>Essayez de vous connecter en utilisant l'adresse IP du miroir.</value>
   </data>
   <data name="ConnectionFailed" xml:space="preserve">
     <value>Connexion impossible.</value>
@@ -132,11 +132,20 @@
   <data name="ConnectionTimeout" xml:space="preserve">
     <value>Il semblerait que ce soit plus long que prévu.</value>
   </data>
+  <data name="DetectingMiriot" xml:space="preserve">
+    <value>Détection des miroirs à proximité...</value>
+  </data>
+  <data name="NoMirrorDetected" xml:space="preserve">
+    <value>Aucun miroir détecté pour l'instant</value>
+  </data>
   <data name="RetrievingUser" xml:space="preserve">
     <value>Récupération de l'utilisateur...</value>
   </data>
   <data name="RetrievingUserFailed" xml:space="preserve">
     <value>Impossible de récupérer l'utilisateur.</value>
+  </data>
+  <data name="SelectMiriot" xml:space="preserve">
+    <value>Sélectionnez dans la liste le miroir que vous souhaitez paramétrer</value>
   </data>
   <data name="UnableToSaveAccount" xml:space="preserve">
     <value>Impossible de sauvegarder le compte</value>
