@@ -1,11 +1,5 @@
-﻿using System.Threading.Tasks;
-using Miriot.Common.Model;
-using System.Net.Http;
-using System;
-using Newtonsoft.Json;
-using Miriot.Common.Model.Widgets.Deezer;
-using System.Linq;
-using Miriot.Services;
+﻿using Miriot.Common.Model;
+using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
@@ -17,7 +11,7 @@ namespace Miriot.Core.ViewModels.Widgets
         {
         }
 
-        public override async Task LoadInfos()
+        public override async Task Load()
         {
             //var configService = SimpleIoc.Default.GetInstance<IConfigurationService>();
             //var keys = await configService.GetKeysByProviderAsync("deezer");

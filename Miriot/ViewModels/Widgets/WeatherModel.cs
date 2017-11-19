@@ -1,11 +1,9 @@
 ﻿using Miriot.Common.Model;
-using Newtonsoft.Json;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
-    public class WeatherModel : WidgetModel
+    public class WeatherModel : WidgetModel<WeatherWidgetInfo>
     {
         public override WidgetType Type => WidgetType.Weather;
 
@@ -22,17 +20,15 @@ namespace Miriot.Core.ViewModels.Widgets
             Title = "Météo";
         }
 
-        public override WidgetInfo GetInfos()
+        public override WeatherWidgetInfo GetModel()
         {
             return new WeatherWidgetInfo { Location = Location };
         }
 
-        public override Task LoadInfos()
+        public override Task Load()
         {
-            var info = _infos.FirstOrDefault();
-            if (info == null) return Task.FromResult(0);
-
-            Location = JsonConvert.DeserializeObject<WeatherWidgetInfo>(info).Location;
+            base.Load();
+            Location = Model?.Location;
 
             return Task.FromResult(0);
         }

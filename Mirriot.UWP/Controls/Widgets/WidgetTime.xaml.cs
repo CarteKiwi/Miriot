@@ -9,7 +9,7 @@ namespace Miriot.Win10.Controls
     {
         private bool _secondDisplayed;
 
-        public WidgetTime(TimeModel widget) : base(widget)
+        public WidgetTime(TimeModel widget) : base(widget.X, widget.Y)
         {
             InitializeComponent();
 

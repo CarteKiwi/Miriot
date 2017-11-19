@@ -1,13 +1,12 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common.Model;
-using Miriot.Services;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Miriot.Services.Interfaces;
 
 namespace Miriot.Core.ViewModels
 {
@@ -137,7 +136,7 @@ namespace Miriot.Core.ViewModels
 
                 if (widgetEntity != null)
                 {
-                    await widgetModel.LoadInfos();
+                    await widgetModel.Load();
                     widgetModel.SetActive();
                 }
                 else

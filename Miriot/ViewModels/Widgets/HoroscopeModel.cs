@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Miriot.Common.Model;
+using Miriot.Common.Model.Widgets.Horoscope;
+using System;
 using System.Collections.Generic;
-using Miriot.Common.Model;
 using System.Linq;
 using System.Threading.Tasks;
-using Miriot.Common.Model.Widgets.Horoscope;
-using Newtonsoft.Json;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
-    public class HoroscopeModel : WidgetModel
+    public class HoroscopeModel : WidgetModel<HoroscopeWidgetInfo>
     {
         private Signs? _sign;
 
@@ -28,20 +27,17 @@ namespace Miriot.Core.ViewModels.Widgets
             Signs = new List<Signs>(Enum.GetValues(typeof(Signs)).Cast<Signs>().ToList());
         }
 
-        public override WidgetInfo GetInfos()
+        public override HoroscopeWidgetInfo GetModel()
         {
             return new HoroscopeWidgetInfo { SignId = (int?)Sign };
         }
 
-        public override Task LoadInfos()
+        public override Task Load()
         {
-            var info = _infos.FirstOrDefault();
-            if (info == null) return Task.FromResult(0);
+            base.Load();
 
-            var infoModel = JsonConvert.DeserializeObject<HoroscopeWidgetInfo>(info);
-
-            if (infoModel?.SignId != null)
-                Sign = (Signs)infoModel.SignId;
+            if (Model?.SignId != null)
+                Sign = (Signs)Model.SignId;
 
             return Task.FromResult(0);
         }

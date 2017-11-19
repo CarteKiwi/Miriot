@@ -3,13 +3,11 @@ using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets.Twitter;
 using Miriot.Services;
 using Miriot.Services.Interfaces;
-using Newtonsoft.Json;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
-    public class TwitterModel : WidgetModel
+    public class TwitterModel : WidgetModel<OAuthWidgetInfo>
     {
         public override string Title => "Twitter";
 
@@ -27,20 +25,15 @@ namespace Miriot.Core.ViewModels.Widgets
         {
         }
 
-        public override WidgetInfo GetInfos()
+        public override OAuthWidgetInfo GetModel()
         {
             var sec = SimpleIoc.Default.GetInstance<ISecurityService>();
             return sec.GetSecureData("TwitterAccessToken");
         }
 
-        public override async Task LoadInfos()
+        public override async Task Load()
         {
-            var info = _infos?.FirstOrDefault();
-            if (string.IsNullOrEmpty(info) || info == "null") return;
-
-            var cred = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info);
-
-            if (!string.IsNullOrEmpty(cred.Token) || !string.IsNullOrEmpty(cred.TokenSecret))
+            if (!string.IsNullOrEmpty(Model?.Token) || !string.IsNullOrEmpty(Model?.TokenSecret))
             {
                 //var vault = new PasswordVault();
                 //var passwordCredential = new PasswordCredential("TwitterAccessToken", cred.Token, cred.TokenSecret);

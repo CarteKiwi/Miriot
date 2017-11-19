@@ -12,13 +12,13 @@ namespace Miriot.Win10.Controls
     {
         private HoroscopeModel _model;
 
-        public WidgetHoroscope(HoroscopeModel model) : base(model)
+        public WidgetHoroscope(HoroscopeModel model) : base(model.X, model.Y)
         {
             _model = model;
 
             InitializeComponent();
 
-            _model.LoadInfos();
+            _model.Load();
 
             Get();
         }

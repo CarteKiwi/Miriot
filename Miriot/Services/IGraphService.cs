@@ -6,11 +6,11 @@ namespace Miriot.Services
 {
     public interface IGraphService
     {
-        void Initialize(OAuthWidgetInfo infos);
+        void Initialize();
 
         bool IsInitialized { get; set; }
 
-        Task<bool> LoginAsync();
+        Task<bool> LoginAsync(bool hideError = false);
 
         Task<GraphUser> GetUserAsync();
 

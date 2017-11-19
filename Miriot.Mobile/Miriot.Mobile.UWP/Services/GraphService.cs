@@ -1,13 +1,10 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
-using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets;
 using Miriot.Services;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Security.Credentials;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
 
@@ -17,21 +14,8 @@ namespace Miriot.Win10.Services
     {
         public bool IsInitialized { get; set; }
 
-        public void Initialize(OAuthWidgetInfo infos)
+        public void Initialize()
         {
-            if (!string.IsNullOrEmpty(infos.Code))
-            {
-                ApplicationData.Current.LocalSettings.Values["userCode"] = infos.Code;
-            }
-
-            if (!string.IsNullOrEmpty(infos.Token))
-            {
-                var vault = new PasswordVault();
-                var passwordCredential = new PasswordCredential("AccessToken", infos.Username, infos.Token);
-                vault.Add(passwordCredential);
-                ApplicationData.Current.LocalSettings.Values["user"] = infos.Username;
-            }
-
             // From Azure portal - Cellenza subscription
             //var appClientId = "ca026d51-8d86-4f85-a697-7be9c0a86453";
 
@@ -46,13 +30,17 @@ namespace Miriot.Win10.Services
             return MicrosoftGraphService.Instance.AuthenticateForDeviceAsync();
         }
 
-        public async Task<bool> LoginAsync()
+        public async Task<bool> LoginAsync(bool hideError = false)
         {
             // Login via Azure Active Directory
             if (!await MicrosoftGraphService.Instance.LoginAsync())
             {
-                var error = new MessageDialog("Impossible de s'authentifier auprès d'Office 365");
-                await error.ShowAsync();
+                if (!hideError)
+                {
+                    var error = new MessageDialog("Impossible de s'authentifier auprès d'Office 365");
+                    await error.ShowAsync();
+                }
+
                 return false;
             }
 
@@ -81,11 +69,6 @@ namespace Miriot.Win10.Services
             {
                 return null;
             }
-        }
-
-        private void Initialize()
-        {
-            Initialize(null);
         }
 
         private async Task<byte[]> GetPhotoAsync()

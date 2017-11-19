@@ -19,21 +19,8 @@ namespace Miriot.Win10.Services
     {
         public bool IsInitialized { get; set; }
 
-        public void Initialize(OAuthWidgetInfo infos)
+        public void Initialize()
         {
-            if (!string.IsNullOrEmpty(infos.Code))
-            {
-                ApplicationData.Current.LocalSettings.Values["userCode"] = infos.Code;
-            }
-
-            if (!string.IsNullOrEmpty(infos.Token))
-            {
-                var vault = new PasswordVault();
-                var passwordCredential = new PasswordCredential("AccessToken", infos.Username, infos.Token);
-                vault.Add(passwordCredential);
-                ApplicationData.Current.LocalSettings.Values["user"] = infos.Username;
-            }
-
             // From Azure portal - Cellenza subscription
             //var appClientId = "ca026d51-8d86-4f85-a697-7be9c0a86453";
 
@@ -45,22 +32,26 @@ namespace Miriot.Win10.Services
 
         public async Task<string> GetCodeAsync()
         {
-            if(!IsInitialized)
+            if (!IsInitialized)
             {
-                Initialize(null);
+                Initialize();
             }
 
             await MicrosoftGraphService.Instance.InitializeForDeviceCodeAsync();
             return MicrosoftGraphService.Instance.UserCode;
         }
 
-        public async Task<bool> LoginAsync()
+        public async Task<bool> LoginAsync(bool hideError = false)
         {
             // Login via Azure Active Directory
             if (!await MicrosoftGraphService.Instance.LoginAsync())
             {
-                var error = new MessageDialog("Impossible de s'authentifier auprès d'Office 365");
-                await error.ShowAsync();
+                if (!hideError)
+                {
+                    var error = new MessageDialog("Impossible de s'authentifier auprès d'Office 365");
+                    await error.ShowAsync();
+                }
+
                 return false;
             }
 
@@ -91,25 +82,27 @@ namespace Miriot.Win10.Services
             }
         }
 
-        private void Initialize()
-        {
-            Initialize(null);
-        }
-
         private async Task<byte[]> GetPhotoAsync()
         {
-            using (IRandomAccessStream photoStream = await MicrosoftGraphService.Instance.User.GetPhotoAsync())
+            try
             {
-                if (photoStream == null)
-                    return null;
-
-                using (var dr = new DataReader(photoStream.GetInputStreamAt(0)))
+                using (IRandomAccessStream photoStream = await MicrosoftGraphService.Instance.User.GetPhotoAsync())
                 {
-                    var bytes = new byte[photoStream.Size];
-                    await dr.LoadAsync((uint)photoStream.Size);
-                    dr.ReadBytes(bytes);
-                    return bytes;
+                    if (photoStream == null)
+                        return null;
+
+                    using (var dr = new DataReader(photoStream.GetInputStreamAt(0)))
+                    {
+                        var bytes = new byte[photoStream.Size];
+                        await dr.LoadAsync((uint)photoStream.Size);
+                        dr.ReadBytes(bytes);
+                        return bytes;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
 

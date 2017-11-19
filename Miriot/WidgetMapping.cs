@@ -25,6 +25,8 @@ namespace Miriot.Core
 
         public static WidgetModel ToModel(this Widget widget)
         {
+            //Type.GetType("");
+
             return (WidgetModel)Activator.CreateInstance(_mapping[widget.Type], widget);
         }
 

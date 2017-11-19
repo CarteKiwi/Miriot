@@ -1,66 +1,31 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets;
+using Miriot.Model;
 using Miriot.Services;
-using Miriot.Services.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
-    public class CalendarModel : WidgetModel
+    public class CalendarModel : WidgetModel<GraphUser>
     {
-        private OAuthWidgetInfo _authInfos;
-        private string _token;
-        private GraphUser _user;
-
-        public string Token
-        {
-            get { return _token; }
-            set { Set(ref _token, value); }
-        }
-
-
         public GraphUser User
         {
-            get => _user;
-            set => Set(ref _user, value);
+            get { return Model; }
+            set { Model = value; }
         }
 
         public override string Title => "Calendrier & mails";
 
         public override WidgetType Type => WidgetType.Calendar;
 
-        public CalendarModel(Widget widget) : base(widget)
+        public CalendarModel(Widget widget) : base(widget) { }
+
+        public override async Task Load()
         {
-        }
-
-        public override WidgetInfo GetInfos()
-        {
-            var sec = SimpleIoc.Default.GetInstance<ISecurityService>();
-            return sec.GetSecureData("AccessToken");
-
-            //var vault = new PasswordVault();
-            //var passwordCredentials = vault.RetrieveAll();
-            //var temp = passwordCredentials.FirstOrDefault(c => c.Resource == "AccessToken");
-            //var cred = vault.Retrieve(temp.Resource, temp.UserName);
-
-            //var temp2 = passwordCredentials.FirstOrDefault(c => c.Resource == "UserCode");
-            //var cred2 = vault.Retrieve(temp2.Resource, temp2.UserName);
-
-            //return new OAuthWidgetInfo { Token = cred.Password, Username = temp.UserName, Code = cred2.Password };
-        }
-
-        public override async Task LoadInfos()
-        {
-            var info = _infos?.FirstOrDefault();
-            if (string.IsNullOrEmpty(info) || info == "null") return;
-
-            _authInfos = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info);
-
+            await base.Load();
             await Initialize();
         }
 
@@ -75,13 +40,13 @@ namespace Miriot.Core.ViewModels.Widgets
                     var auth = SimpleIoc.Default.GetInstance<IGraphService>();
 
                     // Tell the mirror to display code
-                    remoteService.Command(Model.RemoteCommands.GraphService_Initialize);
-                    
+                    remoteService.Command(RemoteCommands.GraphService_Initialize);
+
                     // Redirect the user to the login page
                     await auth.AuthenticateForDeviceAsync();
 
                     // Tell the mirror to retrieve user
-                    User = await remoteService.CommandAsync<GraphUser>(Model.RemoteCommands.GraphService_GetUser);
+                    User = await remoteService.CommandAsync<GraphUser>(RemoteCommands.GraphService_GetUser);
                 });
             }
         }
@@ -104,11 +69,11 @@ namespace Miriot.Core.ViewModels.Widgets
         private async Task Initialize()
         {
             var auth = SimpleIoc.Default.GetInstance<IGraphService>();
-            auth.Initialize(_authInfos);
+            auth.Initialize();
 
             try
             {
-                if (await auth.LoginAsync())
+                if (await auth.LoginAsync(true))
                 {
                     User = await auth.GetUserAsync();
                 }
@@ -116,9 +81,6 @@ namespace Miriot.Core.ViewModels.Widgets
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                //User = new GraphUser { Name = "Echec de la connexion" };
-                User = null;
-                IsActive = false;
             }
         }
     }

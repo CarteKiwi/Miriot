@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Miriot.Services
@@ -12,7 +11,6 @@ namespace Miriot.Services
     public class RemoteService
     {
         private readonly SocketService _socketService;
-        private Timer _discoveryTimer;
         private List<RomeRemoteSystem> _remoteSystems;
         private RomeRemoteSystem _connectedRemoteSystem;
 

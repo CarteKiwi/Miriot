@@ -11,13 +11,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetWeather : IWidgetBase
+    public sealed partial class WidgetWeather
     {
         private readonly string _key = "84bc189921c14c7a98fdea2a98aa11ba";
         private string _location = "paris";
         private WeatherModel _model;
 
-        public WidgetWeather(WeatherModel model) : base(model)
+        public WidgetWeather(WeatherModel model) : base(model.X, model.Y)
         {
             _model = model;
 
@@ -30,7 +30,7 @@ namespace Miriot.Win10.Controls
 
         private void RetrieveData()
         {
-            _model.LoadInfos();
+            _model.Load();
         }
 
         private async void GetWeather()

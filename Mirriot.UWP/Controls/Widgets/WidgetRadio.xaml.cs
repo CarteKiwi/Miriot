@@ -8,9 +8,9 @@ using Windows.Media.Streaming.Adaptive;
 
 namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetRadio : WidgetBase, IWidgetAction, IWidgetExclusive
+    public sealed partial class WidgetRadio : IWidgetAction, IWidgetExclusive
     {
-        public WidgetRadio(RadioModel widget): base (widget)
+        public WidgetRadio(RadioModel widget): base (widget.X, widget.Y)
         {
             InitializeComponent();
             IsExclusive = true;

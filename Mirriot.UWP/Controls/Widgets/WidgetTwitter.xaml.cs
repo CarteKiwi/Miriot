@@ -25,13 +25,15 @@ namespace Miriot.Win10.Controls
         public string Token { get; set; }
 
         private ObservableCollection<ITwitterResult> _tweets;
+        private readonly TwitterModel _widget;
+
         public ObservableCollection<ITwitterResult> Tweets
         {
             get => _tweets;
             private set => Set(ref _tweets, value);
         }
 
-        public WidgetTwitter(TwitterModel widget) : base(widget)
+        public WidgetTwitter(TwitterModel widget) : base(widget.X, widget.Y)
         {
             State = WidgetStates.Minimal;
 
@@ -40,13 +42,14 @@ namespace Miriot.Win10.Controls
             Margin = new Thickness(0);
 
             Loaded += WidgetTwitter_Loaded;
+            this._widget = widget;
         }
 
         private async void WidgetTwitter_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                await OriginalWidget.LoadInfos();
+                await this._widget.Load();
 
                 TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://Miriot.Win10.suismoi.fr");
 

@@ -15,14 +15,14 @@ using Windows.UI.Xaml.Controls;
 
 namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetCalendar : WidgetBase, IWidgetOAuth, IWidgetListener
+    public sealed partial class WidgetCalendar : IWidgetOAuth, IWidgetListener
     {
         public string Token { get; set; }
         public GraphUser User { get; set; }
 
         private readonly CalendarModel _model;
 
-        public WidgetCalendar(CalendarModel model) : base(model)
+        public WidgetCalendar(CalendarModel model) : base(model.X, model.Y)
         {
             _model = model;
 
@@ -33,9 +33,8 @@ namespace Miriot.Win10.Controls
 
         private async Task RetrieveData()
         {
-            await _model.LoadInfos();
+            await _model.Load();
 
-            Token = _model.Token;
             User = _model.User;
         }
 
