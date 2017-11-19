@@ -26,7 +26,7 @@ namespace Miriot.Core.ViewModels.Widgets
             _infos = widgetEntity.Infos;
         }
 
-        public new Widget ToWidget()
+        public override Widget ToWidget()
         {
             var infos = GetModel();
             return new Widget

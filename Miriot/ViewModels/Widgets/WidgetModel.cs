@@ -64,7 +64,7 @@ namespace Miriot.Core.ViewModels.Widgets
             _infos = widgetEntity.Infos;
         }
 
-        public Widget ToWidget()
+        public virtual Widget ToWidget()
         {
             return new Widget
             {
