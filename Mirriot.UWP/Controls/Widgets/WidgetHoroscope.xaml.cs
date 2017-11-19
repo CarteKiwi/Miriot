@@ -12,7 +12,7 @@ namespace Miriot.Win10.Controls
     {
         private HoroscopeModel _model;
 
-        public WidgetHoroscope(HoroscopeModel model) : base(model.X, model.Y)
+        public WidgetHoroscope(HoroscopeModel model) : base(model)
         {
             _model = model;
 

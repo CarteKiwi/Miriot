@@ -28,12 +28,12 @@ namespace Miriot.Win10.Controls
                 w.Stop();
         }
 
-        public WidgetTimer() : base(1, 1)
+        public WidgetTimer() : base(null)
         {
             InitializeComponent();
         }
 
-        public WidgetTimer(WidgetModel widget) : base(widget.X, widget.Y)
+        public WidgetTimer(WidgetModel widget) : base(widget)
         {
             InitializeComponent();
 

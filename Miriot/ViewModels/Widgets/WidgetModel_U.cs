@@ -2,68 +2,22 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels.Widgets
 {
-    public abstract class WidgetModel<U> : INotifyPropertyChanged
+    public abstract class WidgetModel<U> : WidgetModel
     {
-        #region Variables
-        private int _x;
-        private int _y;
-        private string _title;
-        private bool _isActive;
-        protected List<string> _infos;
         private U _model;
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
 
-        #region Properties
         public U Model
         {
             get { return _model; }
             set { _model = value; }
         }
 
-        public int X
-        {
-            get { return _x; }
-            set { Set(ref _x, value); }
-        }
-
-        public int Y
-        {
-            get { return _y; }
-            set { Set(ref _y, value); }
-        }
-
-        public bool IsActive
-        {
-            get { return _isActive; }
-            set
-            {
-                Set(ref _isActive, value);
-                if (value)
-                    OnActivated();
-                else
-                    OnDisabled();
-            }
-        }
-
-        public virtual string Title
-        {
-            get { return string.IsNullOrEmpty(_title) ? Type.ToString() : _title; }
-            set { Set(ref _title, value); }
-        }
-
-        public abstract WidgetType Type { get; }
-
-        #endregion
-
-        public WidgetModel(Widget widgetEntity)
+        public WidgetModel(Widget widgetEntity) : base(widgetEntity)
         {
             if (widgetEntity == null) return;
 
@@ -72,7 +26,7 @@ namespace Miriot.Core.ViewModels.Widgets
             _infos = widgetEntity.Infos;
         }
 
-        public Widget ToWidget()
+        public new Widget ToWidget()
         {
             var infos = GetModel();
             return new Widget
@@ -85,7 +39,7 @@ namespace Miriot.Core.ViewModels.Widgets
             };
         }
 
-        public virtual Task Load()
+        public override Task Load()
         {
             var info = _infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return Task.FromResult(0);
@@ -95,26 +49,12 @@ namespace Miriot.Core.ViewModels.Widgets
             return Task.FromResult(0);
         }
 
-        public virtual U GetModel()
+        public new virtual U GetModel()
         {
             return _model;
         }
 
-        public void SetActive()
-        {
-            Set(ref _isActive, true);
-        }
 
-        public virtual void OnActivated() { }
-        public virtual void OnDisabled() { }
 
-        protected void Set<T>(ref T field, T value, [CallerMemberName] string name = "")
-        {
-            if (field == null || !field.Equals(value))
-            {
-                field = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            }
-        }
     }
 }

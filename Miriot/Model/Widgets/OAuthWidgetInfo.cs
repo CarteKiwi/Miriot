@@ -1,6 +1,6 @@
 ﻿namespace Miriot.Common.Model
 {
-    public class OAuthWidgetInfo : WidgetInfo
+    public class OAuthWidgetInfo
     {
         public string Token { get; set; }
         public string TokenSecret { get; set; }

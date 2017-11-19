@@ -33,7 +33,7 @@ namespace Miriot.Win10.Controls
             private set => Set(ref _tweets, value);
         }
 
-        public WidgetTwitter(TwitterModel widget) : base(widget.X, widget.Y)
+        public WidgetTwitter(TwitterModel widget) : base(widget)
         {
             State = WidgetStates.Minimal;
 

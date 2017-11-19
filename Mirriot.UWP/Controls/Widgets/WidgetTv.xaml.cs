@@ -47,7 +47,7 @@ namespace Miriot.Win10.Controls
 
         public bool IsExclusive { get; set; }
 
-        public WidgetTv(WidgetModel widget, Dictionary<string, string> cachedUrls) : base(widget.X, widget.Y)
+        public WidgetTv(WidgetModel widget, Dictionary<string, string> cachedUrls) : base(widget)
         {
             InitializeComponent();
 

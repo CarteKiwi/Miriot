@@ -73,18 +73,25 @@ namespace Miriot.Win10.Services
 
         private async Task<byte[]> GetPhotoAsync()
         {
-            using (IRandomAccessStream photoStream = await MicrosoftGraphService.Instance.User.GetPhotoAsync())
+            try
             {
-                if (photoStream == null)
-                    return null;
-
-                using (var dr = new DataReader(photoStream.GetInputStreamAt(0)))
+                using (IRandomAccessStream photoStream = await MicrosoftGraphService.Instance.User.GetPhotoAsync())
                 {
-                    var bytes = new byte[photoStream.Size];
-                    await dr.LoadAsync((uint)photoStream.Size);
-                    dr.ReadBytes(bytes);
-                    return bytes;
+                    if (photoStream == null)
+                        return null;
+
+                    using (var dr = new DataReader(photoStream.GetInputStreamAt(0)))
+                    {
+                        var bytes = new byte[photoStream.Size];
+                        await dr.LoadAsync((uint)photoStream.Size);
+                        dr.ReadBytes(bytes);
+                        return bytes;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
 

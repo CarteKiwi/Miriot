@@ -10,7 +10,7 @@ namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetRadio : IWidgetAction, IWidgetExclusive
     {
-        public WidgetRadio(RadioModel widget): base (widget.X, widget.Y)
+        public WidgetRadio(RadioModel widget): base (widget)
         {
             InitializeComponent();
             IsExclusive = true;

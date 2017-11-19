@@ -1,6 +1,6 @@
 ﻿namespace Miriot.Common.Model
 {
-    public class HoroscopeWidgetInfo : WidgetInfo
+    public class HoroscopeWidgetInfo
     {
         public int? SignId { get; set; }
     }

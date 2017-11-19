@@ -1,4 +1,5 @@
-﻿using Miriot.Services;
+﻿using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -6,10 +7,16 @@ namespace Miriot.Win10.Controls
 {
     public class WidgetBase : UserControl
     {
-        public WidgetBase(int x, int y)
+        public WidgetBase()
+        {
+        }
+
+        public WidgetBase(WidgetModel widget)
         {
             Margin = new Thickness(20);
-            SetPosition(x, y);
+
+            if (widget != null)
+                SetPosition(widget.X, widget.Y);
         }
 
         private WidgetStates _state;

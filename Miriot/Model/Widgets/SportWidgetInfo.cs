@@ -1,6 +1,6 @@
 ﻿namespace Miriot.Common.Model
 {
-    public class SportWidgetInfo : WidgetInfo
+    public class SportWidgetInfo
     {
         public string Competition { get; set; }
         public string Sport { get; set; }

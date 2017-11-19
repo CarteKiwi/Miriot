@@ -17,7 +17,7 @@ namespace Miriot.Win10.Controls
         private string _location = "paris";
         private WeatherModel _model;
 
-        public WidgetWeather(WeatherModel model) : base(model.X, model.Y)
+        public WidgetWeather(WeatherModel model) : base(model)
         {
             _model = model;
 

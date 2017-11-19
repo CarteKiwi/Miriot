@@ -22,7 +22,7 @@ namespace Miriot.Win10.Controls
 
         private readonly CalendarModel _model;
 
-        public WidgetCalendar(CalendarModel model) : base(model.X, model.Y)
+        public WidgetCalendar(CalendarModel model) : base(model)
         {
             _model = model;
 

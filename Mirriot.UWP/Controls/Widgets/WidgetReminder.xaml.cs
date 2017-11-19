@@ -7,7 +7,7 @@ namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetReminder: IWidgetAction
     {
-        public WidgetReminder(ReminderModel widget): base(widget.X, widget.Y)
+        public WidgetReminder(ReminderModel widget): base(widget)
         {
             InitializeComponent();
         }

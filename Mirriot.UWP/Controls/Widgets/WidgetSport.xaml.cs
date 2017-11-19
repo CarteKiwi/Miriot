@@ -7,7 +7,7 @@ namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetSport
     {
-        public WidgetSport(SportModel widget) : base(widget.X, widget.Y)
+        public WidgetSport(SportModel widget) : base(widget)
         {
             InitializeComponent();
 
