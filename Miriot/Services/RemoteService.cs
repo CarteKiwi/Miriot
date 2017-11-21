@@ -1,9 +1,13 @@
-﻿using Miriot.Model;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
+using Miriot.Core.ViewModels;
+using Miriot.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Miriot.Services
@@ -86,7 +90,33 @@ namespace Miriot.Services
 
         internal void Listen()
         {
+            _socketService.CommandReceived = OnCommandReceivedAsync;
             Task.Run(() => _socketService.BroadcastListener());
+        }
+
+        private async Task<string> OnCommandReceivedAsync(RemoteCommands cmd)
+        {
+            switch (cmd)
+            {
+                case RemoteCommands.GetUser:
+                    var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
+                    return JsonConvert.SerializeObject(vm.User);
+                case RemoteCommands.GraphService_Initialize:
+                    Messenger.Default.Send(new GraphServiceMessage(false));
+                    return null;
+                case RemoteCommands.GraphService_GetUser:
+                    Messenger.Default.Send(new GraphServiceMessage(true));
+
+                    var _graphService = SimpleIoc.Default.GetInstance<IGraphService>();
+
+                    await _graphService.LoginAsync();
+                    var user = await _graphService.GetUserAsync();
+
+                    return JsonConvert.SerializeObject(user);
+                default:
+                    // Reply back
+                    return Environment.MachineName;
+            }
         }
     }
 }

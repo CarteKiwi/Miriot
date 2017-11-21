@@ -17,6 +17,7 @@ namespace Miriot.Services
     {
         private Timer _discoveryTimer;
         public Action<string, IPEndPoint> Discovered { get; internal set; }
+        public Func<RemoteCommands, Task<string>> CommandReceived { get; internal set; }
 
         public async void BroadcastListener()
         {
@@ -43,33 +44,16 @@ namespace Miriot.Services
                                                 " on their port number " +
                                                 remoteIpEndPoint.Port.ToString());
 
-                    if (returnData == RemoteCommands.GetUser.ToString())
-                    {
-                        var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
-                        var s = JsonConvert.SerializeObject(vm.User);
-                        Byte[] sendBytes = Encoding.ASCII.GetBytes(s);
-                        udpClient.Send(sendBytes, sendBytes.Length, remoteIpEndPoint);
-                    }
-                    else if (returnData == RemoteCommands.GraphService_Initialize.ToString())
-                    {
-                        Messenger.Default.Send(new GraphServiceMessage(false));
-                    }
-                    else if (returnData == RemoteCommands.GraphService_GetUser.ToString())
-                    {
-                        Messenger.Default.Send(new GraphServiceMessage(true));
+                    string serializedData = string.Empty;
 
-                        var _graphService = SimpleIoc.Default.GetInstance<IGraphService>();
-
-                        await _graphService.LoginAsync();
-                        var user = await _graphService.GetUserAsync();
-
-                        Byte[] sendBytes = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(user));
-                        udpClient.Send(sendBytes, sendBytes.Length, remoteIpEndPoint);
-                    }
-                    else
+                    if (Enum.TryParse(returnData, out RemoteCommands cmd))
                     {
-                        // Reply back
-                        Byte[] sendBytes = Encoding.ASCII.GetBytes(Environment.MachineName);
+                        serializedData = await CommandReceived(cmd);
+                    }
+
+                    if (!string.IsNullOrEmpty(serializedData))
+                    {
+                        Byte[] sendBytes = Encoding.ASCII.GetBytes(serializedData);
                         udpClient.Send(sendBytes, sendBytes.Length, remoteIpEndPoint);
                     }
                 }
