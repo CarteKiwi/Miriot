@@ -11,7 +11,7 @@
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand">
 
-            <RelativeLayout Margin="0,15" HorizontalOptions="Center">
+            <RelativeLayout Margin="0,0,0,15" HorizontalOptions="Center">
                 <Image Source="Resources/mirror.png" 
                        x:Name="Panda"
                        HeightRequest="230"

@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common.Model;
 using Miriot.Core.ViewModels;
+using Miriot.Model;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -19,7 +20,7 @@ namespace Miriot.Win10.Views
         {
             if (e.Parameter != null)
             {
-                Vm.User = e.Parameter as User;
+                //Vm.MiriotParameter = e.Parameter as MiriotParameter;
             }
             Vm.Initialize();
             base.OnNavigatedTo(e);

@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Miriot.Model;
 
 namespace Miriot.Core.ViewModels
 {
@@ -24,6 +25,7 @@ namespace Miriot.Core.ViewModels
         private readonly RemoteService _remoteService;
         private User _user;
         private ObservableCollection<WidgetModel> _widgets;
+        private string MiriotId;
         #endregion
 
         #region Properties
@@ -91,32 +93,38 @@ namespace Miriot.Core.ViewModels
         private void AddRemoveWidget(WidgetModel w)
         {
             // If desactivated
-            if (!w.IsActive)
-            {
-                var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.Type);
+            //if (!w.IsActive)
+            //{
+            //    var ww = User.UserData.Configurations[].Widgets.FirstOrDefault(e => e.Type == w.Type);
 
-                // Should be existing
-                if (ww != null)
-                {
-                    // Remove
-                    User.UserData.Widgets.Remove(ww);
-                }
-            }
-            else // if activated
-            {
-                var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.Type);
+            //    // Should be existing
+            //    if (ww != null)
+            //    {
+            //        // Remove
+            //        User.UserData.Widgets.Remove(ww);
+            //    }
+            //}
+            //else // if activated
+            //{
+            //    var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.Type);
 
-                // Should not be existing
-                if (ww == null)
-                    User.UserData.Widgets.Add(w.ToWidget());
-                else
-                {
-                    var newW = w.ToWidget();
-                    ww.Infos = newW.Infos;
-                    ww.X = newW.X;
-                    ww.Y = newW.Y;
-                }
-            }
+            //    // Should not be existing
+            //    if (ww == null)
+            //        User.UserData.Widgets.Add(w.ToWidget());
+            //    else
+            //    {
+            //        var newW = w.ToWidget();
+            //        ww.Infos = newW.Infos;
+            //        ww.X = newW.X;
+            //        ww.Y = newW.Y;
+            //    }
+            //}
+        }
+
+        public void SetParameters(MiriotParameter parameter)
+        {
+            User = parameter.User;
+            MiriotId = parameter.Id;
         }
 
         protected override async Task InitializeAsync()
@@ -126,11 +134,13 @@ namespace Miriot.Core.ViewModels
 
             Widgets.Clear();
 
+            var config = User.UserData.Configurations[MiriotId];
+
             foreach (var type in Enum.GetValues(typeof(WidgetType)))
             {
                 var wt = (WidgetType)type;
 
-                var widgetEntity = User.UserData.Widgets.FirstOrDefault(e => e.Type == wt);
+                var widgetEntity = config.Widgets.FirstOrDefault(e => e.Type == wt);
 
                 var widgetModel = wt.ToModel(widgetEntity);
 

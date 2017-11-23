@@ -154,11 +154,29 @@
             <ctrl:WidgetTimer x:Name="ToothIndicator"
                               VerticalAlignment="Bottom"
                               HorizontalAlignment="Center"
-                              Visibility="{x:Bind Vm.User, Converter={StaticResource NullToVisibilityConverter}}"
+                              Visibility="{x:Bind Vm.User, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                               IsRunning="{x:Bind Vm.IsToothbrushing, Mode=OneWay}"/>
         </Canvas>
 
-        <ctrl:Lights DataContext="{x:Bind Vm}"/>
+        <StackPanel Visibility="{x:Bind Vm.HasNoConfiguration, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}"
+                    Margin="20"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right">
+            <Image Source="/Assets/miriot_remote.png"
+                   Stretch="Uniform"
+                   Height="130"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"/>
+            <TextBlock Text="{CustomResource NoConfiguration}"
+                       FontWeight="Light"
+                       TextAlignment="Center"
+                       MaxWidth="150"
+                       HorizontalAlignment="Center"
+                       TextWrapping="WrapWholeWords"
+                       FontSize="15"/>
+        </StackPanel>
+
+        <ctrl:Lights DataContext="{x:Bind Vm, Mode=OneWay}"/>
 
         <!--Info panel-->
         <StackPanel Margin="10,35"

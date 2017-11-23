@@ -163,7 +163,11 @@ namespace Miriot.Core.ViewModels
                 }
                 else
                 {
-                    _navigationService.NavigateTo(PageKeys.Settings, user);
+                    _navigationService.NavigateTo(PageKeys.Settings, new MiriotParameter()
+                    {
+                        User = user,
+                        Id = SelectedRemoteSystem.Id
+                    });
                 }
             }
             else

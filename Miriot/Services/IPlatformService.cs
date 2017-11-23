@@ -3,5 +3,7 @@
     public interface IPlatformService
     {
         bool IsInternetAvailable { get; }
+
+        string GetSystemIdentifier();
     }
 }

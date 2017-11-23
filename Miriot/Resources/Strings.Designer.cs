@@ -115,6 +115,15 @@ namespace Miriot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use the mobile application &quot;Miriot Remote&quot; to configure this mirror..
+        /// </summary>
+        public static string NoConfiguration {
+            get {
+                return ResourceManager.GetString("NoConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No mirror detected yet.
         /// </summary>
         public static string NoMirrorDetected {

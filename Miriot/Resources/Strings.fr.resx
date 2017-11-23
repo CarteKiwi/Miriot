@@ -135,6 +135,9 @@
   <data name="DetectingMiriot" xml:space="preserve">
     <value>Détection des miroirs à proximité...</value>
   </data>
+  <data name="NoConfiguration" xml:space="preserve">
+    <value>Configurez le miroir depuis votre téléphone en utilisant l'application mobile "Miriot Remote".</value>
+  </data>
   <data name="NoMirrorDetected" xml:space="preserve">
     <value>Aucun miroir détecté pour l'instant</value>
   </data>

@@ -16,7 +16,7 @@ namespace Miriot.Services
     public class SocketService
     {
         private Timer _discoveryTimer;
-        public Action<string, IPEndPoint> Discovered { get; internal set; }
+        public Action<RomeRemoteSystem> Discovered { get; internal set; }
         public Func<RemoteCommands, Task<string>> CommandReceived { get; internal set; }
 
         public async void BroadcastListener()
@@ -121,22 +121,27 @@ namespace Miriot.Services
             _discoveryTimer = new Timer(OnBroadcast, null, 1000, 4000);
         }
 
-        private void OnBroadcast(object state)
+        private async void OnBroadcast(object state)
         {
             try
             {
                 var udpClient = new UdpClient();
-                var requestData = Encoding.ASCII.GetBytes("Miriot ?");
+                var requestData = Encoding.ASCII.GetBytes(RemoteCommands.MiriotDiscovery.ToString());
                 var serverEp = new IPEndPoint(IPAddress.Any, 0);
 
                 udpClient.EnableBroadcast = true;
                 udpClient.Send(requestData, requestData.Length, new IPEndPoint(IPAddress.Broadcast, 11000));
+                udpClient.Ttl = 5;
+                udpClient.MulticastLoopback = true;
+                var serverResponseData = await udpClient.ReceiveAsync();
+                var serverResponse = Encoding.ASCII.GetString(serverResponseData.Buffer);
 
-                var serverResponseData = udpClient.Receive(ref serverEp);
-                var serverResponse = Encoding.ASCII.GetString(serverResponseData);
-                Debug.WriteLine("Received {0} from {1}", serverResponse, serverEp.Address.ToString());
+                var system = JsonConvert.DeserializeObject<RomeRemoteSystem>(serverResponse);
+                system.EndPoint = serverResponseData.RemoteEndPoint;
 
-                Discovered?.Invoke(serverResponse, serverEp);
+                Debug.WriteLine("Received {0} from {1}", system.DisplayName, system.EndPoint.Address.ToString());
+
+                Discovered?.Invoke(system);
 
                 udpClient.Close();
             }

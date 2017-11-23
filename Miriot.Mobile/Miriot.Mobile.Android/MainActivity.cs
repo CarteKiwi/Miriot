@@ -2,9 +2,11 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Net.Wifi;
 using Android.OS;
 using GalaSoft.MvvmLight.Threading;
 using Miriot.Droid;
+using static Android.Net.Wifi.WifiManager;
 
 namespace Miriot.Mobile.Droid
 {

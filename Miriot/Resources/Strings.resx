@@ -135,6 +135,9 @@
   <data name="DetectingMiriot" xml:space="preserve">
     <value>Looking for mirror on the active network...</value>
   </data>
+  <data name="NoConfiguration" xml:space="preserve">
+    <value>Use the mobile application "Miriot Remote" to configure this mirror.</value>
+  </data>
   <data name="NoMirrorDetected" xml:space="preserve">
     <value>No mirror detected yet</value>
   </data>

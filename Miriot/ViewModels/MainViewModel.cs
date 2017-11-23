@@ -48,6 +48,7 @@ namespace Miriot.Core.ViewModels
         private bool _isToothbrushing;
         private bool _isListening;
         private object _speakStream;
+        private bool _hasNoConfiguration;
         #endregion
 
         #region Commands
@@ -144,6 +145,12 @@ namespace Miriot.Core.ViewModels
         {
             get => _subTitle;
             private set => Set(ref _subTitle, value);
+        }
+
+        public bool HasNoConfiguration
+        {
+            get => _hasNoConfiguration;
+            private set => Set(ref _hasNoConfiguration, value);
         }
 
         public MainViewModel(
@@ -459,13 +466,30 @@ namespace Miriot.Core.ViewModels
 
         private async Task LoadUser(User user)
         {
-            if (user.UserData.Widgets == null)
+            var sysId = _platformService.GetSystemIdentifier();
+
+            if (user.UserData.Configurations == null)
             {
-                // In case of the user has no widgets
-                user.UserData.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
+                user.UserData.Configurations = new Dictionary<string, MiriotConfiguration>();
+
+                //var config = new MiriotConfiguration("Configuration initiale");
+                //config.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
+
+                //user.UserData.Configurations.Add(sysId, config);
             }
 
-            await LoadWidgets(user.UserData.Widgets);
+            var config = user.UserData.Configurations.FirstOrDefault(c => c.Key == sysId);
+
+            // No config for this mirror
+            if (config.Value == null)
+            {
+                HasNoConfiguration = true;
+            }
+            else
+            {
+                HasNoConfiguration = false;
+                await LoadWidgets(config.Value.Widgets);
+            }
 
             await _speechService.StartListeningAsync();
 

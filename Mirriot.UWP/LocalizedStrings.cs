@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel.Resources;
+﻿using Miriot.Resources;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Resources;
 
 namespace Miriot.Win10
@@ -9,7 +10,8 @@ namespace Miriot.Win10
 
         protected override object GetResource(string resourceId, string objectType, string propertyName, string propertyType)
         {
-            return ResourceLoader.GetString(resourceId);
+            return Strings.ResourceManager.GetString(resourceId);
+            //return ResourceLoader.GetString(resourceId);
         }
     }
 }

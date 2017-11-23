@@ -15,15 +15,17 @@ namespace Miriot.Services
     public class RemoteService
     {
         private readonly SocketService _socketService;
+        private readonly IPlatformService _platformService;
         private List<RomeRemoteSystem> _remoteSystems;
         private RomeRemoteSystem _connectedRemoteSystem;
 
         public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
         public Action<RomeRemoteSystem> Added { get; set; }
 
-        public RemoteService(SocketService socketService)
+        public RemoteService(SocketService socketService, IPlatformService platformService)
         {
             _socketService = socketService;
+            _platformService = platformService;
             _remoteSystems = new List<RomeRemoteSystem>();
         }
 
@@ -65,18 +67,12 @@ namespace Miriot.Services
             {
                 _socketService.Broadcast();
 
-                _socketService.Discovered = (response, ipEndPoint) =>
+                _socketService.Discovered = (system) =>
                 {
-                    var remoteSystem = _remoteSystems.FirstOrDefault(r => r.EndPoint.Address.ToString() == ipEndPoint.Address.ToString());
+                    var remoteSystem = _remoteSystems.FirstOrDefault(r => r.EndPoint.Address.ToString() == system.EndPoint.Address.ToString());
 
                     if (remoteSystem == null)
                     {
-                        var system = new RomeRemoteSystem(null)
-                        {
-                            DisplayName = response,
-                            EndPoint = ipEndPoint
-                        };
-
                         _remoteSystems.Add(system);
                         Added?.Invoke(system);
                     }
@@ -113,9 +109,16 @@ namespace Miriot.Services
                     var user = await _graphService.GetUserAsync();
 
                     return JsonConvert.SerializeObject(user);
+                case RemoteCommands.MiriotDiscovery:
                 default:
                     // Reply back
-                    return Environment.MachineName;
+                    var id = _platformService.GetSystemIdentifier();
+                    var sys = new RomeRemoteSystem(null)
+                    {
+                        Id = id,
+                        DisplayName = Environment.MachineName
+                    };
+                    return JsonConvert.SerializeObject(sys);
             }
         }
     }
