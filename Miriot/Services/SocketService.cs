@@ -32,7 +32,10 @@ namespace Miriot.Services
                     IPEndPoint remoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
                     Debug.WriteLine("Waiting for broadcast");
                     udpClient.EnableBroadcast = true;
+
                     byte[] receiveBytes = udpClient.Receive(ref remoteIpEndPoint);
+
+                    Debug.WriteLine("Received bytes...");
 
                     string returnData = Encoding.ASCII.GetString(receiveBytes);
 
@@ -121,7 +124,7 @@ namespace Miriot.Services
             _discoveryTimer = new Timer(OnBroadcast, null, 1000, 4000);
         }
 
-        private async void OnBroadcast(object state)
+        private void OnBroadcast(object state)
         {
             try
             {
@@ -131,13 +134,11 @@ namespace Miriot.Services
 
                 udpClient.EnableBroadcast = true;
                 udpClient.Send(requestData, requestData.Length, new IPEndPoint(IPAddress.Broadcast, 11000));
-                udpClient.Ttl = 5;
-                udpClient.MulticastLoopback = true;
-                var serverResponseData = await udpClient.ReceiveAsync();
-                var serverResponse = Encoding.ASCII.GetString(serverResponseData.Buffer);
+                var serverResponseData = udpClient.Receive(ref serverEp);
+                var serverResponse = Encoding.ASCII.GetString(serverResponseData);
 
                 var system = JsonConvert.DeserializeObject<RomeRemoteSystem>(serverResponse);
-                system.EndPoint = serverResponseData.RemoteEndPoint;
+                system.EndPoint = serverEp;
 
                 Debug.WriteLine("Received {0} from {1}", system.DisplayName, system.EndPoint.Address.ToString());
 
