@@ -144,6 +144,10 @@ namespace Miriot.Core.ViewModels
         {
             SelectedRemoteSystem = sys;
         }
+        private void RunOnUiThread(System.Action action)
+        {
+            _dispatcherService.Invoke(action);
+        }
 
         private async void OnConnect()
         {
@@ -155,20 +159,26 @@ namespace Miriot.Core.ViewModels
             {
                 Message = Strings.RetrievingUser;
 
-                var user = await _remoteService.CommandAsync<User>(RemoteCommands.GetUser);
+                await Task.Run(async () =>
+                {
+                    var user = await _remoteService.CommandAsync<User>(RemoteCommands.GetUser);
 
-                if (user == null)
-                {
-                    Message = Strings.RetrievingUserFailed;
-                }
-                else
-                {
-                    _navigationService.NavigateTo(PageKeys.Settings, new MiriotParameter()
+                    RunOnUiThread(() =>
                     {
-                        User = user,
-                        Id = SelectedRemoteSystem.Id
+                        if (user == null)
+                        {
+                            Message = Strings.RetrievingUserFailed;
+                        }
+                        else
+                        {
+                            _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
+                            {
+                                User = user,
+                                Id = SelectedRemoteSystem.Id
+                            });
+                        }
                     });
-                }
+                });
             }
             else
             {

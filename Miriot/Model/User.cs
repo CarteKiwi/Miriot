@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace Miriot.Common.Model

@@ -4,6 +4,7 @@
     {
         public const string Main = "Main";
         public const string Connect = "Connect";
+        public const string Profile = "Profile";
         public const string Settings = "Settings";
     }
 }

@@ -37,7 +37,7 @@ namespace Miriot.Services
                 return default(T);
             }
 
-                Debug.WriteLine("Sending " + command + " to " + _connectedRemoteSystem.EndPoint.Address);
+            Debug.WriteLine("Sending " + command + " to " + _connectedRemoteSystem.EndPoint.Address + ":" + _connectedRemoteSystem.EndPoint.Port);
             string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, command.ToString());
 
             return JsonConvert.DeserializeObject<T>(response);
@@ -76,6 +76,10 @@ namespace Miriot.Services
                     {
                         _remoteSystems.Add(system);
                         Added?.Invoke(system);
+                    }
+                    else
+                    {
+
                     }
                 };
             }

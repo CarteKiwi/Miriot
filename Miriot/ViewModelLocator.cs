@@ -13,11 +13,13 @@ namespace Miriot.Core
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ConnectViewModel>();
+            SimpleIoc.Default.Register<ProfileViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
         }
 
         public MainViewModel MainViewModel => SimpleIoc.Default.GetInstance<MainViewModel>();
         public ConnectViewModel ConnectViewModel => SimpleIoc.Default.GetInstance<ConnectViewModel>();
+        public ProfileViewModel ProfileViewModel => SimpleIoc.Default.GetInstance<ProfileViewModel>();
         public SettingsViewModel SettingsViewModel => SimpleIoc.Default.GetInstance<SettingsViewModel>();
     }
 }

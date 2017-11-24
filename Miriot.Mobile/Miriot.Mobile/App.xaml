@@ -19,6 +19,7 @@
             </Style>
 
             <conv:InvertBoolConverter x:Key="InvertBoolConverter"/>
+            <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
         </ResourceDictionary>
 
     </Application.Resources>

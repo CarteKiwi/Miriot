@@ -11,9 +11,10 @@ using Miriot.Model;
 
 namespace Miriot.Core.ViewModels
 {
-    public class SettingsViewModel : CustomViewModel
+    public class ProfileViewModel : CustomViewModel
     {
         #region Commands
+        public RelayCommand ActionEditWidgets { get; set; }
         public RelayCommand ActionSave { get; set; }
         public RelayCommand ActionDelete { get; set; }
         #endregion
@@ -23,16 +24,17 @@ namespace Miriot.Core.ViewModels
         private readonly IFaceService _faceService;
         private readonly IDispatcherService _dispatcher;
         private readonly RemoteService _remoteService;
+        private ObservableCollection<MiriotConfiguration> _configurations;
         private User _user;
-        private ObservableCollection<WidgetModel> _widgets;
+        private MiriotConfiguration _selectedConfiguration;
+        private bool _hasNoConfiguration;
         private string MiriotId;
         #endregion
 
-        #region Properties
-        public ObservableCollection<WidgetModel> Widgets
+        public ObservableCollection<MiriotConfiguration> Configurations
         {
-            get { return _widgets; }
-            set { Set(() => Widgets, ref _widgets, value); }
+            get { return _configurations; }
+            set { Set(ref _configurations, value); }
         }
 
         public User User
@@ -40,9 +42,20 @@ namespace Miriot.Core.ViewModels
             get { return _user; }
             set { Set(ref _user, value); }
         }
-        #endregion
 
-        public SettingsViewModel(
+        public MiriotConfiguration SelectedConfiguration
+        {
+            get { return _selectedConfiguration; }
+            set { Set(ref _selectedConfiguration, value); }
+        }
+
+        public bool HasNoConfiguration
+        {
+            get { return _hasNoConfiguration; }
+            set { Set(ref _hasNoConfiguration, value); }
+        }
+
+        public ProfileViewModel(
             IDialogService dialogService,
             IDispatcherService dispatcher,
             RemoteService remoteService)
@@ -51,10 +64,14 @@ namespace Miriot.Core.ViewModels
             _dispatcher = dispatcher;
             _remoteService = remoteService;
 
+            ActionEditWidgets = new RelayCommand(OnEditWidgets);
             ActionSave = new RelayCommand(OnSave);
             ActionDelete = new RelayCommand(async () => await OnDelete());
+        }
 
-            Widgets = new ObservableCollection<WidgetModel>();
+        private void OnEditWidgets()
+        {
+            throw new NotImplementedException();
         }
 
         private async Task OnDelete()
@@ -69,11 +86,6 @@ namespace Miriot.Core.ViewModels
 
         private void OnSave()
         {
-            foreach (var w in Widgets)
-            {
-                AddRemoveWidget(w);
-            }
-
             Task.Run(async () =>
             {
                 var isSuccess = await UpdateUserAsync();
@@ -90,37 +102,6 @@ namespace Miriot.Core.ViewModels
             return false; //await _faceService.UpdatePerson(User, User.Picture);
         }
 
-        private void AddRemoveWidget(WidgetModel w)
-        {
-            // If desactivated
-            //if (!w.IsActive)
-            //{
-            //    var ww = User.UserData.Configurations[].Widgets.FirstOrDefault(e => e.Type == w.Type);
-
-            //    // Should be existing
-            //    if (ww != null)
-            //    {
-            //        // Remove
-            //        User.UserData.Widgets.Remove(ww);
-            //    }
-            //}
-            //else // if activated
-            //{
-            //    var ww = User.UserData.Widgets.FirstOrDefault(e => e.Type == w.Type);
-
-            //    // Should not be existing
-            //    if (ww == null)
-            //        User.UserData.Widgets.Add(w.ToWidget());
-            //    else
-            //    {
-            //        var newW = w.ToWidget();
-            //        ww.Infos = newW.Infos;
-            //        ww.X = newW.X;
-            //        ww.Y = newW.Y;
-            //    }
-            //}
-        }
-
         public void SetParameters(MiriotParameter parameter)
         {
             User = parameter.User;
@@ -132,30 +113,18 @@ namespace Miriot.Core.ViewModels
             if (User == null)
                 return;
 
-            Widgets.Clear();
+            if (User.UserData.Devices == null)
+                User.UserData.Devices = new System.Collections.Generic.List<MiriotConfiguration>();
 
-            var config = User.UserData.Devices.First(e => e.Id == MiriotId);
+            Configurations = new ObservableCollection<MiriotConfiguration>(User.UserData.Devices);
 
-            foreach (var type in Enum.GetValues(typeof(WidgetType)))
+            SelectedConfiguration = User.UserData.Devices.FirstOrDefault(e => e.Id == MiriotId);
+
+            if (SelectedConfiguration == null)
             {
-                var wt = (WidgetType)type;
-
-                var widgetEntity = config.Widgets.FirstOrDefault(e => e.Type == wt);
-
-                var widgetModel = wt.ToModel(widgetEntity);
-
-                if (widgetEntity != null)
-                {
-                    await widgetModel.Load();
-                    widgetModel.SetActive();
-                }
-                else
-                {
-                    widgetModel.IsActive = false;
-                }
-
-                Widgets.Add(widgetModel);
+                HasNoConfiguration = true;
             }
+          
         }
     }
 }

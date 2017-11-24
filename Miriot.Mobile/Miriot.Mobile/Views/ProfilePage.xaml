@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:TypeArguments="viewModels:ProfileViewModel"
+             xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
+             xmlns:core="using:Miriot.Core.ViewModels.Widgets"
+             xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+             xmlns:sel="clr-namespace:Miriot.Mobile"
+             xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
+             x:Class="Miriot.Mobile.Views.ProfilePage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand">
+
+            <RelativeLayout Margin="0,0,0,15" HorizontalOptions="Center">
+                <Image Source="{Binding User.Picture, Converter={StaticResource ByteArrayToImageConverter}}" 
+                       x:Name="Panda"
+                       HeightRequest="50"
+                       HorizontalOptions="Center"/>
+
+                <Grid RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Width,Factor=1, Constant=0}"
+                      RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Height,Factor=.5, Constant=0}">
+                    <Label Text="{Binding User.Name}"
+                           FontSize="Micro"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"/>
+                </Grid>
+            </RelativeLayout>
+
+            <ListView x:Name="List" 
+                      Margin="0,0"
+                      HorizontalOptions="Fill"
+                      ItemsSource="{Binding Configurations}"
+                      ItemSelected="RemoteSystemSelected">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout HorizontalOptions="Fill"
+                                             VerticalOptions="Center"
+                                             HeightRequest="35"
+                                             Orientation="Horizontal">
+                                    <Image Source="Resources/mirror_only.png"
+                                           Margin="0,0,5,0"
+                                           HeightRequest="25"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="EndAndExpand"/>
+                                    <Label Text="{Binding Name}" TextColor="#4b6c90" 
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="StartAndExpand"/>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+
+            <Label Text="{sel:LocalizedStrings DetectingMiriot}"
+                   Font="Segoe UI"
+                   FontSize="Small"
+                   TextColor="#4b6c90"
+                   LineBreakMode="WordWrap"
+                   VerticalOptions="Start" 
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="{sel:LocalizedStrings SelectMiriot}"
+                   Font="Segoe UI"
+                   FontSize="Micro"
+                   TextColor="#4b6c90"
+                   LineBreakMode="WordWrap"
+                   VerticalOptions="Start" 
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Grid VerticalOptions="StartAndExpand"
+                  IsVisible="{Binding HasNoConfiguration}">
+                <Label Text="TEST"
+                       Font="Segoe UI"
+                       FontSize="Micro"
+                       TextColor="#4b6c90"
+                       VerticalOptions="Center"
+                       HorizontalOptions="CenterAndExpand"/>
+            </Grid>
+
+            
+            <Button Command="{Binding ActionEditWidgets}" 
+                    IsEnabled="{Binding HasNoConfiguration, Mode=OneWay, Converter={StaticResource InvertBoolConverter}}"
+                    BackgroundColor="#4b6c90"
+                    TextColor="White"
+                    HeightRequest="45"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    Text="Gérer les Widgets"/>
+
+        </StackLayout>
+    </ContentPage.Content>
+</base:BaseContentPage>

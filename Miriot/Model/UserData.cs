@@ -6,11 +6,13 @@ namespace Miriot.Common.Model
 {
     public class MiriotConfiguration
     {
-        public MiriotConfiguration(string name)
+        public MiriotConfiguration(string id, string name)
         {
+            Id = id;
             Name = name;
         }
 
+        public string Id { get; }
         public string Name { get; set; }
 
         public List<Widget> Widgets { get; set; }
@@ -18,7 +20,7 @@ namespace Miriot.Common.Model
 
     public class UserData
     {
-        public Dictionary<string, MiriotConfiguration> Configurations { get; set; }
+        public List<MiriotConfiguration> Devices { get; set; }
 
         public DateTime? PreviousLoginDate { get; set; }
 

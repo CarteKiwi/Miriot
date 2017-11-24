@@ -468,9 +468,9 @@ namespace Miriot.Core.ViewModels
         {
             var sysId = _platformService.GetSystemIdentifier();
 
-            if (user.UserData.Configurations == null)
+            if (user.UserData.Devices == null)
             {
-                user.UserData.Configurations = new Dictionary<string, MiriotConfiguration>();
+                user.UserData.Devices = new List<MiriotConfiguration>();
 
                 //var config = new MiriotConfiguration("Configuration initiale");
                 //config.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
@@ -478,17 +478,17 @@ namespace Miriot.Core.ViewModels
                 //user.UserData.Configurations.Add(sysId, config);
             }
 
-            var config = user.UserData.Configurations.FirstOrDefault(c => c.Key == sysId);
+            var config = user.UserData.Devices.FirstOrDefault(c => c.Id == sysId);
 
             // No config for this mirror
-            if (config.Value == null)
+            if (config == null)
             {
                 HasNoConfiguration = true;
             }
             else
             {
                 HasNoConfiguration = false;
-                await LoadWidgets(config.Value.Widgets);
+                await LoadWidgets(config.Widgets);
             }
 
             await _speechService.StartListeningAsync();
