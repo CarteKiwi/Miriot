@@ -14,10 +14,13 @@ namespace Miriot.Mobile.UWP.Controls
         protected override void OnElementChanged(ElementChangedEventArgs<EllipseView> e)
         {
             base.OnElementChanged(e);
-            
+
             var ellipse = new Ellipse();
             ellipse.DataContext = Element;
-            ellipse.SetBinding(Ellipse.FillProperty, new Binding() { Path = new PropertyPath("Fill"), Converter = new ColorConverter() });
+            if (e.NewElement?.Image != null)
+                ellipse.SetBinding(Ellipse.FillProperty, new Binding() { Path = new PropertyPath("Image"), Converter = new ByteArrayToImageConverter() });
+            else
+                ellipse.SetBinding(Ellipse.FillProperty, new Binding() { Path = new PropertyPath("Fill"), Converter = new ColorConverter() });
             ellipse.SetBinding(Ellipse.StrokeProperty, new Binding() { Path = new PropertyPath("Stroke"), Converter = new ColorConverter() });
             ellipse.SetBinding(Ellipse.HorizontalAlignmentProperty, new Binding() { Path = new PropertyPath("HorizontalOptions"), Converter = new HorizontalOptionsConverter() });
             ellipse.SetBinding(Ellipse.StrokeThicknessProperty, new Binding() { Path = new PropertyPath("StrokeThickness") });

@@ -13,5 +13,10 @@ namespace Miriot.Mobile.Views
             ViewModel.SetParameters(parameter);
             NavigationPage.SetHasNavigationBar(this, false);
         }
+
+        public void RemoteSystemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            //ViewModel.SelectCommand.Execute((RomeRemoteSystem)e.SelectedItem);
+        }
     }
 }

@@ -277,7 +277,7 @@ namespace Miriot.Services
 
                     udpClient.Close();
 
-                    await Task.Delay(5000);
+                    await Task.Delay(1000);
                 }
             }
             catch (Exception e)

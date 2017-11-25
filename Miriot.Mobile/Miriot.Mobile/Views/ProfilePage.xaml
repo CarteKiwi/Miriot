@@ -1,96 +1,102 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:TypeArguments="viewModels:ProfileViewModel"
-             xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
-             xmlns:core="using:Miriot.Core.ViewModels.Widgets"
-             xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
-             xmlns:sel="clr-namespace:Miriot.Mobile"
-             xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
-             x:Class="Miriot.Mobile.Views.ProfilePage">
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      x:TypeArguments="viewModels:ProfileViewModel"
+                      xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
+                      xmlns:core="using:Miriot.Core.ViewModels.Widgets"
+                      xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+                      xmlns:sel="clr-namespace:Miriot.Mobile"
+                      xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
+                      xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
+                      x:Class="Miriot.Mobile.Views.ProfilePage">
     <ContentPage.Content>
-        <StackLayout VerticalOptions="FillAndExpand">
+        <Grid>
+            <Grid VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <RelativeLayout Margin="0,0,0,15" HorizontalOptions="Center">
-                <Image Source="{Binding User.Picture, Converter={StaticResource ByteArrayToImageConverter}}" 
-                       x:Name="Panda"
-                       HeightRequest="50"
-                       HorizontalOptions="Center"/>
+                <Grid BackgroundColor="#4b6c90"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <StackLayout Margin="15" 
+                                 HorizontalOptions="Center">
+                        <ctrl:EllipseView Image="{Binding User.Picture}"
+                                  HeightRequest="80"
+                                  WidthRequest="80"
+                                  Stroke="White"
+                                  Margin="10"
+                                  HorizontalOptions="Center"
+                                  StrokeThickness="1"/>
 
-                <Grid RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Width,Factor=1, Constant=0}"
-                      RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Height,Factor=.5, Constant=0}">
-                    <Label Text="{Binding User.Name}"
-                           FontSize="Micro"
-                           VerticalOptions="Center"
-                           HorizontalOptions="Center"/>
+                        <Label Text="{Binding User.Name}"
+                               FontSize="Micro"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"/>
+                    </StackLayout>
                 </Grid>
-            </RelativeLayout>
 
-            <ListView x:Name="List" 
-                      Margin="0,0"
-                      HorizontalOptions="Fill"
-                      ItemsSource="{Binding Configurations}"
-                      ItemSelected="RemoteSystemSelected">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <StackLayout HorizontalOptions="Fill"
-                                             VerticalOptions="Center"
-                                             HeightRequest="35"
-                                             Orientation="Horizontal">
-                                    <Image Source="Resources/mirror_only.png"
-                                           Margin="0,0,5,0"
-                                           HeightRequest="25"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="EndAndExpand"/>
-                                    <Label Text="{Binding Name}" TextColor="#4b6c90" 
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="StartAndExpand"/>
-                                </StackLayout>
-                            </ViewCell.View>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                <Grid BackgroundColor="LightGray"
+                      Grid.Row="1"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <StackLayout>
+                        <Label Text="{sel:LocalizedStrings MyDevices}"
+                               Font="Segoe UI"
+                               FontSize="Micro"
+                               TextColor="#4b6c90"
+                               LineBreakMode="WordWrap"
+                               VerticalOptions="Start" 
+                               HorizontalOptions="Start" />
+                        <Picker ItemsSource="{Binding Configurations}"
+                                ItemDisplayBinding="{Binding Name}" 
+                                SelectedItem="{Binding SelectedConfiguration, Mode=TwoWay}">
+                        </Picker>
+                    </StackLayout>
+                </Grid>
 
-
-            <Label Text="{sel:LocalizedStrings DetectingMiriot}"
-                   Font="Segoe UI"
-                   FontSize="Small"
-                   TextColor="#4b6c90"
-                   LineBreakMode="WordWrap"
-                   VerticalOptions="Start" 
-                   HorizontalOptions="CenterAndExpand" />
-
-            <Label Text="{sel:LocalizedStrings SelectMiriot}"
-                   Font="Segoe UI"
-                   FontSize="Micro"
-                   TextColor="#4b6c90"
-                   LineBreakMode="WordWrap"
-                   VerticalOptions="Start" 
-                   HorizontalOptions="CenterAndExpand" />
-
-            <Grid VerticalOptions="StartAndExpand"
-                  IsVisible="{Binding HasNoConfiguration}">
-                <Label Text="TEST"
-                       Font="Segoe UI"
-                       FontSize="Micro"
-                       TextColor="#4b6c90"
-                       VerticalOptions="Center"
-                       HorizontalOptions="CenterAndExpand"/>
+                <Grid BackgroundColor="White"
+                      Grid.Row="2"
+                      HorizontalOptions="FillAndExpand">
+                    <Label Text="Paramétrage"
+                           Font="Segoe UI"
+                           FontSize="Small"
+                           TextColor="#4b6c90"
+                           LineBreakMode="WordWrap"
+                           VerticalOptions="Start" 
+                           HorizontalOptions="Start" />
+                </Grid>
             </Grid>
 
-            
-            <Button Command="{Binding ActionEditWidgets}" 
-                    IsEnabled="{Binding HasNoConfiguration, Mode=OneWay, Converter={StaticResource InvertBoolConverter}}"
-                    BackgroundColor="#4b6c90"
-                    TextColor="White"
-                    HeightRequest="45"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="End"
-                    Text="Gérer les Widgets"/>
+            <Grid IsVisible="{Binding HasNoConfiguration}">
+                <Grid Opacity=".9" BackgroundColor="White"/>
+                <StackLayout VerticalOptions="FillAndExpand">
 
-        </StackLayout>
+                    <Image Source="Resources/mirror.png" 
+                           Margin="0,20,0,0"
+                           HeightRequest="230"
+                           HorizontalOptions="Center"/>
+
+                    <Label Text="{sel:LocalizedStrings GiveAName}"
+                           Font="Segoe UI"
+                           FontSize="Micro"
+                           TextColor="#4b6c90"
+                           VerticalOptions="Center"
+                           HorizontalOptions="CenterAndExpand"/>
+
+                    <Editor Text="Miriot"/>
+
+                    <Button Command="{Binding ActionEditName}" 
+                            BackgroundColor="#4b6c90"
+                            TextColor="White"
+                            HeightRequest="45"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="End"
+                            Text="Valider"/>
+                </StackLayout>
+            </Grid>
+        </Grid>
     </ContentPage.Content>
 </base:BaseContentPage>

@@ -4,6 +4,17 @@ namespace Miriot.Mobile.Controls
 {
     public class EllipseView : View
     {
+        public byte[] Image
+        {
+            get { return (byte[])GetValue(ImageProperty); }
+            set { SetValue(ImageProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Image.  This enables animation, styling, binding, etc...
+        public static readonly BindableProperty ImageProperty =
+            BindableProperty.Create<EllipseView, byte[]>(p => p.Image, null);
+
+
         public static readonly BindableProperty FillProperty =
             BindableProperty.Create<EllipseView, Color>(p => p.Fill, Color.Accent);
 

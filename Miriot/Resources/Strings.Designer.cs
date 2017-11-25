@@ -115,6 +115,24 @@ namespace Miriot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Give a name to the mirror..
+        /// </summary>
+        public static string GiveAName {
+            get {
+                return ResourceManager.GetString("GiveAName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My devices.
+        /// </summary>
+        public static string MyDevices {
+            get {
+                return ResourceManager.GetString("MyDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use the mobile application &quot;Miriot Remote&quot; to configure this mirror..
         /// </summary>
         public static string NoConfiguration {

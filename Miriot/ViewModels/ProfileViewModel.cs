@@ -14,6 +14,7 @@ namespace Miriot.Core.ViewModels
     public class ProfileViewModel : CustomViewModel
     {
         #region Commands
+        public RelayCommand<string> ActionEditName { get; set; }
         public RelayCommand ActionEditWidgets { get; set; }
         public RelayCommand ActionSave { get; set; }
         public RelayCommand ActionDelete { get; set; }
@@ -64,9 +65,16 @@ namespace Miriot.Core.ViewModels
             _dispatcher = dispatcher;
             _remoteService = remoteService;
 
+            ActionEditName = new RelayCommand<string>(OnEditName);
             ActionEditWidgets = new RelayCommand(OnEditWidgets);
             ActionSave = new RelayCommand(OnSave);
             ActionDelete = new RelayCommand(async () => await OnDelete());
+        }
+
+        private void OnEditName(string obj)
+        {
+            SelectedConfiguration.Name = obj;
+            HasNoConfiguration = false;
         }
 
         private void OnEditWidgets()
@@ -122,9 +130,15 @@ namespace Miriot.Core.ViewModels
 
             if (SelectedConfiguration == null)
             {
+                var config = new MiriotConfiguration(MiriotId, "Miriot");
+                Configurations.Add(config);
+                SelectedConfiguration = config;
                 HasNoConfiguration = true;
             }
-          
+            else
+            {
+
+            }
         }
     }
 }

@@ -171,6 +171,7 @@ namespace Miriot.Core.ViewModels
                         }
                         else
                         {
+                            Message = string.Empty;
                             _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
                             {
                                 User = user,

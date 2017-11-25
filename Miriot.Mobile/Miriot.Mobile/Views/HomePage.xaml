@@ -68,11 +68,11 @@
                             <ViewCell.View>
                                 <StackLayout HorizontalOptions="Fill"
                                              VerticalOptions="Center"
-                                             HeightRequest="35"
+                                             HeightRequest="50"
                                              Orientation="Horizontal">
                                     <Image Source="Resources/mirror_only.png"
-                                           Margin="0,0,5,0"
-                                           HeightRequest="25"
+                                           Margin="0,2,5,0"
+                                           HeightRequest="35"
                                            VerticalOptions="Center"
                                            HorizontalOptions="EndAndExpand"/>
                                     <Label Text="{Binding DisplayName}" TextColor="#4b6c90" 
