@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using Xamarin.Forms;
 
 namespace Miriot.Mobile.Controls
 {
@@ -10,10 +11,8 @@ namespace Miriot.Mobile.Controls
             set { SetValue(ImageProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Image.  This enables animation, styling, binding, etc...
         public static readonly BindableProperty ImageProperty =
             BindableProperty.Create<EllipseView, byte[]>(p => p.Image, null);
-
 
         public static readonly BindableProperty FillProperty =
             BindableProperty.Create<EllipseView, Color>(p => p.Fill, Color.Accent);

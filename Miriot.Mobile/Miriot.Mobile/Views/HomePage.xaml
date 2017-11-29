@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:TypeArguments="viewModels:ConnectViewModel"
-             xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
-             xmlns:core="using:Miriot.Core.ViewModels.Widgets"
-             xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
-             xmlns:sel="clr-namespace:Miriot.Mobile"
-             xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
-             x:Class="Miriot.Mobile.Views.HomePage">
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      x:TypeArguments="viewModels:ConnectViewModel"
+                      xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
+                      xmlns:core="using:Miriot.Core.ViewModels.Widgets"
+                      xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+                      xmlns:sel="clr-namespace:Miriot.Mobile"
+                      xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
+                      x:Class="Miriot.Mobile.Views.HomePage"
+                      BackgroundColor="{DynamicResource BgColor}">
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand">
 
-            <RelativeLayout Margin="0,0,0,15" HorizontalOptions="Center">
+            <RelativeLayout Margin="0,10,0,15" HorizontalOptions="Center">
                 <Image Source="Resources/mirror.png" 
                        x:Name="Panda"
                        HeightRequest="230"
@@ -34,7 +35,7 @@
             <Label Text="{sel:LocalizedStrings DetectingMiriot}"
                    Font="Segoe UI"
                    FontSize="Small"
-                   TextColor="#4b6c90"
+                   TextColor="{DynamicResource Primary}"
                    LineBreakMode="WordWrap"
                    VerticalOptions="Start" 
                    HorizontalOptions="CenterAndExpand" />
@@ -42,7 +43,7 @@
             <Label Text="{sel:LocalizedStrings SelectMiriot}"
                    Font="Segoe UI"
                    FontSize="Micro"
-                   TextColor="#4b6c90"
+                   TextColor="{DynamicResource Primary}"
                    LineBreakMode="WordWrap"
                    VerticalOptions="Start" 
                    HorizontalOptions="CenterAndExpand" />
@@ -52,7 +53,7 @@
                 <Label Text="{sel:LocalizedStrings NoMirrorDetected}"
                        Font="Segoe UI"
                        FontSize="Micro"
-                       TextColor="#4b6c90"
+                       TextColor="{DynamicResource Primary}"
                        VerticalOptions="Center"
                        HorizontalOptions="CenterAndExpand"/>
             </Grid>
@@ -75,7 +76,7 @@
                                            HeightRequest="35"
                                            VerticalOptions="Center"
                                            HorizontalOptions="EndAndExpand"/>
-                                    <Label Text="{Binding DisplayName}" TextColor="#4b6c90" 
+                                    <Label Text="{Binding DisplayName}" TextColor="{DynamicResource Primary}" 
                                            VerticalOptions="Center"
                                            HorizontalOptions="StartAndExpand"/>
                                 </StackLayout>
@@ -92,7 +93,7 @@
                 <Label Text="{Binding Message, Mode=OneWay}"
                        Font="Segoe UI"
                        FontSize="Micro"
-                       TextColor="#4b6c90"
+                       TextColor="{DynamicResource Primary}"
                        LineBreakMode="WordWrap"
                        VerticalOptions="Start" 
                        HorizontalOptions="CenterAndExpand" />
@@ -100,7 +101,7 @@
                 <Label Text="{Binding MessageTimeout, Mode=OneWay}"
                        Font="Segoe UI"
                        FontSize="12"
-                       TextColor="#4b6c90"
+                       TextColor="{DynamicResource Primary}"
                        LineBreakMode="WordWrap"
                        VerticalOptions="Start" 
                        HorizontalOptions="CenterAndExpand" />
@@ -109,14 +110,14 @@
             <Label Text="{Binding Message}"
                    Font="Segoe UI"
                    FontSize="Micro"
-                   TextColor="#4b6c90"
+                   TextColor="{DynamicResource Primary}"
                    IsVisible="{Binding HasTimedOut, Mode=OneWay, Converter={StaticResource InvertBoolConverter}}"
                    HorizontalOptions="CenterAndExpand"/>
 
             <Button Command="{Binding ConnectCommand}" 
                     IsEnabled="{Binding HasAtLeastOneRemoteSystem, Mode=OneWay}"
-                    BackgroundColor="#4b6c90"
-                    TextColor="White"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource Accent}"
                     HeightRequest="45"
                     HorizontalOptions="Fill"
                     VerticalOptions="End"

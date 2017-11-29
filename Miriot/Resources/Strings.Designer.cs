@@ -124,6 +124,16 @@ namespace Miriot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This name is used to identify the mirror among others.
+        ///Use for example &quot;Miriot - Bathroom&quot;.
+        /// </summary>
+        public static string GiveANameMessage {
+            get {
+                return ResourceManager.GetString("GiveANameMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My devices.
         /// </summary>
         public static string MyDevices {

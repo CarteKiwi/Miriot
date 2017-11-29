@@ -138,6 +138,10 @@
   <data name="GiveAName" xml:space="preserve">
     <value>Give a name to the mirror.</value>
   </data>
+  <data name="GiveANameMessage" xml:space="preserve">
+    <value>This name is used to identify the mirror among others.
+Use for example "Miriot - Bathroom"</value>
+  </data>
   <data name="MyDevices" xml:space="preserve">
     <value>My devices</value>
   </data>

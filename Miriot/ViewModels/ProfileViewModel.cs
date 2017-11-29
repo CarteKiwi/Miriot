@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Miriot.Model;
+using Miriot.Common;
 
 namespace Miriot.Core.ViewModels
 {
@@ -22,6 +23,7 @@ namespace Miriot.Core.ViewModels
 
         #region Variables
         private readonly IDialogService _dialogService;
+        private readonly INavigationService _navigationService;
         private readonly IFaceService _faceService;
         private readonly IDispatcherService _dispatcher;
         private readonly RemoteService _remoteService;
@@ -58,10 +60,12 @@ namespace Miriot.Core.ViewModels
 
         public ProfileViewModel(
             IDialogService dialogService,
+            INavigationService navigationService,
             IDispatcherService dispatcher,
-            RemoteService remoteService)
+            RemoteService remoteService) : base(navigationService)
         {
             _dialogService = dialogService;
+            _navigationService = navigationService;
             _dispatcher = dispatcher;
             _remoteService = remoteService;
 
@@ -73,6 +77,9 @@ namespace Miriot.Core.ViewModels
 
         private void OnEditName(string obj)
         {
+            if (SelectedConfiguration == null)
+                return;
+
             SelectedConfiguration.Name = obj;
             HasNoConfiguration = false;
         }

@@ -1,4 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -7,6 +9,7 @@ namespace Miriot.Core.ViewModels
 {
     public abstract class CustomViewModel : ViewModelBase
     {
+        private readonly INavigationService _navigationService;
         private object _parameter;
         protected object Parameter => _parameter;
 
@@ -32,6 +35,21 @@ namespace Miriot.Core.ViewModels
             }
         }
 
+        private RelayCommand _navigateBackCommand;
+
+        public RelayCommand NavigateBackCommand
+        {
+            get
+            {
+                if (_navigateBackCommand == null)
+                {
+                    _navigateBackCommand = new RelayCommand(OnBack);
+                }
+
+                return _navigateBackCommand;
+            }
+        }
+
         protected abstract Task InitializeAsync();
 
         public async void Initialize(object parameter = null)
@@ -44,6 +62,16 @@ namespace Miriot.Core.ViewModels
             {
                 Debug.WriteLine(ex);
             }
+        }
+
+        private void OnBack()
+        {
+            _navigationService.GoBack();
+        }
+
+        public CustomViewModel(INavigationService navigationService)
+        {
+            _navigationService = navigationService;
         }
     }
 }

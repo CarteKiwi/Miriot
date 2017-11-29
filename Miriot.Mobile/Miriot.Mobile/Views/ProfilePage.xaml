@@ -3,75 +3,105 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                       x:TypeArguments="viewModels:ProfileViewModel"
                       xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
+                      xmlns:ctrls="xamar"
                       xmlns:core="using:Miriot.Core.ViewModels.Widgets"
                       xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
                       xmlns:sel="clr-namespace:Miriot.Mobile"
                       xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
                       xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
-                      x:Class="Miriot.Mobile.Views.ProfilePage">
+                      x:Class="Miriot.Mobile.Views.ProfilePage"
+                      BackgroundColor="{DynamicResource BgColor}">
     <ContentPage.Content>
         <Grid>
-            <Grid VerticalOptions="FillAndExpand">
+            <Image Source="{Binding User.Picture, Converter={StaticResource ByteArrayToImageConverter}}"
+                   HorizontalOptions="FillAndExpand"
+                   Aspect="AspectFill"
+                   VerticalOptions="Start"/>
+
+            <Grid VerticalOptions="FillAndExpand"
+                  RowSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Grid BackgroundColor="#4b6c90"
-                      VerticalOptions="FillAndExpand"
-                      HorizontalOptions="FillAndExpand">
+                <ctrl:AcrylicGrid TintColor="{DynamicResource Primary}"
+                                  RowSpacing="0"
+                                  BlurOpacity="0.6"
+                                  HorizontalOptions="FillAndExpand">
+                    <ctrl:AcrylicGrid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </ctrl:AcrylicGrid.RowDefinitions>
+
                     <StackLayout Margin="15" 
                                  HorizontalOptions="Center">
-                        <ctrl:EllipseView Image="{Binding User.Picture}"
+                        <ctrl:EllipseView Image="{Binding User.Picture, Mode=OneWay}"
                                   HeightRequest="80"
                                   WidthRequest="80"
                                   Stroke="White"
                                   Margin="10"
                                   HorizontalOptions="Center"
-                                  StrokeThickness="1"/>
+                                  StrokeThickness="2"/>
 
                         <Label Text="{Binding User.Name}"
                                FontSize="Micro"
                                VerticalOptions="Center"
                                HorizontalOptions="Center"/>
                     </StackLayout>
-                </Grid>
 
-                <Grid BackgroundColor="LightGray"
-                      Grid.Row="1"
-                      VerticalOptions="FillAndExpand"
-                      HorizontalOptions="FillAndExpand">
-                    <StackLayout>
-                        <Label Text="{sel:LocalizedStrings MyDevices}"
-                               Font="Segoe UI"
-                               FontSize="Micro"
-                               TextColor="#4b6c90"
-                               LineBreakMode="WordWrap"
-                               VerticalOptions="Start" 
-                               HorizontalOptions="Start" />
+                    <Grid BackgroundColor="White" 
+                          Opacity="0.4"
+                          HeightRequest="1"
+                          VerticalOptions="End"/>
+                    
+                    <Grid Grid.Row="1"
+                          HorizontalOptions="FillAndExpand"
+                          VerticalOptions="FillAndExpand"
+                          BackgroundColor="White" Opacity="0.2"/>
+                    
+                    <Grid Grid.Row="1"
+                          VerticalOptions="End"
+                          HorizontalOptions="FillAndExpand"
+                          Padding="10">
+
                         <Picker ItemsSource="{Binding Configurations}"
                                 ItemDisplayBinding="{Binding Name}" 
+                                BackgroundColor="Transparent"
+                                HorizontalOptions="Center"
+                                WidthRequest="300"
+                                TextColor="White"
                                 SelectedItem="{Binding SelectedConfiguration, Mode=TwoWay}">
                         </Picker>
-                    </StackLayout>
-                </Grid>
 
-                <Grid BackgroundColor="White"
-                      Grid.Row="2"
-                      HorizontalOptions="FillAndExpand">
+                        <Label Text="&#xE187;" 
+                               Margin="0,0,20,0"
+                               FontSize="20"
+                               TextColor="White"
+                               HorizontalOptions="End"
+                               VerticalOptions="Center"
+                               FontFamily="Segoe MDL2 Assets"/>
+                    </Grid>
+
+                </ctrl:AcrylicGrid>
+
+                <Grid Grid.Row="1"
+                      BackgroundColor="{DynamicResource BgColor}"
+                      HorizontalOptions="Fill"
+                      Padding="10">
                     <Label Text="Paramétrage"
                            Font="Segoe UI"
                            FontSize="Small"
-                           TextColor="#4b6c90"
+                           TextColor="{DynamicResource Primary}"
                            LineBreakMode="WordWrap"
                            VerticalOptions="Start" 
                            HorizontalOptions="Start" />
                 </Grid>
             </Grid>
 
-            <Grid IsVisible="{Binding HasNoConfiguration}">
-                <Grid Opacity=".9" BackgroundColor="White"/>
+            <Grid IsVisible="{Binding HasNoConfiguration}"
+                  VerticalOptions="FillAndExpand">
+                <Grid Opacity="1" BackgroundColor="{DynamicResource BgColor}"/>
                 <StackLayout VerticalOptions="FillAndExpand">
 
                     <Image Source="Resources/mirror.png" 
@@ -82,20 +112,28 @@
                     <Label Text="{sel:LocalizedStrings GiveAName}"
                            Font="Segoe UI"
                            FontSize="Micro"
-                           TextColor="#4b6c90"
+                           TextColor="{DynamicResource Primary}"
                            VerticalOptions="Center"
                            HorizontalOptions="CenterAndExpand"/>
 
-                    <Editor Text="Miriot"/>
+                    <Editor Text="Miriot"
+                            Margin="20"/>
 
-                    <Button Command="{Binding ActionEditName}" 
-                            BackgroundColor="#4b6c90"
-                            TextColor="White"
-                            HeightRequest="45"
-                            HorizontalOptions="Fill"
-                            VerticalOptions="End"
-                            Text="Valider"/>
+                    <Label Text="{sel:LocalizedStrings GiveANameMessage}"
+                           Font="Segoe UI"
+                           FontSize="Micro"
+                           TextColor="{DynamicResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="CenterAndExpand"/>
                 </StackLayout>
+
+                <Button Command="{Binding ActionEditName}" 
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="{DynamicResource BgColor}"
+                        HeightRequest="45"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="End"
+                        Text="Enregistrer"/>
             </Grid>
         </Grid>
     </ContentPage.Content>

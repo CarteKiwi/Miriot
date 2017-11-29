@@ -5,7 +5,8 @@
         public MainPage()
         {
             InitializeComponent();
-            LoadApplication(new Mobile.App());
+            var app = new Mobile.App();
+            LoadApplication(app);
         }
     }
 }

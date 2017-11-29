@@ -141,6 +141,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\AcrylicGridRenderer.cs" />
     <Compile Include="Controls\EllipseViewRenderer.cs" />
     <Compile Include="Converters\ByteArrayToImageConverter.cs" />
     <Compile Include="Converters\HorizontalOptionsConverter.cs" />
@@ -181,7 +182,6 @@
     <Content Include="Resources\mirror.png" />
     <Content Include="Resources\mirror_only.png" />
     <Content Include="slideout.png" />
-    <Content Include="Resources\step1.png" />
     <Content Include="xamarin_logo.png" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +192,11 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
   </ItemGroup>
   <ItemGroup>

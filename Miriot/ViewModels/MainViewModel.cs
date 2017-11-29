@@ -164,7 +164,7 @@ namespace Miriot.Core.ViewModels
             ISpeechService speechService,
             IGraphService graphService,
             ILuisService luisService,
-            RemoteService remoteService)
+            RemoteService remoteService) : base(navigationService)
         {
             _luisService = luisService;
             _remoteService = remoteService;

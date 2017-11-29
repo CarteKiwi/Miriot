@@ -43,9 +43,10 @@ namespace Miriot.Core.ViewModels
         #endregion
 
         public SettingsViewModel(
+            INavigationService navigationService,
             IDialogService dialogService,
             IDispatcherService dispatcher,
-            RemoteService remoteService)
+            RemoteService remoteService) : base(navigationService)
         {
             _dialogService = dialogService;
             _dispatcher = dispatcher;

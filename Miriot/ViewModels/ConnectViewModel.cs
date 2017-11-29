@@ -5,6 +5,8 @@ using Miriot.Common.Model;
 using Miriot.Model;
 using Miriot.Resources;
 using Miriot.Services;
+using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -74,7 +76,7 @@ namespace Miriot.Core.ViewModels
         public ConnectViewModel(
             IDispatcherService dispatcherService,
             INavigationService navigationService,
-            RemoteService remoteService)
+            RemoteService remoteService) : base(navigationService)
         {
             _dispatcherService = dispatcherService;
             _navigationService = navigationService;
@@ -99,24 +101,35 @@ namespace Miriot.Core.ViewModels
             _remoteService.Added = OnAdded;
             _remoteService.Discover();
 
-            //_navigationService.NavigateTo(PageKeys.Settings, new User
+            //_navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
             //{
-            //    Id = Guid.NewGuid(),
-            //    Name = "Guillaume Test",
-            //    UserData = new UserData
+            //    Id = "1",
+            //    User = new User
             //    {
-            //        Widgets = new System.Collections.Generic.List<Widget>()
+            //        Id = Guid.NewGuid(),
+            //        Name = "Guillaume Test",
+            //        UserData = new UserData
             //        {
-            //            new Widget(){
-            //                Id = Guid.NewGuid(),
-            //                Title = "Widget 1",
-            //                X = 2,
-            //                Y = 0,
-            //                Type = WidgetType.Weather,
-            //                Infos = new System.Collections.Generic.List<string>{
-            //                    JsonConvert.SerializeObject(new WeatherWidgetInfo { Location = "Asnières sur Seine" })
+            //            Devices = new System.Collections.Generic.List<MiriotConfiguration>()
+            //        {
+            //           new MiriotConfiguration("1", "Miriot")
+            //           {
+            //                Widgets = new System.Collections.Generic.List<Widget>()
+            //                {
+            //                    new Widget(){
+            //                        Id = Guid.NewGuid(),
+            //                        Title = "Widget 1",
+            //                        X = 2,
+            //                        Y = 0,
+            //                        Type = WidgetType.Weather,
+            //                        Infos = new System.Collections.Generic.List<string>{
+            //                            JsonConvert.SerializeObject(new WeatherWidgetInfo { Location = "Asnières sur Seine" })
+            //                        }
+            //                    }
             //                }
             //            }
+            //        }
+
             //        }
             //    }
             //});

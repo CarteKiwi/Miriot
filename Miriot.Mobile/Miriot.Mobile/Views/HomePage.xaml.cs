@@ -11,24 +11,34 @@ namespace Miriot.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HomePage
     {
+        private CancellationTokenSource _cancellationToken;
+
         public HomePage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         protected override async void OnAppearing()
         {
-            RotateElement(Badge, CancellationToken.None);
+            _cancellationToken = new CancellationTokenSource();
+            RotateElement(Badge, _cancellationToken);
 
             base.OnAppearing();
         }
 
-        private async Task RotateElement(VisualElement element, CancellationToken cancellation)
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            _cancellationToken.Cancel();
+        }
+
+        private async Task RotateElement(VisualElement element, CancellationTokenSource cancellation)
         {
             while (!cancellation.IsCancellationRequested)
             {
                 await element.RotateTo(360, 2000, Easing.Linear);
-                await element.RotateTo(0, 0); // reset to initial position
+                await element.RotateTo(0, 0);
             }
         }
 

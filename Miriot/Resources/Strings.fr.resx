@@ -138,6 +138,10 @@
   <data name="GiveAName" xml:space="preserve">
     <value>Donnez un nom au miroir.</value>
   </data>
+  <data name="GiveANameMessage" xml:space="preserve">
+    <value>Ce nom est utilisé pour identifier le miroir parmi d'autres.
+Utilisez par exemple "Miriot - Salle de bain"</value>
+  </data>
   <data name="MyDevices" xml:space="preserve">
     <value>Mes appareils</value>
   </data>

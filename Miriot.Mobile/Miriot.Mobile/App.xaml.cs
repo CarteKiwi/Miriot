@@ -28,7 +28,7 @@ namespace Miriot.Mobile
             var nav = InitializeNavigationService();
 
             Locator = new ViewModelLocator();
-
+            
             Alias.Init();
 
             if (Device.RuntimePlatform == Device.iOS)

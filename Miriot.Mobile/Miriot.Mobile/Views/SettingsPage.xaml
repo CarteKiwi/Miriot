@@ -13,11 +13,6 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!--<Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="#2d2d3b" />
-                <Setter Property="BarTextColor" Value="White" />
-            </Style>-->
-
             <Style TargetType="Label">
                 <Setter Property="TextColor" Value="White"/>
             </Style>

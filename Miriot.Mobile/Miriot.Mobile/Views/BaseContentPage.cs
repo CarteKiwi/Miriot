@@ -1,5 +1,4 @@
-﻿using CommonServiceLocator;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Core.ViewModels;
 using System.ComponentModel;
 using Xamarin.Forms;
@@ -37,6 +36,12 @@ namespace Miriot.Mobile.Views
         {
             base.OnAppearing();
             ViewModel.Initialize();
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            ViewModel.NavigateBackCommand.Execute(null);
+            return false;// base.OnBackButtonPressed();
         }
     }
 }
