@@ -426,6 +426,9 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.OneDrive.Sdk.Authentication.WinRT">
+      <HintPath>..\Libs\Microsoft.OneDrive.Sdk.Authentication.WinRT.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Toolkit.Services">
       <HintPath>..\Libs\Microsoft.Toolkit.Services.dll</HintPath>
     </Reference>
