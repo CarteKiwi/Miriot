@@ -93,7 +93,7 @@
                 <Grid Grid.Row="1"
                       BackgroundColor="{DynamicResource BgColor}"
                       HorizontalOptions="Fill">
-                    <base:SettingsPage />
+                    <base:SettingsView />
                 </Grid>
             </Grid>
 

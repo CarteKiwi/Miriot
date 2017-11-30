@@ -44,7 +44,7 @@ namespace Miriot.Mobile
             var nav = new NavigationService();
             nav.Configure(PageKeys.Main, typeof(HomePage));
             nav.Configure(PageKeys.Profile, typeof(ProfilePage));
-            nav.Configure(PageKeys.Settings, typeof(SettingsPage));
+            nav.Configure(PageKeys.Settings, typeof(SettingsView));
             SimpleIoc.Default.Register<INavigationService>(() => nav);
 
             return nav;
