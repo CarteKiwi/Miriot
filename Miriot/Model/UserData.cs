@@ -1,19 +1,22 @@
-﻿using Miriot.Common.Model.Widgets.Horoscope;
+﻿using GalaSoft.MvvmLight;
+using Miriot.Common.Model.Widgets.Horoscope;
 using System;
 using System.Collections.Generic;
 
 namespace Miriot.Common.Model
 {
-    public class MiriotConfiguration
+    public class MiriotConfiguration : ObservableObject
     {
         public MiriotConfiguration(string id, string name)
         {
             Id = id;
             Name = name;
+            Widgets = new List<Widget>();
         }
 
         public string Id { get; }
-        public string Name { get; set; }
+        private string _name;
+        public string Name { get { return _name; } set { Set(ref _name, value); } }
 
         public List<Widget> Widgets { get; set; }
     }

@@ -1,17 +1,18 @@
-﻿using Miriot.Model;
+﻿using System;
+using GalaSoft.MvvmLight.Ioc;
+using Miriot.Common.Model;
+using Miriot.Core.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace Miriot.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public sealed partial class SettingsPage
+    public partial class SettingsPage : ContentView
     {
-        public SettingsPage(MiriotParameter parameter)
+        public SettingsPage()
         {
             InitializeComponent();
-            ViewModel.SetParameters(parameter);
-            NavigationPage.SetHasNavigationBar(this, false);
         }
     }
 }

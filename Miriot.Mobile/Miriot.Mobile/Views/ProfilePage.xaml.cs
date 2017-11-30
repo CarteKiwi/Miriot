@@ -10,19 +10,9 @@ namespace Miriot.Mobile.Views
         public ProfilePage(MiriotParameter parameter)
         {
             InitializeComponent();
-            
+
             ViewModel.SetParameters(parameter);
             NavigationPage.SetHasNavigationBar(this, false);
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-        }
-
-        public void RemoteSystemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            //ViewModel.SelectCommand.Execute((RomeRemoteSystem)e.SelectedItem);
         }
     }
 }

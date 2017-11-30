@@ -3,7 +3,6 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                       x:TypeArguments="viewModels:ProfileViewModel"
                       xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
-                      xmlns:ctrls="xamar"
                       xmlns:core="using:Miriot.Core.ViewModels.Widgets"
                       xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
                       xmlns:sel="clr-namespace:Miriot.Mobile"
@@ -46,6 +45,7 @@
 
                         <Label Text="{Binding User.Name}"
                                FontSize="Micro"
+                               TextColor="{DynamicResource BgColor}"
                                VerticalOptions="Center"
                                HorizontalOptions="Center"/>
                     </StackLayout>
@@ -54,12 +54,12 @@
                           Opacity="0.4"
                           HeightRequest="1"
                           VerticalOptions="End"/>
-                    
+
                     <Grid Grid.Row="1"
                           HorizontalOptions="FillAndExpand"
                           VerticalOptions="FillAndExpand"
                           BackgroundColor="White" Opacity="0.2"/>
-                    
+
                     <Grid Grid.Row="1"
                           VerticalOptions="End"
                           HorizontalOptions="FillAndExpand"
@@ -71,34 +71,33 @@
                                 HorizontalOptions="Center"
                                 WidthRequest="300"
                                 TextColor="White"
-                                SelectedItem="{Binding SelectedConfiguration, Mode=TwoWay}">
+                                SelectedItem="{Binding SelectedConfiguration}">
                         </Picker>
 
-                        <Label Text="&#xE187;" 
+                        <Label Text="&#xE74E;" 
+                               x:Name="SaveLabel"
                                Margin="0,0,20,0"
                                FontSize="20"
                                TextColor="White"
                                HorizontalOptions="End"
                                VerticalOptions="Center"
-                               FontFamily="Segoe MDL2 Assets"/>
+                               FontFamily="Segoe MDL2 Assets">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ActionSave}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
                     </Grid>
 
                 </ctrl:AcrylicGrid>
 
                 <Grid Grid.Row="1"
                       BackgroundColor="{DynamicResource BgColor}"
-                      HorizontalOptions="Fill"
-                      Padding="10">
-                    <Label Text="Paramétrage"
-                           Font="Segoe UI"
-                           FontSize="Small"
-                           TextColor="{DynamicResource Primary}"
-                           LineBreakMode="WordWrap"
-                           VerticalOptions="Start" 
-                           HorizontalOptions="Start" />
+                      HorizontalOptions="Fill">
+                    <base:SettingsPage />
                 </Grid>
             </Grid>
 
+            <!--Rename screen (displayed when HasNoConfiguration = true)-->
             <Grid IsVisible="{Binding HasNoConfiguration}"
                   VerticalOptions="FillAndExpand">
                 <Grid Opacity="1" BackgroundColor="{DynamicResource BgColor}"/>
@@ -116,7 +115,7 @@
                            VerticalOptions="Center"
                            HorizontalOptions="CenterAndExpand"/>
 
-                    <Editor Text="Miriot"
+                    <Editor Text="{Binding SelectedConfiguration.Name, Mode=TwoWay}"
                             Margin="20"/>
 
                     <Label Text="{sel:LocalizedStrings GiveANameMessage}"

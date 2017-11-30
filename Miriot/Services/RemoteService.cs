@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Miriot.Services
@@ -27,6 +26,19 @@ namespace Miriot.Services
             _socketService = socketService;
             _platformService = platformService;
             _remoteSystems = new List<RomeRemoteSystem>();
+        }
+
+        public async Task<bool> CommandAsync<T>(RemoteCommands command, string data)
+        {
+            if (_connectedRemoteSystem == null)
+            {
+                Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
+                return false;
+            }
+
+            string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, command.ToString());
+
+            return true;
         }
 
         public async Task<T> CommandAsync<T>(RemoteCommands command)

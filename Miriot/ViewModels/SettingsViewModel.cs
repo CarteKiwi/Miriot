@@ -35,11 +35,7 @@ namespace Miriot.Core.ViewModels
             set { Set(() => Widgets, ref _widgets, value); }
         }
 
-        public User User
-        {
-            get { return _user; }
-            set { Set(ref _user, value); }
-        }
+        public MiriotConfiguration Configuration { get; set; }
         #endregion
 
         public SettingsViewModel(
@@ -122,26 +118,18 @@ namespace Miriot.Core.ViewModels
             //}
         }
 
-        public void SetParameters(MiriotParameter parameter)
-        {
-            User = parameter.User;
-            MiriotId = parameter.Id;
-        }
-
         protected override async Task InitializeAsync()
         {
-            if (User == null)
+            if (Configuration == null)
                 return;
 
             Widgets.Clear();
-
-            var config = User.UserData.Devices.First(e => e.Id == MiriotId);
 
             foreach (var type in Enum.GetValues(typeof(WidgetType)))
             {
                 var wt = (WidgetType)type;
 
-                var widgetEntity = config.Widgets.FirstOrDefault(e => e.Type == wt);
+                var widgetEntity = Configuration.Widgets.FirstOrDefault(e => e.Type == wt);
 
                 var widgetModel = wt.ToModel(widgetEntity);
 

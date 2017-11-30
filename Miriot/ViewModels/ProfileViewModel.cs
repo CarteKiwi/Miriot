@@ -2,20 +2,19 @@
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common.Model;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Model;
 using Miriot.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Miriot.Model;
-using Miriot.Common;
 
 namespace Miriot.Core.ViewModels
 {
     public class ProfileViewModel : CustomViewModel
     {
         #region Commands
-        public RelayCommand<string> ActionEditName { get; set; }
+        public RelayCommand ActionEditName { get; set; }
         public RelayCommand ActionEditWidgets { get; set; }
         public RelayCommand ActionSave { get; set; }
         public RelayCommand ActionDelete { get; set; }
@@ -28,6 +27,7 @@ namespace Miriot.Core.ViewModels
         private readonly IDispatcherService _dispatcher;
         private readonly RemoteService _remoteService;
         private ObservableCollection<MiriotConfiguration> _configurations;
+        private ObservableCollection<WidgetModel> _widgets;
         private User _user;
         private MiriotConfiguration _selectedConfiguration;
         private bool _hasNoConfiguration;
@@ -49,13 +49,24 @@ namespace Miriot.Core.ViewModels
         public MiriotConfiguration SelectedConfiguration
         {
             get { return _selectedConfiguration; }
-            set { Set(ref _selectedConfiguration, value); }
+            set
+            {
+                Set(ref _selectedConfiguration, value);
+                if (value != null)
+                    OnSelectionChanged();
+            }
         }
 
         public bool HasNoConfiguration
         {
             get { return _hasNoConfiguration; }
             set { Set(ref _hasNoConfiguration, value); }
+        }
+
+        public ObservableCollection<WidgetModel> Widgets
+        {
+            get { return _widgets; }
+            set { Set(() => Widgets, ref _widgets, value); }
         }
 
         public ProfileViewModel(
@@ -69,18 +80,21 @@ namespace Miriot.Core.ViewModels
             _dispatcher = dispatcher;
             _remoteService = remoteService;
 
-            ActionEditName = new RelayCommand<string>(OnEditName);
+            ActionEditName = new RelayCommand(OnEditName);
             ActionEditWidgets = new RelayCommand(OnEditWidgets);
             ActionSave = new RelayCommand(OnSave);
             ActionDelete = new RelayCommand(async () => await OnDelete());
+
+            Widgets = new ObservableCollection<WidgetModel>();
         }
 
-        private void OnEditName(string obj)
+        private void OnEditName()
         {
             if (SelectedConfiguration == null)
                 return;
 
-            SelectedConfiguration.Name = obj;
+            RaisePropertyChanged(() => SelectedConfiguration);
+            RaisePropertyChanged(() => SelectedConfiguration.Name);
             HasNoConfiguration = false;
         }
 
@@ -114,6 +128,8 @@ namespace Miriot.Core.ViewModels
 
         private async Task<bool> UpdateUserAsync()
         {
+            await _faceService.UpdateUserDataAsync(User);
+            var user = await _remoteService.CommandAsync<User>(RemoteCommands.UpdateUser);
             return false; //await _faceService.UpdatePerson(User, User.Picture);
         }
 
@@ -121,6 +137,11 @@ namespace Miriot.Core.ViewModels
         {
             User = parameter.User;
             MiriotId = parameter.Id;
+        }
+
+        private async void OnSelectionChanged()
+        {
+            await LoadWidgetsAsync();
         }
 
         protected override async Task InitializeAsync()
@@ -144,7 +165,32 @@ namespace Miriot.Core.ViewModels
             }
             else
             {
+            }
+        }
 
+        private async Task LoadWidgetsAsync()
+        {
+            Widgets.Clear();
+
+            foreach (var type in Enum.GetValues(typeof(WidgetType)))
+            {
+                var wt = (WidgetType)type;
+
+                var widgetEntity = SelectedConfiguration.Widgets.FirstOrDefault(e => e.Type == wt);
+
+                var widgetModel = wt.ToModel(widgetEntity);
+
+                if (widgetEntity != null)
+                {
+                    await widgetModel.Load();
+                    widgetModel.SetActive();
+                }
+                else
+                {
+                    widgetModel.IsActive = false;
+                }
+
+                Widgets.Add(widgetModel);
             }
         }
     }

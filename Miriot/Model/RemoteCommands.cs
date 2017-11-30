@@ -6,6 +6,7 @@
         GetUser,
         GraphService_GetCode,
         GraphService_Initialize,
-        GraphService_GetUser
+        GraphService_GetUser,
+        UpdateUser
     }
 }
