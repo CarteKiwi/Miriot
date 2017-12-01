@@ -63,6 +63,7 @@ namespace Miriot.Win10
             Vm.ActionCallback = OnAction;
 
             Vm.PropertyChanged += VmOnPropertyChanged;
+            Vm.Widgets.CollectionChanged += WidgetsChanged;
 
             TurnOnLeds();
         }
@@ -85,15 +86,6 @@ namespace Miriot.Win10
 
         private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Vm.Widgets))
-            {
-                if (Vm.Widgets != null)
-                {
-                    Vm.Widgets.CollectionChanged -= WidgetsChanged;
-                    Vm.Widgets.CollectionChanged += WidgetsChanged;
-                }
-            }
-
             if (e.PropertyName == nameof(Vm.SpeakStream))
             {
                 if (Vm.SpeakStream != null)

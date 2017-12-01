@@ -55,7 +55,7 @@
 
                         <Entry Text="{Binding X, Mode=TwoWay}"
                                BackgroundColor="Transparent"
-                               TextColor="White"
+                               TextColor="{DynamicResource Primary}"
                                MinimumWidthRequest="30"
                                HorizontalOptions="Start" VerticalOptions="Center"
                                FontSize="18"/>
@@ -66,12 +66,12 @@
                                Margin="0,0,0,0"/>
 
                         <Entry Text="{Binding Y, Mode=TwoWay}"
-                             HorizontalOptions="Start" VerticalOptions="Center"
-                             FontSize="18"
-                             MinimumWidthRequest="30"
-                             BackgroundColor="Transparent"
-                             TextColor="White"
-                             Margin="0,0,0,0"/>
+                               HorizontalOptions="Start" VerticalOptions="Center"
+                               FontSize="18"
+                               MinimumWidthRequest="30"
+                               BackgroundColor="Transparent"
+                               TextColor="{DynamicResource Primary}"
+                               Margin="0,0,0,0"/>
 
                         <Label Text=")"
                                HorizontalOptions="Start" VerticalOptions="Center"

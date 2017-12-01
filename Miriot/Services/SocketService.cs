@@ -15,11 +15,12 @@ namespace Miriot.Services
 {
     public class SocketService
     {
+        private const int _port = 11100;
         private Timer _discoveryTimer;
         private CancellationTokenSource _canceller;
 
         public Action<RomeRemoteSystem> Discovered { get; internal set; }
-        public Func<RemoteCommands, Task<string>> CommandReceived { get; internal set; }
+        public Func<RemoteParameter, Task<string>> CommandReceived { get; internal set; }
 
         public void ConnectTcp(String server, String message)
         {
@@ -150,7 +151,7 @@ namespace Miriot.Services
         {
             bool done = false;
 
-            UdpClient udpClient = new UdpClient(11000);
+            UdpClient udpClient = new UdpClient(_port);
 
             try
             {
@@ -176,10 +177,9 @@ namespace Miriot.Services
 
                     string serializedData = string.Empty;
 
-                    if (Enum.TryParse(returnData, out RemoteCommands cmd))
-                    {
-                        serializedData = await CommandReceived(cmd);
-                    }
+                    var parameter = JsonConvert.DeserializeObject<RemoteParameter>(returnData);
+
+                    serializedData = await CommandReceived(parameter);
 
                     if (!string.IsNullOrEmpty(serializedData))
                     {
@@ -256,14 +256,16 @@ namespace Miriot.Services
         {
             try
             {
+                var parameter = new RemoteParameter() { Command = RemoteCommands.MiriotDiscovery };
+
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var udpClient = new UdpClient();
-                    var requestData = Encoding.ASCII.GetBytes(RemoteCommands.MiriotDiscovery.ToString());
+                    var requestData = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(parameter));
                     var serverEp = new IPEndPoint(IPAddress.Any, 0);
 
                     udpClient.EnableBroadcast = true;
-                    udpClient.Send(requestData, requestData.Length, new IPEndPoint(IPAddress.Broadcast, 11000));
+                    udpClient.Send(requestData, requestData.Length, new IPEndPoint(IPAddress.Broadcast, _port));
 
                     var serverResponseData = udpClient.Receive(ref serverEp);
                     var serverResponse = Encoding.ASCII.GetString(serverResponseData);

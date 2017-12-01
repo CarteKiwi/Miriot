@@ -183,6 +183,7 @@ namespace Miriot.Core.ViewModels
 
         protected override async Task InitializeAsync()
         {
+            Widgets = new ObservableCollection<WidgetModel>();
             _toothbrushingLauncher = new Timer(ToothbrushingLauncher);
 
             _toothbrushingSemaphore = new SemaphoreSlim(1);
@@ -464,18 +465,13 @@ namespace Miriot.Core.ViewModels
             IsLoading = false;
         }
 
-        private async Task LoadUser(User user)
+        public async Task LoadUser(User user)
         {
             var sysId = _platformService.GetSystemIdentifier();
 
             if (user.UserData.Devices == null)
             {
                 user.UserData.Devices = new List<MiriotConfiguration>();
-
-                //var config = new MiriotConfiguration("Configuration initiale");
-                //config.Widgets = new List<Widget> { new Widget { Type = WidgetType.Time } };
-
-                //user.UserData.Configurations.Add(sysId, config);
             }
 
             var config = user.UserData.Devices.FirstOrDefault(c => c.Id == sysId);
@@ -508,7 +504,7 @@ namespace Miriot.Core.ViewModels
 
         private async Task LoadWidgets(IEnumerable<Widget> widgets)
         {
-            Widgets = new ObservableCollection<WidgetModel>();
+            Widgets.Clear();
 
             foreach (var widget in widgets)
             {

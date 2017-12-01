@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using Miriot.Common.Model;
 using Miriot.Core.ViewModels;
 using Miriot.Model;
 using Newtonsoft.Json;
@@ -28,7 +29,7 @@ namespace Miriot.Services
             _remoteSystems = new List<RomeRemoteSystem>();
         }
 
-        public async Task<bool> CommandAsync<T>(RemoteCommands command, string data)
+        public async Task<bool> SendAsync(RemoteParameter parameter)
         {
             if (_connectedRemoteSystem == null)
             {
@@ -36,7 +37,15 @@ namespace Miriot.Services
                 return false;
             }
 
-            string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, command.ToString());
+            try
+            {
+                await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(parameter));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
 
             return true;
         }
@@ -50,7 +59,7 @@ namespace Miriot.Services
             }
 
             Debug.WriteLine("Sending " + command + " to " + _connectedRemoteSystem.EndPoint.Address + ":" + _connectedRemoteSystem.EndPoint.Port);
-            string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, command.ToString());
+            string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
 
             return JsonConvert.DeserializeObject<T>(response);
         }
@@ -63,7 +72,7 @@ namespace Miriot.Services
                 return;
             }
 
-            _socketService.SendMessage(_connectedRemoteSystem.EndPoint, command.ToString());
+            _socketService.SendMessage(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
         }
 
         internal Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
@@ -107,10 +116,26 @@ namespace Miriot.Services
             Task.Run(() => _socketService.BroadcastListener());
         }
 
-        private async Task<string> OnCommandReceivedAsync(RemoteCommands cmd)
+        private async Task<string> OnCommandReceivedAsync(RemoteParameter parameter)
         {
-            switch (cmd)
+            switch (parameter.Command)
             {
+                case RemoteCommands.UpdateUser:
+                    var user = JsonConvert.DeserializeObject<User>(parameter.SerializedData);
+                    var faceService = SimpleIoc.Default.GetInstance<IFaceService>();
+                    var success = await faceService.UpdateUserDataAsync(user);
+
+                    if (success)
+                    {
+                        var dispatcher = SimpleIoc.Default.GetInstance<IDispatcherService>();
+                        dispatcher.Invoke(async () =>
+                        {
+                            var mainVm = SimpleIoc.Default.GetInstance<MainViewModel>();
+                            await mainVm.LoadUser(user);
+                        });
+                    }
+
+                    return JsonConvert.SerializeObject(success);
                 case RemoteCommands.GetUser:
                     var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
                     return JsonConvert.SerializeObject(vm.User);
@@ -123,9 +148,9 @@ namespace Miriot.Services
                     var _graphService = SimpleIoc.Default.GetInstance<IGraphService>();
 
                     await _graphService.LoginAsync();
-                    var user = await _graphService.GetUserAsync();
+                    var graphUser = await _graphService.GetUserAsync();
 
-                    return JsonConvert.SerializeObject(user);
+                    return JsonConvert.SerializeObject(graphUser);
                 case RemoteCommands.MiriotDiscovery:
                 default:
                     // Reply back

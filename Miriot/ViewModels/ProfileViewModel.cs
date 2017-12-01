@@ -4,6 +4,7 @@ using Miriot.Common.Model;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Model;
 using Miriot.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -85,6 +86,7 @@ namespace Miriot.Core.ViewModels
             ActionSave = new RelayCommand(OnSave);
             ActionDelete = new RelayCommand(async () => await OnDelete());
 
+            Configurations = new ObservableCollection<MiriotConfiguration>();
             Widgets = new ObservableCollection<WidgetModel>();
         }
 
@@ -103,6 +105,37 @@ namespace Miriot.Core.ViewModels
             throw new NotImplementedException();
         }
 
+        private void AddRemoveWidget(WidgetModel w)
+        {
+            // If desactivated
+            if (!w.IsActive)
+            {
+                var ww = SelectedConfiguration.Widgets.FirstOrDefault(e => e.Type == w.Type);
+
+                // Should be existing
+                if (ww != null)
+                {
+                    // Remove
+                    SelectedConfiguration.Widgets.Remove(ww);
+                }
+            }
+            else // if activated
+            {
+                var ww = SelectedConfiguration.Widgets.FirstOrDefault(e => e.Type == w.Type);
+
+                // Should not be existing
+                if (ww == null)
+                    SelectedConfiguration.Widgets.Add(w.ToWidget());
+                else
+                {
+                    var newW = w.ToWidget();
+                    ww.Infos = newW.Infos;
+                    ww.X = newW.X;
+                    ww.Y = newW.Y;
+                }
+            }
+        }
+
         private async Task OnDelete()
         {
             var isSuccess = false; // await _faceService.DeletePerson(User.Id);
@@ -115,6 +148,11 @@ namespace Miriot.Core.ViewModels
 
         private void OnSave()
         {
+            foreach (var w in Widgets)
+            {
+                AddRemoveWidget(w);
+            }
+
             Task.Run(async () =>
             {
                 var isSuccess = await UpdateUserAsync();
@@ -128,9 +166,7 @@ namespace Miriot.Core.ViewModels
 
         private async Task<bool> UpdateUserAsync()
         {
-            await _faceService.UpdateUserDataAsync(User);
-            var user = await _remoteService.CommandAsync<User>(RemoteCommands.UpdateUser);
-            return false; //await _faceService.UpdatePerson(User, User.Picture);
+            return await _remoteService.SendAsync(new RemoteParameter() { Command = RemoteCommands.UpdateUser, SerializedData = JsonConvert.SerializeObject(User) });
         }
 
         public void SetParameters(MiriotParameter parameter)
@@ -149,22 +185,24 @@ namespace Miriot.Core.ViewModels
             if (User == null)
                 return;
 
-            if (User.UserData.Devices == null)
-                User.UserData.Devices = new System.Collections.Generic.List<MiriotConfiguration>();
+            HasNoConfiguration = false;
+            Configurations.Clear();
 
-            Configurations = new ObservableCollection<MiriotConfiguration>(User.UserData.Devices);
+            if (!User.UserData.Devices.Any())
+            {
+                var config = new MiriotConfiguration(MiriotId, "Miriot");
+                User.UserData.Devices.Add(config);
+                HasNoConfiguration = true;
+            }
 
-            SelectedConfiguration = User.UserData.Devices.FirstOrDefault(e => e.Id == MiriotId);
+            foreach (var d in User.UserData.Devices)
+                Configurations.Add(d);
+
+            SelectedConfiguration = Configurations.FirstOrDefault(e => e.Id == MiriotId);
 
             if (SelectedConfiguration == null)
             {
-                var config = new MiriotConfiguration(MiriotId, "Miriot");
-                Configurations.Add(config);
-                SelectedConfiguration = config;
                 HasNoConfiguration = true;
-            }
-            else
-            {
             }
         }
 
