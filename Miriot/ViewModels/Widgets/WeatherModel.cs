@@ -7,6 +7,8 @@ namespace Miriot.Core.ViewModels.Widgets
     {
         public override WidgetType Type => WidgetType.Weather;
 
+        public override string Title => "Météo";
+
         private string _location;
 
         public string Location
@@ -17,7 +19,6 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public WeatherModel(Widget widget) : base(widget)
         {
-            Title = "Météo";
         }
 
         public override WeatherWidgetInfo GetModel()

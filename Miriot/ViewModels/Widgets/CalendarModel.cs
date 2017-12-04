@@ -19,6 +19,8 @@ namespace Miriot.Core.ViewModels.Widgets
 
         public override string Title => "Calendrier & mails";
 
+        public override WidgetStates State => WidgetStates.Compact;
+
         public override WidgetType Type => WidgetType.Calendar;
 
         public CalendarModel(Widget widget) : base(widget) { }

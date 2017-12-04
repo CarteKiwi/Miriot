@@ -70,6 +70,15 @@ namespace Miriot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mode compact.
+        /// </summary>
+        public static string Compact {
+            get {
+                return ResourceManager.GetString("Compact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connecting....
         /// </summary>
         public static string Connecting {
@@ -134,6 +143,15 @@ namespace Miriot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plein écran.
+        /// </summary>
+        public static string Large {
+            get {
+                return ResourceManager.GetString("Large", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My devices.
         /// </summary>
         public static string MyDevices {
@@ -184,6 +202,15 @@ namespace Miriot.Resources {
         public static string SelectMiriot {
             get {
                 return ResourceManager.GetString("SelectMiriot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Taille standard.
+        /// </summary>
+        public static string Standard {
+            get {
+                return ResourceManager.GetString("Standard", resourceCulture);
             }
         }
         

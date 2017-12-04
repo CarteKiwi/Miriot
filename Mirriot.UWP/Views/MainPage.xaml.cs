@@ -33,6 +33,7 @@ namespace Miriot.Win10
         private ColorBloomTransitionHelper _transition;
         private readonly IFrameAnalyzer<ServiceResponse> _frameAnalyzer;
         private int _noFaceDetectedCount;
+        private bool _areLedsOn;
 
         private MainViewModel Vm => DataContext as MainViewModel;
 
@@ -64,19 +65,36 @@ namespace Miriot.Win10
 
             Vm.PropertyChanged += VmOnPropertyChanged;
             Vm.Widgets.CollectionChanged += WidgetsChanged;
-
-            TurnOnLeds();
         }
 
-        private void TurnOnLeds()
+        private void TurnOffLeds()
         {
+            if (!_areLedsOn) return;
+
             var gpio = GpioController.GetDefault();
 
             if (gpio == null) return;
 
-            var pin = gpio.OpenPin(21);
+            var pin = gpio.OpenPin(23);
+            pin.SetDriveMode(GpioPinDriveMode.Output);
+            pin.Write(GpioPinValue.High);
+
+            _areLedsOn = false;
+        }
+
+        private void TurnOnLeds()
+        {
+            if (_areLedsOn) return;
+
+            var gpio = GpioController.GetDefault();
+
+            if (gpio == null) return;
+
+            var pin = gpio.OpenPin(23);
             pin.SetDriveMode(GpioPinDriveMode.Output);
             pin.Write(GpioPinValue.Low);
+
+            _areLedsOn = true;
         }
 
         private void OnAction(IntentResponse intent)
@@ -84,8 +102,89 @@ namespace Miriot.Win10
             DoAction(intent);
         }
 
+        private void ShowGridLines(bool isVisible)
+        {
+            if (isVisible)
+            {
+                ShowGridLine(1);
+                ShowGridLine(2);
+                ShowGridLine(3);
+                ShowGridLine(4);
+            }
+        }
+
+        private void ShowGridLine(int number)
+        {
+            var rect = new Windows.UI.Xaml.Shapes.Line()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                StrokeThickness = 1,
+                Stroke = new SolidColorBrush(Colors.White),
+                StrokeDashCap = PenLineCap.Round,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeDashOffset = 40,
+                StrokeLineJoin = PenLineJoin.Round,
+                StrokeDashArray = new DoubleCollection() { 8 }
+            };
+
+            var txt = new TextBlock();
+            var txt2 = new TextBlock();
+
+            if (number == 1)
+            {
+                txt.Text = "1";
+                txt2.Text = "2";
+
+                rect.Y1 = 0;
+                rect.Y2 = this.ActualHeight;
+                rect.HorizontalAlignment = HorizontalAlignment.Right;
+                rect.VerticalAlignment = VerticalAlignment.Stretch;
+                Grid.SetRowSpan(rect, 3);
+            }
+
+            if (number == 2)
+            {
+                rect.Y1 = 0;
+                rect.Y2 = this.ActualHeight;
+                rect.HorizontalAlignment = HorizontalAlignment.Right;
+                rect.VerticalAlignment = VerticalAlignment.Stretch;
+                Grid.SetRowSpan(rect, 3);
+                Grid.SetColumn(rect, 1);
+            }
+
+            if (number == 3)
+            {
+                rect.X1 = 0;
+                rect.X2 = this.ActualWidth;
+                rect.HorizontalAlignment = HorizontalAlignment.Stretch;
+                rect.VerticalAlignment = VerticalAlignment.Bottom;
+                Grid.SetColumnSpan(rect, 3);
+            }
+
+            if (number == 4)
+            {
+                rect.X1 = 0;
+                rect.X2 = this.ActualWidth;
+                rect.HorizontalAlignment = HorizontalAlignment.Stretch;
+                rect.VerticalAlignment = VerticalAlignment.Bottom;
+                Grid.SetColumnSpan(rect, 3);
+                Grid.SetRow(rect, 1);
+            }
+
+            WidgetZone.Children.Add(rect);
+        }
+
         private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == nameof(Vm.IsConfiguring))
+            {
+                if (Vm.IsConfiguring)
+                {
+                    ShowGridLines(Vm.IsConfiguring);
+                }
+            }
+
             if (e.PropertyName == nameof(Vm.SpeakStream))
             {
                 if (Vm.SpeakStream != null)
@@ -101,6 +200,11 @@ namespace Miriot.Win10
             if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 WidgetZone.Children.Clear();
+
+                if (Vm.IsConfiguring)
+                {
+                    ShowGridLines(Vm.IsConfiguring);
+                }
             }
             else if (e.NewItems.Count > 0)
             {
@@ -110,6 +214,8 @@ namespace Miriot.Win10
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
         {
+            TurnOnLeds();
+
             await RunOnUiThread(() =>
             {
                 if (Vm.CurrentState == States.Active)
@@ -124,6 +230,8 @@ namespace Miriot.Win10
 
         private async void OnNoFaceDetected(object sender, EventArgs e)
         {
+            TurnOffLeds();
+
             await RunOnUiThread(() =>
             {
                 _noFaceDetectedCount++;
@@ -219,6 +327,12 @@ namespace Miriot.Win10
                 // Generic actions
                 switch (intent.Intent)
                 {
+                    case "ToggleLight":
+                        if (_areLedsOn)
+                            TurnOffLeds();
+                        else
+                            TurnOnLeds();
+                        break;
                     case "TakePhoto":
                         TakePhoto();
                         break;

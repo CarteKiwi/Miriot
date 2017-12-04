@@ -2,9 +2,8 @@
 {
     public enum WidgetStates
     {
-        Iconic,
-        Minimal,
         Compact,
+        Standard,
         Large
     }
 }

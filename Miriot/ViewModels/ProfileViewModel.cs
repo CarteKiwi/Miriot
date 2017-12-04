@@ -6,6 +6,7 @@ using Miriot.Model;
 using Miriot.Services;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -100,9 +101,19 @@ namespace Miriot.Core.ViewModels
             HasNoConfiguration = false;
         }
 
-        private void OnEditWidgets()
+        private void UpdateWidgets()
         {
-            throw new NotImplementedException();
+            foreach (var w in Widgets)
+            {
+                AddRemoveWidget(w);
+            }
+        }
+
+        private async void OnEditWidgets()
+        {
+            UpdateWidgets();
+
+            await RefreshUserAsync();
         }
 
         private void AddRemoveWidget(WidgetModel w)
@@ -148,10 +159,7 @@ namespace Miriot.Core.ViewModels
 
         private void OnSave()
         {
-            foreach (var w in Widgets)
-            {
-                AddRemoveWidget(w);
-            }
+            UpdateWidgets();
 
             Task.Run(async () =>
             {
@@ -162,6 +170,11 @@ namespace Miriot.Core.ViewModels
                 else
                     _dispatcher.Invoke(async () => await _dialogService.ShowMessage("Erreur lors de la sauvegarde. Réessayez.", "Alerte"));
             });
+        }
+
+        private Task<bool> RefreshUserAsync()
+        {
+            return _remoteService.SendAsync(new RemoteParameter() { Command = RemoteCommands.LoadUser, SerializedData = JsonConvert.SerializeObject(User) });
         }
 
         private async Task<bool> UpdateUserAsync()
@@ -177,6 +190,9 @@ namespace Miriot.Core.ViewModels
 
         private async void OnSelectionChanged()
         {
+            if (MiriotId == SelectedConfiguration.Id)
+                _remoteService.Command(RemoteCommands.MiriotConfiguring);
+
             await LoadWidgetsAsync();
         }
 
@@ -203,12 +219,17 @@ namespace Miriot.Core.ViewModels
             if (SelectedConfiguration == null)
             {
                 HasNoConfiguration = true;
+                var config = new MiriotConfiguration(MiriotId, "Miriot");
+                User.UserData.Devices.Add(config);
+                SelectedConfiguration = config;
             }
         }
 
         private async Task LoadWidgetsAsync()
         {
             Widgets.Clear();
+
+            var widgets = new List<WidgetModel>();
 
             foreach (var type in Enum.GetValues(typeof(WidgetType)))
             {
@@ -217,6 +238,9 @@ namespace Miriot.Core.ViewModels
                 var widgetEntity = SelectedConfiguration.Widgets.FirstOrDefault(e => e.Type == wt);
 
                 var widgetModel = wt.ToModel(widgetEntity);
+
+                if (widgetModel.IsBuiltIn)
+                    continue;
 
                 if (widgetEntity != null)
                 {
@@ -228,8 +252,10 @@ namespace Miriot.Core.ViewModels
                     widgetModel.IsActive = false;
                 }
 
-                Widgets.Add(widgetModel);
+                widgets.Add(widgetModel);
             }
+
+            Widgets = new ObservableCollection<WidgetModel>(widgets.OrderBy(e => e.Title));
         }
     }
 }

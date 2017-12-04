@@ -7,6 +7,8 @@
         GraphService_GetCode,
         GraphService_Initialize,
         GraphService_GetUser,
-        UpdateUser
+        UpdateUser,
+        LoadUser,
+        MiriotConfiguring
     }
 }

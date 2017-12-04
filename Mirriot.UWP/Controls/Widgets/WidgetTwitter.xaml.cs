@@ -35,8 +35,6 @@ namespace Miriot.Win10.Controls
 
         public WidgetTwitter(TwitterModel widget) : base(widget)
         {
-            State = WidgetStates.Minimal;
-
             InitializeComponent();
 
             Margin = new Thickness(0);
@@ -69,7 +67,7 @@ namespace Miriot.Win10.Controls
             switch (State)
             {
                 default:
-                case WidgetStates.Minimal:
+                case WidgetStates.Compact:
                     SetPosition(1, 2);
                     VisualStateManager.GoToState(this, "MinimalState", true);
                     break;
@@ -121,7 +119,7 @@ namespace Miriot.Win10.Controls
                         {
                             _tweets.Insert(0, tweet);
 
-                            if (State == WidgetStates.Minimal)
+                            if (State == WidgetStates.Compact)
                                 TweetReceivedSb.Begin();
                         }
                     }
@@ -144,7 +142,7 @@ namespace Miriot.Win10.Controls
             // TODO: Switch state
         }
 
-        public override void SetPosition(int x, int y)
+        public override void SetPosition(int? x, int? y)
         {
             Grid.SetRowSpan(this, 2);
             base.SetPosition(x, y);

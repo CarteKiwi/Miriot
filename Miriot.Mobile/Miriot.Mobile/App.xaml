@@ -20,6 +20,7 @@
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
 
+            <conv:IntToStateConverter x:Key="IntToStateConverter"/>
             <conv:InvertBoolConverter x:Key="InvertBoolConverter"/>
             <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
         </ResourceDictionary>

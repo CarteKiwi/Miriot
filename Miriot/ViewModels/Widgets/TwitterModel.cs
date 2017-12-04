@@ -11,6 +11,8 @@ namespace Miriot.Core.ViewModels.Widgets
     {
         public override string Title => "Twitter";
 
+        public override WidgetStates State => WidgetStates.Compact;
+
         public override WidgetType Type => WidgetType.Twitter;
 
         private TwitterUser _user;

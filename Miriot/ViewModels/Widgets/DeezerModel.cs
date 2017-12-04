@@ -7,6 +7,8 @@ namespace Miriot.Core.ViewModels.Widgets
     {
         public override WidgetType Type => WidgetType.Deezer;
 
+        public override string Title => "Musique avec Deezer";
+
         public DeezerModel(Widget widgetEntity) : base(widgetEntity)
         {
         }

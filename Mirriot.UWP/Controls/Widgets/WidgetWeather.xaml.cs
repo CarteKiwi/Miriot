@@ -107,11 +107,5 @@ namespace Miriot.Win10.Controls
 
             PictoFont.Text = ico;
         }
-
-        public override void SetPosition(int x, int y)
-        {
-            Grid.SetColumn(this, x);
-            Grid.SetRow(this, y);
-        }
     }
 }

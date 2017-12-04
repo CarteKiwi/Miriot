@@ -120,6 +120,9 @@
   <data name="CheckConnection" xml:space="preserve">
     <value>Vérifiez votre connexion: Miriot &amp; Miriot Remote doivent être connecté au même réseau Wifi.</value>
   </data>
+  <data name="Compact" xml:space="preserve">
+    <value>Mode compact</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Connexion en cours...</value>
   </data>
@@ -142,6 +145,9 @@
     <value>Ce nom est utilisé pour identifier le miroir parmi d'autres.
 Utilisez par exemple "Miriot - Salle de bain"</value>
   </data>
+  <data name="Large" xml:space="preserve">
+    <value>Plein écran</value>
+  </data>
   <data name="MyDevices" xml:space="preserve">
     <value>Mes appareils</value>
   </data>
@@ -159,6 +165,9 @@ Utilisez par exemple "Miriot - Salle de bain"</value>
   </data>
   <data name="SelectMiriot" xml:space="preserve">
     <value>Sélectionnez dans la liste le miroir que vous souhaitez paramétrer</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>Taille standard</value>
   </data>
   <data name="UnableToSaveAccount" xml:space="preserve">
     <value>Impossible de sauvegarder le compte</value>

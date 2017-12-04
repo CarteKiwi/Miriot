@@ -241,11 +241,15 @@ namespace Miriot.Win10.Controls
             }
         }
 
-        public override void SetPosition(int x, int y)
+        public override void SetPosition(int? x, int? y)
         {
-            Grid.SetColumn(this, x);
-            Grid.SetRow(this, y);
+            base.SetPosition(x, y);
             Grid.SetRowSpan(this, 2);
+        }
+
+        public override void OnStateChanged()
+        {
+            base.OnStateChanged();
         }
     }
 

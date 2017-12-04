@@ -4,6 +4,8 @@ namespace Miriot.Core.ViewModels.Widgets
 {
     public class FitbitModel : WidgetModel
     {
+        public override string Title => "Composant Fitbit";
+
         public FitbitModel(Widget widgetEntity) : base(widgetEntity)
         {
         }

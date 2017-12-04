@@ -49,6 +49,7 @@ namespace Miriot.Core.ViewModels
         private bool _isListening;
         private object _speakStream;
         private bool _hasNoConfiguration;
+        private bool _isConfiguring;
         #endregion
 
         #region Commands
@@ -153,6 +154,16 @@ namespace Miriot.Core.ViewModels
             private set => Set(ref _hasNoConfiguration, value);
         }
 
+        public bool IsConfiguring
+        {
+            get => _isConfiguring;
+            set
+            {
+                _isConfiguring = value;
+                RaisePropertyChanged(() => IsConfiguring);
+            }
+        }
+
         public MainViewModel(
             IFileService fileService,
             IPlatformService platformService,
@@ -177,6 +188,8 @@ namespace Miriot.Core.ViewModels
             _visionService = visionService;
             _speechService = speechService;
             _graphService = graphService;
+
+            _remoteService.Attach(this);
 
             SetCommands();
         }
@@ -489,7 +502,7 @@ namespace Miriot.Core.ViewModels
 
             await _speechService.StartListeningAsync();
 
-            user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
+            //user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
 
             user.PreviousLoginDate = user.UserData.PreviousLoginDate;
         }
@@ -596,6 +609,11 @@ namespace Miriot.Core.ViewModels
         {
             var user = User;
             _navigationService.NavigateTo(pageKey, user);
+        }
+
+        public Task<bool> UpdateUserDataAsync(User user)
+        {
+            return _faceService.UpdateUserDataAsync(user);
         }
 
         public async Task<bool> UpdateUserAsync()

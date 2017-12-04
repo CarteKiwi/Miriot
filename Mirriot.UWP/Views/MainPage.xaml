@@ -114,16 +114,7 @@
                 <ColumnDefinition Width="1.4*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-
-            <!--<ctrl:WidgetDeezer Grid.Column="0"></ctrl:WidgetDeezer>
-            <ctrl:WidgetCalendar Grid.Column="0"
-                                 Grid.RowSpan="2"
-                                 Grid.Row="1"></ctrl:WidgetCalendar>
-            <ctrl:WidgetSncf Grid.Column="2" Grid.Row="1"></ctrl:WidgetSncf>-->
-            <!--<ctrl:WidgetTime Grid.Column="2"
-                             Canvas.ZIndex="2"></ctrl:WidgetTime>-->
-            <!--<ctrl:WidgetWeather Grid.Column="2" Grid.Row="2"></ctrl:WidgetWeather>
-            <ctrl:WidgetTwitter Grid.Column="1" Grid.Row="1"></ctrl:WidgetTwitter>-->
+            
         </Grid>
 
         <!--Welcome text-->

@@ -15,18 +15,28 @@ namespace Miriot.Services
     public class RemoteService
     {
         private readonly SocketService _socketService;
+        private readonly IDispatcherService _dispatcherService;
         private readonly IPlatformService _platformService;
         private List<RomeRemoteSystem> _remoteSystems;
         private RomeRemoteSystem _connectedRemoteSystem;
+        private MainViewModel _vm;
 
         public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
         public Action<RomeRemoteSystem> Added { get; set; }
 
-        public RemoteService(SocketService socketService, IPlatformService platformService)
+        public RemoteService(SocketService socketService,
+            IDispatcherService dispatcherService,
+            IPlatformService platformService)
         {
             _socketService = socketService;
+            _dispatcherService = dispatcherService;
             _platformService = platformService;
             _remoteSystems = new List<RomeRemoteSystem>();
+        }
+
+        public void Attach(MainViewModel vm)
+        {
+            _vm = vm;
         }
 
         public async Task<bool> SendAsync(RemoteParameter parameter)
@@ -116,29 +126,51 @@ namespace Miriot.Services
             Task.Run(() => _socketService.BroadcastListener());
         }
 
+        internal void OnLoadUser(User user)
+        {
+            _dispatcherService.Invoke(async () =>
+            {
+                await _vm.LoadUser(user);
+            });
+        }
+
+        private T Deserialize<T>(RemoteParameter parameter)
+        {
+            return JsonConvert.DeserializeObject<T>(parameter.SerializedData);
+        }
+
         private async Task<string> OnCommandReceivedAsync(RemoteParameter parameter)
         {
             switch (parameter.Command)
             {
+                case RemoteCommands.MiriotConfiguring:
+                    _dispatcherService.Invoke(() =>
+                    {
+                        _vm.IsConfiguring = true;
+                    });
+                    return string.Empty;
+                case RemoteCommands.LoadUser:
+                    OnLoadUser(Deserialize<User>(parameter));
+                    return string.Empty;
                 case RemoteCommands.UpdateUser:
-                    var user = JsonConvert.DeserializeObject<User>(parameter.SerializedData);
-                    var faceService = SimpleIoc.Default.GetInstance<IFaceService>();
-                    var success = await faceService.UpdateUserDataAsync(user);
+                    var user = Deserialize<User>(parameter);
+                    var success = await _vm.UpdateUserDataAsync(user);
 
                     if (success)
                     {
-                        var dispatcher = SimpleIoc.Default.GetInstance<IDispatcherService>();
-                        dispatcher.Invoke(async () =>
+                        _dispatcherService.Invoke(async () =>
                         {
-                            var mainVm = SimpleIoc.Default.GetInstance<MainViewModel>();
-                            await mainVm.LoadUser(user);
+                            _vm.IsConfiguring = false;
+                            await _vm.LoadUser(user);
                         });
                     }
-
                     return JsonConvert.SerializeObject(success);
                 case RemoteCommands.GetUser:
-                    var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
-                    return JsonConvert.SerializeObject(vm.User);
+                    _dispatcherService.Invoke(() =>
+                    {
+                        _vm.IsConfiguring = true;
+                    });
+                    return JsonConvert.SerializeObject(_vm.User);
                 case RemoteCommands.GraphService_Initialize:
                     Messenger.Default.Send(new GraphServiceMessage(false));
                     return null;

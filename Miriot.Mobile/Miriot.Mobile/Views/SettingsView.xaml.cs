@@ -1,8 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight.Ioc;
-using Miriot.Common.Model;
-using Miriot.Core.ViewModels;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace Miriot.Mobile.Views

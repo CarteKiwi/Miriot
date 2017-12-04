@@ -16,7 +16,10 @@ namespace Miriot.Win10.Controls
             Margin = new Thickness(20);
 
             if (widget != null)
+            {
                 SetPosition(widget.X, widget.Y);
+                State = widget.State;
+            }
         }
 
         private WidgetStates _state;
@@ -32,10 +35,13 @@ namespace Miriot.Win10.Controls
 
         public virtual void OnStateChanged() { }
 
-        public virtual void SetPosition(int x, int y)
+        public virtual void SetPosition(int? x, int? y)
         {
-            Grid.SetColumn(this, x);
-            Grid.SetRow(this, y);
+            if (x != null)
+                Grid.SetColumn(this, x.Value);
+
+            if (y != null)
+                Grid.SetRow(this, y.Value);
         }
     }
 }

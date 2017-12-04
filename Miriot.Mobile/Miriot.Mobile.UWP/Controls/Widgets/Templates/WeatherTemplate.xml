@@ -30,32 +30,26 @@
                        Grid.ColumnSpan="2"
                        Margin="0,-10,0,0">
 
-            <Label Text="Positionnement: (x:"
+            <Label Text="Position: "
                    HorizontalOptions="Start" VerticalOptions="Center"
                    FontSize="15"
                    Margin="0,0,0,0"/>
 
-            <Entry Text="{Binding X, Mode=TwoWay}"
-                   TextColor="White"
-                   MinimumWidthRequest="30"
-                   HorizontalOptions="Start" VerticalOptions="Center"
-                   FontSize="18"/>
-
-            <Label Text="y:"
-                   HorizontalOptions="Start" VerticalOptions="Center"
-                   FontSize="15"
-                   Margin="0,0,0,0"/>
-
-            <Entry Text="{Binding Y, Mode=TwoWay}"
-                   HorizontalOptions="Start" VerticalOptions="Center"
-                   FontSize="18"
-                   MinimumWidthRequest="30"
-                   Margin="0,0,0,0"/>
-
-            <Label Text=")"
-                   HorizontalOptions="Start" VerticalOptions="Center"
-                   FontSize="15"
-                   Margin="0,0,0,0"/>
+            <Picker BackgroundColor="Transparent"
+                    SelectedIndex="{Binding Position, Mode=TwoWay}"
+                    TextColor="{DynamicResource Primary}">
+              <Picker.Items>
+                <x:String>-</x:String>
+                <x:String>1</x:String>
+                <x:String>2</x:String>
+                <x:String>3</x:String>
+                <x:String>4</x:String>
+                <x:String>5</x:String>
+                <x:String>6</x:String>
+                <x:String>8</x:String>
+                <x:String>9</x:String>
+              </Picker.Items>
+            </Picker>
           </StackLayout>
 
           <StackLayout Orientation="Horizontal"
