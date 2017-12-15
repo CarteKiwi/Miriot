@@ -43,7 +43,7 @@ namespace Miriot.Win10.Services
 
             // Compile the dictation topic constraint, which optimizes for dictated speech.
             var listConstraint = new SpeechRecognitionListConstraint(new[] { "Miriot" });
-            //_speechRecognizer.Constraints.Add(listConstraint);
+            _speechRecognizer.Constraints.Add(listConstraint);
             _speechRecognizer.Constraints.Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, ""));
 
             await _speechRecognizer.CompileConstraintsAsync();

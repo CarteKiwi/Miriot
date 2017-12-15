@@ -3,6 +3,7 @@
     public enum RemoteCommands
     {
         MiriotDiscovery,
+        MiriotConnect,
         GetUser,
         GraphService_GetCode,
         GraphService_Initialize,

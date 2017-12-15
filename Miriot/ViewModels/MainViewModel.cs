@@ -531,6 +531,22 @@ namespace Miriot.Core.ViewModels
             {
                 Widgets.Clear();
             }
+
+            ActionCallback(new IntentResponse() {
+                Actions = new List<Common.Action>() {
+                    new Common.Action() {
+                        Triggered = true,
+                        Name = "Search",
+                        Parameters = new List<Common.Parameter>() {
+                            new Common.Parameter() {
+                                Value = new List<ParameterValue>() {
+                                    new ParameterValue() { Entity = "Michael Jackson" }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         private void ContinueProcess(ServiceResponse response)
@@ -655,7 +671,7 @@ namespace Miriot.Core.ViewModels
 
         public async Task<ServiceResponse> IdentifyFaces(byte[] bitmap)
         {
-            _lastFrameShot = await _fileService.EncodedBytes(bitmap);
+            _lastFrameShot = bitmap;
 
             // Post photo to Azure 
             // Compare faces & return identified user

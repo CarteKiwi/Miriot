@@ -4,6 +4,7 @@ using Miriot.Common;
 using Miriot.Services;
 using Miriot.Win10.Services;
 using Miriot.Win10.Views;
+using Windows.Media;
 
 namespace Miriot.Win10
 {

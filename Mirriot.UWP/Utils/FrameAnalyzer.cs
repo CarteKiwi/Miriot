@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.FaceAnalysis;
+using Windows.System.Threading;
 
 namespace Miriot.Win10.Utils
 {
@@ -18,7 +19,7 @@ namespace Miriot.Win10.Utils
         public event EventHandler NoFaceDetected;
 
         private FaceTracker _faceTracker;
-        private Timer _frameProcessingTimer;
+        private ThreadPoolTimer _frameProcessingTimer;
         private readonly SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         private ICameraService _camera;
         private int _detectedFacesInLastFrame;
@@ -34,11 +35,12 @@ namespace Miriot.Win10.Utils
         {
             _camera = camera;
             _faceTracker = await FaceTracker.CreateAsync();
-            _frameProcessingTimer = new Timer((a) => { ProcessCurrentVideoFrame(); });
-            _frameProcessingTimer.Change(0, 300);
+
+            var timerInterval = TimeSpan.FromMilliseconds(300);
+            _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
         }
 
-        public async void ProcessCurrentVideoFrame()
+        public async void ProcessCurrentVideoFrame(ThreadPoolTimer timer)
         {
             if (!_frameProcessingSemaphore.Wait(0))
             {
@@ -69,7 +71,8 @@ namespace Miriot.Win10.Utils
                 {
                     OnPreAnalysis?.Invoke(this, null);
 
-                    var output = await AnalysisFunction(currentFrame.SoftwareBitmap.ToByteArray());
+                    var bytes = await _camera.GetEncodedBytesAsync(currentFrame);
+                    var output = await AnalysisFunction(bytes);// currentFrame.SoftwareBitmap.ToByteArray());
                     UsersIdentified?.Invoke(this, output);
                 }
 
@@ -109,7 +112,9 @@ namespace Miriot.Win10.Utils
         public async Task<byte[]> GetFrame()
         {
             var frame = await GetVideoFrameSafe();
-            return await _fileService.EncodedBytes(frame?.SoftwareBitmap.ToByteArray());
+            var bytes = await _camera.GetEncodedBytesAsync(frame);
+            frame.Dispose();
+            return bytes;
         }
     }
 }

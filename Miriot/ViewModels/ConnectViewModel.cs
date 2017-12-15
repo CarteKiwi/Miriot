@@ -178,7 +178,7 @@ namespace Miriot.Core.ViewModels
 
                     RunOnUiThread(() =>
                     {
-                        if (user == null)
+                        if (user == null || user?.Id != Guid.Empty)
                         {
                             Message = Strings.RetrievingUserFailed;
                         }

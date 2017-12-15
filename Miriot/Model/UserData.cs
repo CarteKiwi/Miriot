@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using Miriot.Common.Model.Widgets.Horoscope;
 using System;
 using System.Collections.Generic;
 

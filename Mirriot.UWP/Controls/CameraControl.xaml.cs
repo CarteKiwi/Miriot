@@ -2,6 +2,7 @@
 using Miriot.Win10.Utils;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Devices.Enumeration;
@@ -59,7 +60,7 @@ namespace Miriot.Win10.Controls
         public CameraControl()
         {
             InitializeComponent();
-            
+
             Loaded += async (a, b) =>
             {
                 _displayInformation = DisplayInformation.GetForCurrentView();
@@ -331,7 +332,7 @@ namespace Miriot.Win10.Controls
             {
                 var decoder = await BitmapDecoder.CreateAsync(inputStream);
 
-                var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.Win10.jpeg", CreationCollisionOption.GenerateUniqueName);
+                var file = await Package.Current.InstalledLocation.CreateFileAsync("Miriot.jpeg", CreationCollisionOption.GenerateUniqueName);
 
                 using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {
@@ -366,14 +367,43 @@ namespace Miriot.Win10.Controls
 
             //var supportedBitmapFormats = FaceDetector.GetSupportedBitmapPixelFormats();
             //var f = (supportedBitmapFormats.First());
-
             // Create a video frame in the desired format for the preview frame
             VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
 
-            VideoFrame previewFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
+            var currentFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
+            
+            // Collect the resulting frame
+            SoftwareBitmap previewFrame = currentFrame.SoftwareBitmap;
 
-            return previewFrame;
+            return currentFrame;
         }
+
+        public async Task<byte[]> GetEncodedBytesAsync(object frame)
+        {
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(((VideoFrame)frame).SoftwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+
+            byte[] array = null;
+
+            // First: Use an encoder to copy from SoftwareBitmap to an in-mem stream (FlushAsync)
+            // Next:  Use ReadAsync on the in-mem stream to get byte[] array
+
+            using (var ms = new InMemoryRandomAccessStream())
+            {
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, ms);
+                encoder.SetSoftwareBitmap(bitmapBgra8);
+
+                try
+                {
+                    await encoder.FlushAsync();
+                }
+                catch (Exception ex) { return new byte[0]; }
+
+                array = new byte[ms.Size];
+                await ms.ReadAsync(array.AsBuffer(), (uint)ms.Size, InputStreamOptions.None);
+            }
+            return array;
+        }
+
         #endregion Methods
     }
 }

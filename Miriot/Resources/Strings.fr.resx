@@ -121,7 +121,7 @@
     <value>Vérifiez votre connexion: Miriot &amp; Miriot Remote doivent être connecté au même réseau Wifi.</value>
   </data>
   <data name="Compact" xml:space="preserve">
-    <value>Mode compact</value>
+    <value>Compact</value>
   </data>
   <data name="Connecting" xml:space="preserve">
     <value>Connexion en cours...</value>
@@ -167,7 +167,7 @@ Utilisez par exemple "Miriot - Salle de bain"</value>
     <value>Sélectionnez dans la liste le miroir que vous souhaitez paramétrer</value>
   </data>
   <data name="Standard" xml:space="preserve">
-    <value>Taille standard</value>
+    <value>Standard</value>
   </data>
   <data name="UnableToSaveAccount" xml:space="preserve">
     <value>Impossible de sauvegarder le compte</value>

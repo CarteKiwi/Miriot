@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp;
+﻿using Microsoft.Toolkit.Uwp.Connectivity;
 using Miriot.Services;
 using System;
 using Windows.System.Profile;

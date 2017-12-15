@@ -69,7 +69,10 @@ namespace Miriot.Services
             }
 
             Debug.WriteLine("Sending " + command + " to " + _connectedRemoteSystem.EndPoint.Address + ":" + _connectedRemoteSystem.EndPoint.Port);
-            string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
+            string response = await _socketService.SendReceiveTcpAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
+
+            if (response == null)
+                return default(T);
 
             return JsonConvert.DeserializeObject<T>(response);
         }
@@ -85,12 +88,14 @@ namespace Miriot.Services
             _socketService.SendMessage(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
         }
 
-        internal Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
+        internal async Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
         {
             _socketService.StopBroadcasting();
             _connectedRemoteSystem = selectedRemoteSystem;
+            Command(RemoteCommands.MiriotConnect);
+            await Task.Delay(500);
 
-            return Task.FromResult(true);
+            return true;
         }
 
         public void Discover()
@@ -124,6 +129,7 @@ namespace Miriot.Services
         {
             _socketService.CommandReceived = OnCommandReceivedAsync;
             Task.Run(() => _socketService.BroadcastListener());
+            Task.Run(() => _socketService.CreateTcpServer());
         }
 
         internal void OnLoadUser(User user)
@@ -183,6 +189,9 @@ namespace Miriot.Services
                     var graphUser = await _graphService.GetUserAsync();
 
                     return JsonConvert.SerializeObject(graphUser);
+                case RemoteCommands.MiriotConnect:
+                    //_socketService.ListenTcp();
+                    return null;
                 case RemoteCommands.MiriotDiscovery:
                 default:
                     // Reply back
