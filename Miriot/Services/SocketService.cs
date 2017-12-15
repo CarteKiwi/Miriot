@@ -71,10 +71,10 @@ namespace Miriot.Services
         public void CreateTcpServer()
         {
             Int32 port = 13123;
-            IPAddress ipAddress = Dns.GetHostEntry("localhost").AddressList.First(ip=>ip.;
-            //IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+            //IPAddress ipAddress = Dns.GetHostEntry("localhost").AddressList.First(ip=>ip.;
+            IPAddress localAddr = IPAddress.Parse("127.0.0.1");
 
-            server = new TcpListener(ipAddress, port);
+            server = new TcpListener(localAddr, port);
 
             // Start listening for client requests.
             server.Start();
