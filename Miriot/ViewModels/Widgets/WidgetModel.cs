@@ -19,7 +19,7 @@ namespace Miriot.Core.ViewModels.Widgets
         private int _position;
         private string _title;
         private bool _isActive;
-        protected List<string> _infos;
+        protected string _infos;
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 

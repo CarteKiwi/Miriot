@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirriot.UWP", "Mirriot.UWP\Mirriot.UWP.csproj", "{EFC31295-A4CE-426C-AE3C-7E1C4999A4BD}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot", "Miriot\Miriot.csproj", "{B89DC383-614A-49B2-A745-B7681441E4B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot.Cognitive", "Miriot.Cognitive\Miriot.Cognitive.csproj", "{56693705-0D1F-4CEC-B492-57465CE1AF84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Api", "Miriot.Api\Miriot.Api.csproj", "{09171C31-27EB-4376-93BF-20DA4C2CC133}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -159,6 +161,30 @@ Global
 		{56693705-0D1F-4CEC-B492-57465CE1AF84}.Release|x64.Build.0 = Release|Any CPU
 		{56693705-0D1F-4CEC-B492-57465CE1AF84}.Release|x86.ActiveCfg = Release|Any CPU
 		{56693705-0D1F-4CEC-B492-57465CE1AF84}.Release|x86.Build.0 = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|ARM.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|x64.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Debug|x86.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|Any CPU.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|Any CPU.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|ARM.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|ARM.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|x64.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|x64.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|x86.ActiveCfg = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Mock|x86.Build.0 = Debug|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|ARM.ActiveCfg = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|ARM.Build.0 = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|x64.ActiveCfg = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|x64.Build.0 = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|x86.ActiveCfg = Release|Any CPU
+		{09171C31-27EB-4376-93BF-20DA4C2CC133}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

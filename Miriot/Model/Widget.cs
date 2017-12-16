@@ -10,6 +10,6 @@ namespace Miriot.Common.Model
         public int? X { get; set; }
         public int? Y { get; set; }
         public WidgetType Type { get; set; }
-        public List<string> Infos { get; set; }
+        public string Infos { get; set; }
     }
 }

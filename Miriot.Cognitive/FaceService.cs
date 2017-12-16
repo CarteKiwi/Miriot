@@ -119,13 +119,10 @@ namespace Miriot.Cognitive
                 var faceId = identifyResults.First(r => r.Candidates.Select(c => c.PersonId).Contains(mostConfidentPerson.PersonId)).FaceId;
                 var face = faces.Single(o => o.FaceId == faceId);
 
-                var data = TryDeserialize(person.UserData);
-
                 var user = new User
                 {
                     Id = person.PersonId,
                     Name = person.Name,
-                    UserData = data,
                     FaceRectangle = new System.Drawing.Rectangle
                     {
                         Height = face.FaceRectangle.Height,
@@ -140,20 +137,6 @@ namespace Miriot.Cognitive
             }
 
             return new ServiceResponse(users.ToArray(), null);
-        }
-
-        private UserData TryDeserialize(string userData)
-        {
-            try
-            {
-                return JsonConvert.DeserializeObject<UserData>(userData);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                Debug.WriteLine("UserData:" + userData);
-                return new UserData();
-            }
         }
 
         public async Task<UserEmotion> GetEmotion(byte[] bitmap, int top, int left)
@@ -212,7 +195,7 @@ namespace Miriot.Cognitive
             try
             {
                 // Create PERSON
-                var newPerson = await _faceClient.CreatePersonAsync(_miriotPersonGroupId, name, JsonConvert.SerializeObject(new UserData()));
+                var newPerson = await _faceClient.CreatePersonAsync(_miriotPersonGroupId, name);
 
                 // Add FACE to PERSON
                 using (var stream = new MemoryStream(bitmap))
@@ -239,7 +222,7 @@ namespace Miriot.Cognitive
             try
             {
                 // Update user's data
-                await _faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name, JsonConvert.SerializeObject(user.UserData));
+                await _faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name);
 
                 // Add the new face
                 using (var stream = new MemoryStream(pic))
@@ -262,7 +245,7 @@ namespace Miriot.Cognitive
             try
             {
                 // Update user's data
-                await _faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name, JsonConvert.SerializeObject(user.UserData));
+                await _faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name);
 
                 return true;
             }

@@ -194,7 +194,7 @@ namespace Miriot.Win10.Controls
             try
             {
                 var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
-                vm.User.UserData.CachedTvUrls = _cachedUrls;
+                //vm.User.UserData.CachedTvUrls = _cachedUrls;
                 Task.Run(async () => await vm.UpdateUserAsync());
             }
             catch (Exception)

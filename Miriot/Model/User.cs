@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
+using Miriot.Model;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Miriot.Common.Model
@@ -7,23 +9,20 @@ namespace Miriot.Common.Model
     public class User : ObservableObject
     {
         public Guid Id { get; set; }
+
         public string Name { get; set; }
-        public string Address { get; set; }
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
-        public UserData UserData { get; set; }
+
+        public List<MiriotConfiguration> Devices { get; set; }
+
+        public DateTime? LastLoginDate { get; set; }
+
         public byte[] Picture { get; set; }
-        public string PictureLocalPath { get; set; }
 
-        private DateTime? _previousLoginDate;
 
-        public DateTime? PreviousLoginDate
-        {
-            get { return _previousLoginDate; }
-            set { Set(ref _previousLoginDate, value); }
-        }
+
 
         private UserEmotion _emotion;
+
         public UserEmotion Emotion
         {
             get { return _emotion; }
@@ -35,6 +34,8 @@ namespace Miriot.Common.Model
                 RaisePropertyChanged(() => FriendlyEmotion);
             }
         }
+
+        public List<ToothbrushingEntry> ToothbrushingHistory { get; set; }
 
         public string FriendlyEmotion
         {

@@ -441,9 +441,10 @@ namespace Miriot.Core.ViewModels
 
             if (_toothbrushingTimer.Elapsed.Seconds > 5)
             {
-                if (User.UserData.ToothbrushingHistory == null)
-                    User.UserData.ToothbrushingHistory = new Dictionary<DateTime, int>();
-                User.UserData.ToothbrushingHistory.Add(DateTime.UtcNow, _toothbrushingTimer.Elapsed.Seconds);
+                if (User.ToothbrushingHistory == null)
+                    User.ToothbrushingHistory = new List<ToothbrushingEntry>();
+
+                User.ToothbrushingHistory.Add(new ToothbrushingEntry() { Date = DateTime.UtcNow, Duration = _toothbrushingTimer.Elapsed.Seconds });
             }
         }
 
@@ -482,12 +483,12 @@ namespace Miriot.Core.ViewModels
         {
             var sysId = _platformService.GetSystemIdentifier();
 
-            if (user.UserData.Devices == null)
+            if (user.Devices == null)
             {
-                user.UserData.Devices = new List<MiriotConfiguration>();
+                user.Devices = new List<MiriotConfiguration>();
             }
 
-            var config = user.UserData.Devices.FirstOrDefault(c => c.Id == sysId);
+            var config = user.Devices.FirstOrDefault(c => c.DeviceId == sysId);
 
             // No config for this mirror
             if (config == null)
@@ -503,14 +504,11 @@ namespace Miriot.Core.ViewModels
             await _speechService.StartListeningAsync();
 
             //user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
-
-            user.PreviousLoginDate = user.UserData.PreviousLoginDate;
         }
 
         private async Task UpdateUser(User user)
         {
-            user.UserData.PreviousEmotion = user.Emotion;
-            user.UserData.PreviousLoginDate = DateTime.UtcNow;
+            user.LastLoginDate = DateTime.UtcNow;
 
             await _faceService.UpdateUserDataAsync(user);
         }
@@ -532,7 +530,8 @@ namespace Miriot.Core.ViewModels
                 Widgets.Clear();
             }
 
-            ActionCallback(new IntentResponse() {
+            ActionCallback(new IntentResponse()
+            {
                 Actions = new List<Common.Action>() {
                     new Common.Action() {
                         Triggered = true,

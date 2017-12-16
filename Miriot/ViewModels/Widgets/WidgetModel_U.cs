@@ -35,16 +35,14 @@ namespace Miriot.Core.ViewModels.Widgets
                 Type = Type,
                 X = X,
                 Y = Y,
-                Infos = infos == null ? null : new List<string> { JsonConvert.SerializeObject(infos) }
+                Infos = infos == null ? null : JsonConvert.SerializeObject(infos)
             };
         }
 
         public override Task Load()
         {
-            var info = _infos?.FirstOrDefault();
-            if (string.IsNullOrEmpty(info) || info == "null") return Task.FromResult(0);
-
-            _model = JsonConvert.DeserializeObject<U>(info);
+            if (!string.IsNullOrEmpty(_infos))
+                _model = JsonConvert.DeserializeObject<U>(_infos);
 
             return Task.FromResult(0);
         }
@@ -53,8 +51,5 @@ namespace Miriot.Core.ViewModels.Widgets
         {
             return _model;
         }
-
-
-
     }
 }
