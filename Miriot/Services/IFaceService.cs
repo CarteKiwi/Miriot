@@ -16,7 +16,5 @@ namespace Miriot.Services
         Task<bool> CreatePerson(byte[] bitmap, string name);
 
         Task<bool> UpdatePerson(User user, byte[] pic);
-
-        Task<bool> UpdateUserDataAsync(User user);
     }
 }

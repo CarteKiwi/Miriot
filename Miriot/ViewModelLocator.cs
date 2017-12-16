@@ -10,6 +10,7 @@ namespace Miriot.Core
         {
             SimpleIoc.Default.Register<SocketService>();
             SimpleIoc.Default.Register<RemoteService>();
+            SimpleIoc.Default.Register<MiriotService>();
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ConnectViewModel>();

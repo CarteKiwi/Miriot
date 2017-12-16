@@ -69,7 +69,7 @@ namespace Miriot.Services
             }
 
             Debug.WriteLine("Sending " + command + " to " + _connectedRemoteSystem.EndPoint.Address + ":" + _connectedRemoteSystem.EndPoint.Port);
-            string response = await _socketService.SendReceiveTcpAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
+            string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
 
             if (response == null)
                 return default(T);
@@ -129,7 +129,6 @@ namespace Miriot.Services
         {
             _socketService.CommandReceived = OnCommandReceivedAsync;
             Task.Run(() => _socketService.BroadcastListener());
-            Task.Run(() => _socketService.CreateTcpServer());
         }
 
         internal void OnLoadUser(User user)
@@ -160,9 +159,9 @@ namespace Miriot.Services
                     return string.Empty;
                 case RemoteCommands.UpdateUser:
                     var user = Deserialize<User>(parameter);
-                    var success = await _vm.UpdateUserDataAsync(user);
+                    //var success = await _vm.UpdateUserDataAsync(user);
 
-                    if (success)
+                    if (true)
                     {
                         _dispatcherService.Invoke(async () =>
                         {
@@ -170,7 +169,7 @@ namespace Miriot.Services
                             await _vm.LoadUser(user);
                         });
                     }
-                    return JsonConvert.SerializeObject(success);
+                    return JsonConvert.SerializeObject(true);
                 case RemoteCommands.GetUser:
                     _dispatcherService.Invoke(() =>
                     {

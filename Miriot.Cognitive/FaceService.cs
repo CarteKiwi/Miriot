@@ -5,7 +5,6 @@ using Microsoft.ProjectOxford.Face.Contract;
 using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Services;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -230,22 +229,6 @@ namespace Miriot.Cognitive
 
                 // Train model
                 await _faceClient.TrainPersonGroupAsync(_miriotPersonGroupId);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return false;
-            }
-        }
-
-        public async Task<bool> UpdateUserDataAsync(User user)
-        {
-            try
-            {
-                // Update user's data
-                await _faceClient.UpdatePersonAsync(_miriotPersonGroupId, user.Id, user.Name);
 
                 return true;
             }

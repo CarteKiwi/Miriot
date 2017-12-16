@@ -32,6 +32,7 @@ namespace Miriot.Core.ViewModels
         private readonly IGraphService _graphService;
         private readonly ILuisService _luisService;
         private readonly RemoteService _remoteService;
+        private readonly MiriotService _miriotService;
         private string _title;
         private string _subTitle;
         private bool _isListeningYesNo;
@@ -175,10 +176,12 @@ namespace Miriot.Core.ViewModels
             ISpeechService speechService,
             IGraphService graphService,
             ILuisService luisService,
-            RemoteService remoteService) : base(navigationService)
+            RemoteService remoteService,
+            MiriotService miriotService) : base(navigationService)
         {
             _luisService = luisService;
             _remoteService = remoteService;
+            _miriotService = miriotService;
             _fileService = fileService;
             _platformService = platformService;
             _dispatcherService = dispatcherService;
@@ -458,6 +461,11 @@ namespace Miriot.Core.ViewModels
                 var user = User;
                 try
                 {
+                    var u = await _miriotService.GetUser(User.Id);
+
+                    if (u != null)
+                        User = u;
+
                     await LoadUser(user);
                     await UpdateUser(user);
 #if MOCK
@@ -510,7 +518,7 @@ namespace Miriot.Core.ViewModels
         {
             user.LastLoginDate = DateTime.UtcNow;
 
-            await _faceService.UpdateUserDataAsync(user);
+            await _miriotService.UpdateUserAsync(user);
         }
 
         private async Task LoadWidgets(IEnumerable<Widget> widgets)
@@ -626,11 +634,6 @@ namespace Miriot.Core.ViewModels
             _navigationService.NavigateTo(pageKey, user);
         }
 
-        public Task<bool> UpdateUserDataAsync(User user)
-        {
-            return _faceService.UpdateUserDataAsync(user);
-        }
-
         public async Task<bool> UpdateUserAsync()
         {
             return await _faceService.UpdatePerson(User, User.Picture);
@@ -638,7 +641,12 @@ namespace Miriot.Core.ViewModels
 
         private async Task<bool> CreateAsync()
         {
-            return await _faceService.CreatePerson(User.Picture, User.Name);
+            if (await _faceService.CreatePerson(User.Picture, User.Name))
+            {
+                return await _miriotService.CreateUser(User);
+            }
+
+            return false;
         }
 
         /// <summary>
