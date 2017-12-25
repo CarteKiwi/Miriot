@@ -11,11 +11,11 @@ using Miriot.Common.Model;
 namespace Miriot.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class UsersController : Controller
+    public class WidgetsController : Controller
     {
         private readonly MiriotContext _context;
 
-        public UsersController(MiriotContext context)
+        public WidgetsController(MiriotContext context)
         {
             _context = context;
         }
@@ -36,12 +36,8 @@ namespace Miriot.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
-            var user = _context.Users
-                .Include(u => u.Devices)
-                .Include(u => u.ToothbrushingHistory)
-                .FirstOrDefault(u => u.Id == id);
-
-            return Ok(user);
+            var w = _context.Widgets.Find(id);
+            return Ok(w);
         }
 
         // POST api/values
@@ -85,22 +81,8 @@ namespace Miriot.Api.Controllers
             else
             {
                 existingUser.Devices = user.Devices;
-
-                foreach(var d in user.Devices)
-                {
-                    var config = _context.Configurations.Find(d.Id);
-
-                    if(config != null)
-                    {
-                        config.Widgets = d.Widgets;
-                        _context.Configurations.Update(config);
-                    }
-                }
-
                 existingUser.ToothbrushingHistory = user.ToothbrushingHistory;
-
-                _context.Users.Update(existingUser);
-                //_context.Update(user);
+                _context.Update(existingUser);
                 //existingUser.Devices = user.Devices;
                 //existingUser.ToothbrushingHistory = user.ToothbrushingHistory;
                 //_context.Entry(existingUser).State = Microsoft.EntityFrameworkCore.EntityState.Modified;

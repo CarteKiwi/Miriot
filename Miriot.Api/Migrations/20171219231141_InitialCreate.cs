@@ -71,7 +71,7 @@ namespace Miriot.Api.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Infos = table.Column<string>(nullable: true),
-                    MiriotConfigurationId = table.Column<int>(nullable: true),
+                    MiriotConfigurationId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Type = table.Column<int>(nullable: false),
                     X = table.Column<int>(nullable: true),
@@ -85,7 +85,7 @@ namespace Miriot.Api.Migrations
                         column: x => x.MiriotConfigurationId,
                         principalTable: "Configurations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

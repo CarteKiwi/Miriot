@@ -8,7 +8,8 @@ namespace Miriot.Api.Models
     {
         public MiriotContext(DbContextOptions<MiriotContext> options)
             : base(options)
-        { }
+        {
+        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Widget> Widgets { get; set; }

@@ -74,6 +74,11 @@ namespace Miriot.Services
             if (response == null)
                 return default(T);
 
+            if (typeof(T) == response.GetType())
+            {
+                return (T)(object)response;
+            }
+
             return JsonConvert.DeserializeObject<T>(response);
         }
 
@@ -131,14 +136,6 @@ namespace Miriot.Services
             Task.Run(() => _socketService.BroadcastListener());
         }
 
-        internal void OnLoadUser(User user)
-        {
-            _dispatcherService.Invoke(async () =>
-            {
-                await _vm.LoadUser(user);
-            });
-        }
-
         private T Deserialize<T>(RemoteParameter parameter)
         {
             return JsonConvert.DeserializeObject<T>(parameter.SerializedData);
@@ -151,31 +148,23 @@ namespace Miriot.Services
                 case RemoteCommands.MiriotConfiguring:
                     _dispatcherService.Invoke(() =>
                     {
+                        _vm.HasNoConfiguration = false;
                         _vm.IsConfiguring = true;
                     });
                     return string.Empty;
                 case RemoteCommands.LoadUser:
-                    OnLoadUser(Deserialize<User>(parameter));
-                    return string.Empty;
-                case RemoteCommands.UpdateUser:
-                    var user = Deserialize<User>(parameter);
-                    //var success = await _vm.UpdateUserDataAsync(user);
-
-                    if (true)
+                    _dispatcherService.Invoke(async () =>
                     {
-                        _dispatcherService.Invoke(async () =>
-                        {
-                            _vm.IsConfiguring = false;
-                            await _vm.LoadUser(user);
-                        });
-                    }
-                    return JsonConvert.SerializeObject(true);
+                        await _vm.LoadUser(_vm.User);
+                    });
+                    return string.Empty;
                 case RemoteCommands.GetUser:
                     _dispatcherService.Invoke(() =>
                     {
+                        _vm.HasNoConfiguration = false;
                         _vm.IsConfiguring = true;
                     });
-                    return JsonConvert.SerializeObject(_vm.User);
+                    return _vm.User.Id.ToString();
                 case RemoteCommands.GraphService_Initialize:
                     Messenger.Default.Send(new GraphServiceMessage(false));
                     return null;

@@ -11,11 +11,11 @@ using Miriot.Common.Model;
 namespace Miriot.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class UsersController : Controller
+    public class ConfigurationsController : Controller
     {
         private readonly MiriotContext _context;
 
-        public UsersController(MiriotContext context)
+        public ConfigurationsController(MiriotContext context)
         {
             _context = context;
         }
@@ -36,12 +36,8 @@ namespace Miriot.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
-            var user = _context.Users
-                .Include(u => u.Devices)
-                .Include(u => u.ToothbrushingHistory)
-                .FirstOrDefault(u => u.Id == id);
-
-            return Ok(user);
+            var w = _context.Configurations.Find(id);
+            return Ok(w);
         }
 
         // POST api/values
@@ -73,34 +69,18 @@ namespace Miriot.Api.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]User user)
+        public void Put(int id, [FromBody]MiriotConfiguration config)
         {
-            var existingUser = _context.Users
-                .Find(user.Id);
+            var existing = _context.Configurations.Find(config.Id);
 
-            if (existingUser == null)
+            if (existing == null)
             {
-                _context.Users.Add(user);
+                _context.Configurations.Add(config);
             }
             else
             {
-                existingUser.Devices = user.Devices;
-
-                foreach(var d in user.Devices)
-                {
-                    var config = _context.Configurations.Find(d.Id);
-
-                    if(config != null)
-                    {
-                        config.Widgets = d.Widgets;
-                        _context.Configurations.Update(config);
-                    }
-                }
-
-                existingUser.ToothbrushingHistory = user.ToothbrushingHistory;
-
-                _context.Users.Update(existingUser);
-                //_context.Update(user);
+                existing.Widgets = config.Widgets;
+                //_context.Update(existing);
                 //existingUser.Devices = user.Devices;
                 //existingUser.ToothbrushingHistory = user.ToothbrushingHistory;
                 //_context.Entry(existingUser).State = Microsoft.EntityFrameworkCore.EntityState.Modified;

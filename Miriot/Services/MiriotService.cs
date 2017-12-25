@@ -47,7 +47,7 @@ namespace Miriot.Services
             return null;
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task<bool> UpdateUserAsync(User user)
         {
             var uri = new Uri(string.Format(RestUrl, user.Id));
 
@@ -56,6 +56,8 @@ namespace Miriot.Services
 
             HttpResponseMessage response = null;
             response = await _client.PutAsync(uri, content);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }

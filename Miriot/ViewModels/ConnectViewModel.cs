@@ -19,6 +19,7 @@ namespace Miriot.Core.ViewModels
         private readonly IDispatcherService _dispatcherService;
         private readonly INavigationService _navigationService;
         private readonly RemoteService _remoteService;
+        private readonly MiriotService _miriotService;
         private RomeRemoteSystem _selectedSystem;
         private Timer _timer;
         private string _message;
@@ -76,11 +77,13 @@ namespace Miriot.Core.ViewModels
         public ConnectViewModel(
             IDispatcherService dispatcherService,
             INavigationService navigationService,
-            RemoteService remoteService) : base(navigationService)
+            RemoteService remoteService,
+            MiriotService miriotService) : base(navigationService)
         {
             _dispatcherService = dispatcherService;
             _navigationService = navigationService;
             _remoteService = remoteService;
+            _miriotService = miriotService;
             _timer = new Timer(OnTimeout, null, 10000, Timeout.Infinite);
 
             RemoteSystems = new ObservableCollection<RomeRemoteSystem>();
@@ -174,24 +177,34 @@ namespace Miriot.Core.ViewModels
 
                 await Task.Run(async () =>
                 {
-                    var user = await _remoteService.CommandAsync<User>(RemoteCommands.GetUser);
+                    var userId = await _remoteService.CommandAsync<string>(RemoteCommands.GetUser);
 
-                    RunOnUiThread(() =>
+                    if (Guid.TryParse(userId, out Guid userGuid) && userGuid != Guid.Empty)
                     {
-                        if (user == null || user?.Id != Guid.Empty)
+                        var user = await _miriotService.GetUser(userGuid);
+
+                        RunOnUiThread(() =>
+                        {
+                            if (user?.Id != Guid.Empty)
+                            {
+                                Message = string.Empty;
+                                _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
+                                {
+                                    User = user,
+                                    Id = SelectedRemoteSystem.Id
+                                });
+                            }
+                            else
+                                Message = "Unregistered user";
+                        });
+                    }
+                    else
+                    {
+                        RunOnUiThread(() =>
                         {
                             Message = Strings.RetrievingUserFailed;
-                        }
-                        else
-                        {
-                            Message = string.Empty;
-                            _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
-                            {
-                                User = user,
-                                Id = SelectedRemoteSystem.Id
-                            });
-                        }
-                    });
+                        });
+                    }
                 });
             }
             else

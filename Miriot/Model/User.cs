@@ -12,14 +12,11 @@ namespace Miriot.Common.Model
 
         public string Name { get; set; }
 
-        public List<MiriotConfiguration> Devices { get; set; }
+        public ICollection<MiriotConfiguration> Devices { get; set; }
 
         public DateTime? LastLoginDate { get; set; }
 
         public byte[] Picture { get; set; }
-
-
-
 
         private UserEmotion _emotion;
 

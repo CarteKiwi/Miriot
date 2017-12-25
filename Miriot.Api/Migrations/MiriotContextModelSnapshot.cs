@@ -62,7 +62,7 @@ namespace Miriot.Api.Migrations
 
                     b.Property<string>("Infos");
 
-                    b.Property<int?>("MiriotConfigurationId");
+                    b.Property<int>("MiriotConfigurationId");
 
                     b.Property<string>("Title");
 
@@ -109,7 +109,8 @@ namespace Miriot.Api.Migrations
                 {
                     b.HasOne("Miriot.Common.Model.MiriotConfiguration")
                         .WithMany("Widgets")
-                        .HasForeignKey("MiriotConfigurationId");
+                        .HasForeignKey("MiriotConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Miriot.Model.ToothbrushingEntry", b =>

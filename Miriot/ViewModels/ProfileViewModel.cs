@@ -28,6 +28,7 @@ namespace Miriot.Core.ViewModels
         private readonly IFaceService _faceService;
         private readonly IDispatcherService _dispatcher;
         private readonly RemoteService _remoteService;
+        private readonly MiriotService _miriotService;
         private ObservableCollection<MiriotConfiguration> _configurations;
         private ObservableCollection<WidgetModel> _widgets;
         private User _user;
@@ -75,13 +76,14 @@ namespace Miriot.Core.ViewModels
             IDialogService dialogService,
             INavigationService navigationService,
             IDispatcherService dispatcher,
-            RemoteService remoteService) : base(navigationService)
+            RemoteService remoteService,
+            MiriotService miriotService) : base(navigationService)
         {
             _dialogService = dialogService;
             _navigationService = navigationService;
             _dispatcher = dispatcher;
             _remoteService = remoteService;
-
+            _miriotService = miriotService;
             ActionEditName = new RelayCommand(OnEditName);
             ActionEditWidgets = new RelayCommand(OnEditWidgets);
             ActionSave = new RelayCommand(OnSave);
@@ -174,12 +176,13 @@ namespace Miriot.Core.ViewModels
 
         private Task<bool> RefreshUserAsync()
         {
-            return _remoteService.SendAsync(new RemoteParameter() { Command = RemoteCommands.LoadUser, SerializedData = JsonConvert.SerializeObject(User) });
+            return _remoteService.SendAsync(new RemoteParameter() { Command = RemoteCommands.LoadUser });
         }
 
         private async Task<bool> UpdateUserAsync()
         {
-            return await _remoteService.SendAsync(new RemoteParameter() { Command = RemoteCommands.UpdateUser, SerializedData = JsonConvert.SerializeObject(User) });
+            await _miriotService.UpdateUserAsync(User);
+            return await RefreshUserAsync();
         }
 
         public void SetParameters(MiriotParameter parameter)
@@ -190,7 +193,7 @@ namespace Miriot.Core.ViewModels
 
         private async void OnSelectionChanged()
         {
-            if (MiriotId == SelectedConfiguration.DeviceId)
+            if (MiriotId == SelectedConfiguration.DeviceIdentifier)
                 _remoteService.Command(RemoteCommands.MiriotConfiguring);
 
             await LoadWidgetsAsync();
@@ -204,6 +207,9 @@ namespace Miriot.Core.ViewModels
             HasNoConfiguration = false;
             Configurations.Clear();
 
+            if (User.Devices == null)
+                User.Devices = new List<MiriotConfiguration>();
+
             if (!User.Devices.Any())
             {
                 var config = new MiriotConfiguration(MiriotId, "Miriot");
@@ -214,7 +220,7 @@ namespace Miriot.Core.ViewModels
             foreach (var d in User.Devices)
                 Configurations.Add(d);
 
-            SelectedConfiguration = Configurations.FirstOrDefault(e => e.DeviceId == MiriotId);
+            SelectedConfiguration = Configurations.FirstOrDefault(e => e.DeviceIdentifier == MiriotId);
 
             if (SelectedConfiguration == null)
             {

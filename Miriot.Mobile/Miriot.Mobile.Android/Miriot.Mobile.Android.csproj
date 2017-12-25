@@ -162,11 +162,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\badge_bg.png" />
-    <AndroidResource Include="Resources\drawable\magnif.png" />
-    <AndroidResource Include="Resources\drawable\miriot_remote.png" />
-    <AndroidResource Include="Resources\drawable\mirror.png" />
-    <AndroidResource Include="Resources\drawable\mirror_only.png" />
+    <Content Include="Resources\drawable\badge_bg.png" />
+    <Content Include="Resources\drawable\magnif.png" />
+    <Content Include="Resources\drawable\miriot_remote.png" />
+    <Content Include="Resources\drawable\mirror.png" />
+    <Content Include="Resources\drawable\mirror_only.png" />
     <AndroidResource Include="Resources\drawable\Searching.gif" />
     <AndroidResource Include="Resources\drawable\step1.png" />
   </ItemGroup>

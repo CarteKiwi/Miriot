@@ -6,16 +6,21 @@ namespace Miriot.Common.Model
 {
     public class MiriotConfiguration : ObservableObject
     {
+        public MiriotConfiguration()
+        {
+
+        }
+
         public MiriotConfiguration(string id, string name)
         {
-            DeviceId = id;
+            DeviceIdentifier = id;
             Name = name;
             Widgets = new List<Widget>();
         }
 
         public int Id { get; set; }
 
-        public string DeviceId { get; }
+        public string DeviceIdentifier { get; }
 
         private string _name;
         public string Name { get { return _name; } set { Set(ref _name, value); } }

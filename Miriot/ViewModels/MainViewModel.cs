@@ -152,7 +152,7 @@ namespace Miriot.Core.ViewModels
         public bool HasNoConfiguration
         {
             get => _hasNoConfiguration;
-            private set => Set(ref _hasNoConfiguration, value);
+            set => Set(ref _hasNoConfiguration, value);
         }
 
         public bool IsConfiguring
@@ -270,6 +270,7 @@ namespace Miriot.Core.ViewModels
             _cancellationToken = new CancellationTokenSource();
             Widgets?.Clear();
             IsLoading = false;
+            HasNoConfiguration = false;
 
             _toothbrushingLauncher.Change(0, Timeout.Infinite);
             IsListeningFirstName = false;
@@ -461,11 +462,6 @@ namespace Miriot.Core.ViewModels
                 var user = User;
                 try
                 {
-                    var u = await _miriotService.GetUser(User.Id);
-
-                    if (u != null)
-                        User = u;
-
                     await LoadUser(user);
                     await UpdateUser(user);
 #if MOCK
@@ -489,6 +485,11 @@ namespace Miriot.Core.ViewModels
 
         public async Task LoadUser(User user)
         {
+            var u = await _miriotService.GetUser(User.Id);
+
+            if (u != null)
+                User = u;
+
             var sysId = _platformService.GetSystemIdentifier();
 
             if (user.Devices == null)
@@ -496,7 +497,7 @@ namespace Miriot.Core.ViewModels
                 user.Devices = new List<MiriotConfiguration>();
             }
 
-            var config = user.Devices.FirstOrDefault(c => c.DeviceId == sysId);
+            var config = user.Devices.FirstOrDefault(c => c.DeviceIdentifier == sysId);
 
             // No config for this mirror
             if (config == null)
@@ -514,11 +515,14 @@ namespace Miriot.Core.ViewModels
             //user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
         }
 
-        private async Task UpdateUser(User user)
+        public async Task<bool> UpdateUser(User user)
         {
             user.LastLoginDate = DateTime.UtcNow;
 
-            await _miriotService.UpdateUserAsync(user);
+            RaisePropertyChanged(() => user.LastLoginDate);
+
+            await UpdateUserAsync();
+            return await _miriotService.UpdateUserAsync(user);
         }
 
         private async Task LoadWidgets(IEnumerable<Widget> widgets)

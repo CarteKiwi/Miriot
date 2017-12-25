@@ -246,14 +246,14 @@
                                FontSize="15"
                                FontStyle="Italic"/>
                     <TextBlock FontWeight="Light"
-                               Text="{Binding User.PreviousLoginDate, Mode=OneWay, Converter={StaticResource RelativeTimeConverter}}"
+                               Text="{x:Bind Vm.User.LastLoginDate, Mode=OneWay, Converter={StaticResource RelativeTimeConverter}}"
                                HorizontalAlignment="Left"
                                TextWrapping="WrapWholeWords"
                                FontSize="15"
                                FontStyle="Italic"/>
 
                     <TextBlock FontWeight="Light"
-                               Text="{Binding User.FriendlyEmotion, Mode=OneWay}"
+                               Text="{x:Bind Vm.User.FriendlyEmotion, Mode=OneWay}"
                                HorizontalAlignment="Left"
                                TextWrapping="WrapWholeWords"
                                FontSize="20"

@@ -12,7 +12,7 @@ using System;
 namespace Miriot.Api.Migrations
 {
     [DbContext(typeof(MiriotContext))]
-    [Migration("20171215232447_InitialCreate")]
+    [Migration("20171219231141_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,7 +63,7 @@ namespace Miriot.Api.Migrations
 
                     b.Property<string>("Infos");
 
-                    b.Property<int?>("MiriotConfigurationId");
+                    b.Property<int>("MiriotConfigurationId");
 
                     b.Property<string>("Title");
 
@@ -110,7 +110,8 @@ namespace Miriot.Api.Migrations
                 {
                     b.HasOne("Miriot.Common.Model.MiriotConfiguration")
                         .WithMany("Widgets")
-                        .HasForeignKey("MiriotConfigurationId");
+                        .HasForeignKey("MiriotConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Miriot.Model.ToothbrushingEntry", b =>
