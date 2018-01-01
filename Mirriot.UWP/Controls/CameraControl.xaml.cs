@@ -2,6 +2,7 @@
 using Miriot.Win10.Utils;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -12,6 +13,7 @@ using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.Capture;
+using Windows.Media.Devices;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -39,9 +41,21 @@ namespace Miriot.Win10.Controls
         private readonly SimpleOrientationSensor _orientationSensor = SimpleOrientationSensor.GetDefault();
         private SimpleOrientation _deviceOrientation = SimpleOrientation.NotRotated;
         private DisplayOrientations _displayOrientation = DisplayOrientations.Portrait;
+
+        private AdvancedPhotoCapture _advancedCapture;
+        private bool _lowLightSupported;
         #endregion
 
-        #region ShowPreview DP
+        #region Dependency Properties
+        public bool OptimizeForLowLight
+        {
+            get { return (bool)GetValue(OptimizeForLowLightProperty); }
+            set { SetValue(OptimizeForLowLightProperty, value); }
+        }
+
+        public static readonly DependencyProperty OptimizeForLowLightProperty =
+            DependencyProperty.Register("OptimizeForLowLight", typeof(bool), typeof(CameraControl), new PropertyMetadata(false));
+
         public bool ShowPreview
         {
             get { return (bool)GetValue(ShowPreviewProperty); }
@@ -130,10 +144,65 @@ namespace Miriot.Win10.Controls
                     // Only mirror the preview if the camera is on the front panel
                     _mirroringPreview = true;
 
+                    if (OptimizeForLowLight)
+                    {
+                        await InitializeForLowLight();
+                    }
+
                     PreviewControl.Source = _mediaCapture;
                     RegisterOrientationEventHandlers();
                     await StartPreviewAsync();
+
+                    AdjustSettings();
                 }
+            }
+        }
+
+        private async Task InitializeForLowLight()
+        {
+            _lowLightSupported =
+                _mediaCapture.VideoDeviceController.AdvancedPhotoControl.SupportedModes.Contains(Windows.Media.Devices.AdvancedPhotoMode.LowLight);
+
+            _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
+
+            if (_lowLightSupported)
+            {
+                // Choose LowLight mode
+                var settings = new AdvancedPhotoCaptureSettings { Mode = AdvancedPhotoMode.LowLight };
+                _mediaCapture.VideoDeviceController.AdvancedPhotoControl.Configure(settings);
+
+                // Prepare for an advanced capture
+                _advancedCapture =
+                    await _mediaCapture.PrepareAdvancedPhotoCaptureAsync(ImageEncodingProperties.CreateUncompressed(MediaPixelFormat.Nv12));
+            }
+        }
+
+        private void AdjustSettings()
+        {
+            if (!OptimizeForLowLight) return;
+
+            var exposureControl = _mediaCapture.VideoDeviceController.ExposureControl;
+            var bright = _mediaCapture.VideoDeviceController.Brightness;
+
+            if (bright.Capabilities.Supported)
+            {
+                if (bright.Capabilities.AutoModeSupported)
+                {
+                    bright.TrySetAuto(false);
+                }
+
+                bright.TrySetValue(255);
+            }
+
+            var expo = _mediaCapture.VideoDeviceController.Exposure;
+            if (expo.Capabilities.Supported)
+            {
+                if (expo.Capabilities.AutoModeSupported)
+                {
+                    expo.TrySetAuto(false);
+                }
+
+                expo.TrySetValue(expo.Capabilities.Max);
             }
         }
 
@@ -362,25 +431,31 @@ namespace Miriot.Win10.Controls
                 return null;
             }
 
-            // Get information about the preview
-            var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
+            if (_lowLightSupported)
+            {
+                var res = await _advancedCapture.CaptureAsync();
+                return res.Frame.SoftwareBitmap;
+            }
+            else
+            {
+                // Get information about the preview
+                var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
 
-            //var supportedBitmapFormats = FaceDetector.GetSupportedBitmapPixelFormats();
-            //var f = (supportedBitmapFormats.First());
-            // Create a video frame in the desired format for the preview frame
-            VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
+                // Create a video frame in the desired format for the preview frame
+                VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
 
-            var currentFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
-            
-            // Collect the resulting frame
-            SoftwareBitmap previewFrame = currentFrame.SoftwareBitmap;
+                var currentFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
 
-            return currentFrame;
+                // Collect the resulting frame
+                SoftwareBitmap previewFrame = currentFrame.SoftwareBitmap;
+
+                return previewFrame;
+            }
         }
 
         public async Task<byte[]> GetEncodedBytesAsync(object frame)
         {
-            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(((VideoFrame)frame).SoftwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(((SoftwareBitmap)frame), BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
 
             byte[] array = null;
 

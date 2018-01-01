@@ -12,9 +12,10 @@ using System;
 namespace Miriot.Api.Migrations
 {
     [DbContext(typeof(MiriotContext))]
-    partial class MiriotContextModelSnapshot : ModelSnapshot
+    [Migration("20171227013726_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,8 +26,6 @@ namespace Miriot.Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("DeviceIdentifier");
 
                     b.Property<string>("Name");
 

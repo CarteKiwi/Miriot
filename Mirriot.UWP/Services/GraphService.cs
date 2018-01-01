@@ -25,10 +25,10 @@ namespace Miriot.Win10.Services
             //var appClientId = "ca026d51-8d86-4f85-a697-7be9c0a86453";
 
             // From https://apps.dev.microsoft.com/#/appList
-            var appClientId = "59c7d308-7e47-4e5b-9f32-86cb2f3c8f88";
+            //var appClientId = "59c7d308-7e47-4e5b-9f32-86cb2f3c8f88";
 
             // From Azure portal - Supinfo subscription
-            //var appClientId = "e57bfe1e-a88e-47f3-b47c-c414f8ca244b";
+            var appClientId = "e57bfe1e-a88e-47f3-b47c-c414f8ca244b";
             //var appClientId = "1a383460-c136-44e4-be92-aa8a379f3265";
             IsInitialized = MicrosoftGraphService.Instance.Initialize(appClientId, MicrosoftGraphEnums.AuthenticationModel.V1);
         }

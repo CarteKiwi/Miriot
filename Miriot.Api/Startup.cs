@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Miriot.Api.Models;
+using Newtonsoft.Json;
 
 namespace Miriot.Api
 {
@@ -12,6 +13,12 @@ namespace Miriot.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                Formatting = Newtonsoft.Json.Formatting.Indented,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            };
         }
 
         public IConfiguration Configuration { get; }

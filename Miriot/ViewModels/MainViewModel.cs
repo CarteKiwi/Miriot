@@ -229,7 +229,15 @@ namespace Miriot.Core.ViewModels
             }
             else
             {
-                var code = await _graphService.GetCodeAsync();
+                string code = string.Empty;
+                try
+                {
+                    code = await _graphService.GetCodeAsync();
+                }
+                catch (Exception ex)
+                {
+                    code = ex.Message;
+                }
 
                 _dispatcherService.Invoke(() =>
                 {
@@ -272,7 +280,7 @@ namespace Miriot.Core.ViewModels
             IsLoading = false;
             HasNoConfiguration = false;
 
-            _toothbrushingLauncher.Change(0, Timeout.Infinite);
+            //_toothbrushingLauncher.Change(0, Timeout.Infinite);
             IsListeningFirstName = false;
             _isListeningYesNo = false;
             User = null;
@@ -294,15 +302,15 @@ namespace Miriot.Core.ViewModels
             return text;
         }
 
-        private async Task CreateProfile()
+        private async Task CreateProfile(User user)
         {
             //Create profile
-            var isSuccess = await CreateAsync();
+            var isSuccess = await CreateAsync(user);
 
             if (isSuccess)
             {
-                SetMessage($"Très bien. Ravi de faire votre connaissance {User.Name}.", "Utilisez votre téléphone pour ajouter des widgets");
-                Speak($"Très bien. Ravi de faire votre connaissance {User.Name}.");
+                SetMessage($"Très bien. Ravi de faire votre connaissance {user.Name}.", "Utilisez votre téléphone pour ajouter des widgets");
+                Speak($"Très bien. Ravi de faire votre connaissance {user.Name}.");
             }
             else
             {
@@ -329,7 +337,7 @@ namespace Miriot.Core.ViewModels
                 {
                     IsListeningFirstName = false;
 
-                    await CreateProfile();
+                    await CreateProfile(User);
                 }
                 else if (text.Contains("non"))
                 {
@@ -463,11 +471,15 @@ namespace Miriot.Core.ViewModels
                 try
                 {
                     await LoadUser(user);
-                    await UpdateUser(user);
+
+                    if (!await UpdateUser(user))
+                    {
+                        SubTitle = Strings.UnableToUpdateAccount;
+                    }
 #if MOCK
-                    _toothbrushingLauncher.Change(0, Timeout.Infinite);
+                    //_toothbrushingLauncher.Change(0, Timeout.Infinite);
 #else
-                    _toothbrushingLauncher.Change(0, 3);
+                    //_toothbrushingLauncher.Change(0, 3);
 #endif
                 }
                 catch (TaskCanceledException ex)
@@ -485,10 +497,10 @@ namespace Miriot.Core.ViewModels
 
         public async Task LoadUser(User user)
         {
-            var u = await _miriotService.GetUser(User.Id);
+            var u = await _miriotService.GetUser(user.Id);
 
             if (u != null)
-                User = u;
+                user = u;
 
             var sysId = _platformService.GetSystemIdentifier();
 
@@ -497,7 +509,7 @@ namespace Miriot.Core.ViewModels
                 user.Devices = new List<MiriotConfiguration>();
             }
 
-            var config = user.Devices.FirstOrDefault(c => c.DeviceIdentifier == sysId);
+            var config = user.Devices.FirstOrDefault(c => c.MiriotDeviceId == sysId);
 
             // No config for this mirror
             if (config == null)
@@ -513,6 +525,8 @@ namespace Miriot.Core.ViewModels
             await _speechService.StartListeningAsync();
 
             //user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
+            user.Picture = User.Picture;
+            User = user;
         }
 
         public async Task<bool> UpdateUser(User user)
@@ -521,7 +535,8 @@ namespace Miriot.Core.ViewModels
 
             RaisePropertyChanged(() => user.LastLoginDate);
 
-            await UpdateUserAsync();
+            await UpdatePersonAsync(user);
+
             return await _miriotService.UpdateUserAsync(user);
         }
 
@@ -542,22 +557,22 @@ namespace Miriot.Core.ViewModels
                 Widgets.Clear();
             }
 
-            ActionCallback(new IntentResponse()
-            {
-                Actions = new List<Common.Action>() {
-                    new Common.Action() {
-                        Triggered = true,
-                        Name = "Search",
-                        Parameters = new List<Common.Parameter>() {
-                            new Common.Parameter() {
-                                Value = new List<ParameterValue>() {
-                                    new ParameterValue() { Entity = "Michael Jackson" }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            //ActionCallback(new IntentResponse()
+            //{
+            //    Actions = new List<Common.Action>() {
+            //        new Common.Action() {
+            //            Triggered = true,
+            //            Name = "Search",
+            //            Parameters = new List<Common.Parameter>() {
+            //                new Common.Parameter() {
+            //                    Value = new List<ParameterValue>() {
+            //                        new ParameterValue() { Entity = "Michael Jackson" }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //});
         }
 
         private void ContinueProcess(ServiceResponse response)
@@ -638,16 +653,16 @@ namespace Miriot.Core.ViewModels
             _navigationService.NavigateTo(pageKey, user);
         }
 
-        public async Task<bool> UpdateUserAsync()
+        public async Task<bool> UpdatePersonAsync(User user)
         {
-            return await _faceService.UpdatePerson(User, User.Picture);
+            return await _faceService.UpdatePerson(user, user.Picture);
         }
 
-        private async Task<bool> CreateAsync()
+        private async Task<bool> CreateAsync(User user)
         {
-            if (await _faceService.CreatePerson(User.Picture, User.Name))
+            if (await _faceService.CreatePerson(user.Picture, user.Name))
             {
-                return await _miriotService.CreateUser(User);
+                return await _miriotService.CreateUser(user);
             }
 
             return false;

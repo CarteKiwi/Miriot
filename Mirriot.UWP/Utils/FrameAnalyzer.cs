@@ -18,7 +18,7 @@ namespace Miriot.Win10.Utils
         public event EventHandler<T> UsersIdentified;
         public event EventHandler NoFaceDetected;
 
-        private FaceTracker _faceTracker;
+        private FaceDetector _faceDetector;
         private ThreadPoolTimer _frameProcessingTimer;
         private readonly SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         private ICameraService _camera;
@@ -34,9 +34,10 @@ namespace Miriot.Win10.Utils
         public async Task AttachAsync(ICameraService camera)
         {
             _camera = camera;
-            _faceTracker = await FaceTracker.CreateAsync();
+            _faceDetector = await FaceDetector.CreateAsync();
 
             var timerInterval = TimeSpan.FromMilliseconds(300);
+
             _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
         }
 
@@ -47,13 +48,15 @@ namespace Miriot.Win10.Utils
                 return;
             }
 
-            VideoFrame currentFrame = await GetVideoFrameSafe();
+            var latestFrame = await _camera.GetLatestFrame();
+
+            SoftwareBitmap currentFrame = latestFrame as SoftwareBitmap;
 
             // Use FaceDetector.GetSupportedBitmapPixelFormats and IsBitmapPixelFormatSupported to dynamically
             // determine supported formats
             const BitmapPixelFormat faceDetectionPixelFormat = BitmapPixelFormat.Nv12;
 
-            if (currentFrame == null || currentFrame.SoftwareBitmap.BitmapPixelFormat != faceDetectionPixelFormat)
+            if (currentFrame == null || currentFrame.BitmapPixelFormat != faceDetectionPixelFormat)
             {
                 _frameProcessingSemaphore.Release();
                 return;
@@ -61,7 +64,7 @@ namespace Miriot.Win10.Utils
 
             try
             {
-                IList<DetectedFace> detectedFaces = await _faceTracker.ProcessNextFrameAsync(currentFrame);
+                IList<DetectedFace> detectedFaces = await _faceDetector.DetectFacesAsync(currentFrame);
 
                 if (detectedFaces.Count == 0)
                 {
@@ -91,19 +94,6 @@ namespace Miriot.Win10.Utils
             currentFrame.Dispose();
         }
 
-        private async Task<VideoFrame> GetVideoFrameSafe()
-        {
-            try
-            {
-                return (VideoFrame)await _camera.GetLatestFrame();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return null;
-            }
-        }
-
         public void Cleanup()
         {
             _frameProcessingTimer = null;
@@ -111,7 +101,7 @@ namespace Miriot.Win10.Utils
 
         public async Task<byte[]> GetFrame()
         {
-            var frame = await GetVideoFrameSafe();
+            SoftwareBitmap frame = await _camera.GetLatestFrame() as SoftwareBitmap;
             var bytes = await _camera.GetEncodedBytesAsync(frame);
             frame.Dispose();
             return bytes;

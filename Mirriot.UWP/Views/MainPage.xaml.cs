@@ -400,7 +400,7 @@ namespace Miriot.Win10
             //    w.OriginalWidget.Infos.Add(JsonConvert.SerializeObject(new OAuthWidgetInfo { Token = ((IWidgetOAuth)w).Token }));
             //}
 
-            await Vm.UpdateUserAsync();
+            //await Vm.UpdatePersonAsync();
         }
 
         private void CleanUi()

@@ -12,8 +12,8 @@ using System;
 namespace Miriot.Api.Migrations
 {
     [DbContext(typeof(MiriotContext))]
-    [Migration("20171219231141_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20171227230030_DeviceIdentifier")]
+    partial class DeviceIdentifier
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,6 +26,8 @@ namespace Miriot.Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("DeviceIdentifier");
 
                     b.Property<string>("Name");
 

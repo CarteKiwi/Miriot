@@ -172,4 +172,7 @@ Use for example "Miriot - Bathroom"</value>
   <data name="UnableToSaveAccount" xml:space="preserve">
     <value>Unable to save account.</value>
   </data>
+  <data name="UnableToUpdateAccount" xml:space="preserve">
+    <value>Unable to update user account.</value>
+  </data>
 </root>

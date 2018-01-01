@@ -184,7 +184,7 @@ namespace Miriot.Win10.Controls
             TvView.Stop();
             MainGrid.Children.Remove(TvView);
             GC.Collect();
-            TvView.Source = new Uri("http://Miriot.Win10.suismoi.fr", UriKind.Absolute);
+            TvView.Source = new Uri("http://Miriot.suismoi.fr", UriKind.Absolute);
 
             if (_cachedUrls.ContainsKey(_currentChannelKey))
                 _cachedUrls[_currentChannelKey] = source;
@@ -195,7 +195,7 @@ namespace Miriot.Win10.Controls
             {
                 var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
                 //vm.User.UserData.CachedTvUrls = _cachedUrls;
-                Task.Run(async () => await vm.UpdateUserAsync());
+                //Task.Run(async () => await vm.UpdatePersonAsync());
             }
             catch (Exception)
             {

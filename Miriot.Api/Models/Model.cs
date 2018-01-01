@@ -20,7 +20,19 @@ namespace Miriot.Api.Models
         {
             modelBuilder.Entity<User>()
                 .Ignore(u => u.FaceRectangle)
-                .Ignore(u => u.FriendlyEmotion);
+                .Ignore(u => u.FriendlyEmotion)
+                .HasMany(u => u.Devices)
+                .WithOne();
+
+            //modelBuilder.Entity<Widget>()
+            //    .HasOne<MiriotConfiguration>()
+            //    .WithMany(c => c.Widgets)
+            //    .IsRequired();
+
+            modelBuilder.Entity<MiriotConfiguration>()
+                .HasMany(d => d.Widgets)
+                .WithOne()
+                .IsRequired();                
 
             base.OnModelCreating(modelBuilder);
         }

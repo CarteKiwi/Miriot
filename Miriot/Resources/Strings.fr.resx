@@ -172,4 +172,7 @@ Utilisez par exemple "Miriot - Salle de bain"</value>
   <data name="UnableToSaveAccount" xml:space="preserve">
     <value>Impossible de sauvegarder le compte</value>
   </data>
+  <data name="UnableToUpdateAccount" xml:space="preserve">
+    <value>Echec lors de la mise à jour.</value>
+  </data>
 </root>

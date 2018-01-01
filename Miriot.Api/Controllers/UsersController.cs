@@ -36,8 +36,9 @@ namespace Miriot.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
-            var user = _context.Users
+            var user = _context.Users.AsNoTracking()
                 .Include(u => u.Devices)
+                .ThenInclude(w => w.Widgets)
                 .Include(u => u.ToothbrushingHistory)
                 .FirstOrDefault(u => u.Id == id);
 
@@ -75,8 +76,8 @@ namespace Miriot.Api.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]User user)
         {
-            var existingUser = _context.Users
-                .Find(user.Id);
+            var existingUser = _context.Users.AsNoTracking()
+                .FirstOrDefault(u => u.Id == user.Id);
 
             if (existingUser == null)
             {
@@ -84,27 +85,38 @@ namespace Miriot.Api.Controllers
             }
             else
             {
-                existingUser.Devices = user.Devices;
+                //foreach (var d in user.Devices)
+                //{
+                //    d.UserId = user.Id;
+                //    _context.Configurations.Update(d);
 
-                foreach(var d in user.Devices)
-                {
-                    var config = _context.Configurations.Find(d.Id);
+                //    foreach (var w in d.Widgets)
+                //    {
+                //        _context.Widgets.Update(w);
+                //    }
+                //}
+                //existingUser.Devices = user.Devices;
 
-                    if(config != null)
-                    {
-                        config.Widgets = d.Widgets;
-                        _context.Configurations.Update(config);
-                    }
-                }
+                //foreach(var d in user.Devices)
+                //{
+                //    var config = _context.Configurations.Find(d.Id);
 
-                existingUser.ToothbrushingHistory = user.ToothbrushingHistory;
+                //    if(config != null)
+                //    {
+                //        config.Widgets = d.Widgets;
+                //        _context.Configurations.Update(config);
+                //    }
+                //}
 
-                _context.Users.Update(existingUser);
+                //existingUser.ToothbrushingHistory = user.ToothbrushingHistory;
+
+                //_context.Users.Update(existingUser);
                 //_context.Update(user);
                 //existingUser.Devices = user.Devices;
                 //existingUser.ToothbrushingHistory = user.ToothbrushingHistory;
-                //_context.Entry(existingUser).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                //_context.Entry(existingUser).CurrentValues.SetValues(user);
+                _context.Entry(existingUser).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                _context.Entry(existingUser).CurrentValues.SetValues(user);
+                //_context.Users.Update(existingUser);
             }
             _context.SaveChanges();
         }

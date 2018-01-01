@@ -222,5 +222,14 @@ namespace Miriot.Resources {
                 return ResourceManager.GetString("UnableToSaveAccount", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to update user account..
+        /// </summary>
+        public static string UnableToUpdateAccount {
+            get {
+                return ResourceManager.GetString("UnableToUpdateAccount", resourceCulture);
+            }
+        }
     }
 }
