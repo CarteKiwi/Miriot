@@ -30,6 +30,7 @@ namespace Miriot.Win10
 #endif
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<IPlatformService, PlatformService>();
+            SimpleIoc.Default.Register<IBluetoothService, BluetoothService>();
         }
 
         private static INavigationService CreateNavigationService()

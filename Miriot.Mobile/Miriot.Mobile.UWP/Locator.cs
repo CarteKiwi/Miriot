@@ -18,6 +18,7 @@ namespace Miriot.Win10
             SimpleIoc.Default.Register<ITwitterService, TwitterWrapperService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<IPlatformService, PlatformService>();
+            SimpleIoc.Default.Register<IBluetoothService, BluetoothClientService>();
         }
     }
 }

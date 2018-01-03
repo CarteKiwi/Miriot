@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using Miriot.Common.Model;
 using Miriot.Core.ViewModels;
 using Miriot.Model;
 using Newtonsoft.Json;
@@ -14,7 +13,7 @@ namespace Miriot.Services
 {
     public class RemoteService
     {
-        private readonly SocketService _socketService;
+        private readonly IBluetoothService _bluetoothService;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPlatformService _platformService;
         private List<RomeRemoteSystem> _remoteSystems;
@@ -24,11 +23,12 @@ namespace Miriot.Services
         public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
         public Action<RomeRemoteSystem> Added { get; set; }
 
-        public RemoteService(SocketService socketService,
+        public RemoteService(
+            IBluetoothService socketService,
             IDispatcherService dispatcherService,
             IPlatformService platformService)
         {
-            _socketService = socketService;
+            _bluetoothService = socketService;
             _dispatcherService = dispatcherService;
             _platformService = platformService;
             _remoteSystems = new List<RomeRemoteSystem>();
@@ -49,7 +49,7 @@ namespace Miriot.Services
 
             try
             {
-                await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(parameter));
+                //await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(parameter));
             }
             catch (Exception ex)
             {
@@ -69,7 +69,8 @@ namespace Miriot.Services
             }
 
             Debug.WriteLine("Sending " + command + " to " + _connectedRemoteSystem.EndPoint.Address + ":" + _connectedRemoteSystem.EndPoint.Port);
-            string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
+            //string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
+            string response = null;
 
             if (response == null)
                 return default(T);
@@ -90,28 +91,29 @@ namespace Miriot.Services
                 return;
             }
 
-            _socketService.SendMessage(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
+            //_socketService.SendMessage(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
         }
 
         internal async Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
         {
-            _socketService.StopBroadcasting();
+            //_socketService.StopBroadcasting();
             _connectedRemoteSystem = selectedRemoteSystem;
-            Command(RemoteCommands.MiriotConnect);
+            await _bluetoothService.ConnectAsync(selectedRemoteSystem);
+            //Command(RemoteCommands.MiriotConnect);
             await Task.Delay(500);
 
             return true;
         }
 
-        public void Discover()
+        public async void Discover()
         {
             try
             {
-                _socketService.Broadcast();
+                await _bluetoothService.InitializeAsync();
 
-                _socketService.Discovered = (system) =>
+                _bluetoothService.Discovered = (system) =>
                 {
-                    var remoteSystem = _remoteSystems.FirstOrDefault(r => r.EndPoint.Address.ToString() == system.EndPoint.Address.ToString());
+                    var remoteSystem = _remoteSystems.FirstOrDefault(r => r.Id == system.Id);
 
                     if (remoteSystem == null)
                     {
@@ -132,8 +134,8 @@ namespace Miriot.Services
 
         internal void Listen()
         {
-            _socketService.CommandReceived = OnCommandReceivedAsync;
-            Task.Run(() => _socketService.BroadcastListener());
+            _bluetoothService.CommandReceived = OnCommandReceivedAsync;
+            Task.Run(async () => await _bluetoothService.InitializeAsync());
         }
 
         private T Deserialize<T>(RemoteParameter parameter)

@@ -176,6 +176,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\BluetoothService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Controls\CameraControl.xaml.cs">
       <DependentUpon>CameraControl.xaml</DependentUpon>

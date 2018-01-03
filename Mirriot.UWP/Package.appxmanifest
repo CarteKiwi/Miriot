@@ -38,5 +38,6 @@
     <rescap:Capability Name="cellularMessaging" />
     <DeviceCapability Name="webcam" />
     <DeviceCapability Name="microphone" />
+    <DeviceCapability Name="bluetooth" />
   </Capabilities>
 </Package>
