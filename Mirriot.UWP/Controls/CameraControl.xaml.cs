@@ -181,17 +181,41 @@ namespace Miriot.Win10.Controls
         {
             if (!OptimizeForLowLight) return;
 
-            var exposureControl = _mediaCapture.VideoDeviceController.ExposureControl;
+            //var zoom = _mediaCapture.VideoDeviceController.Zoom;
+
+            //if(zoom.Capabilities.Supported)
+            //{
+            //    if (zoom.Capabilities.AutoModeSupported)
+            //    {
+            //        zoom.TrySetAuto(false);
+            //    }
+
+            //    zoom.TrySetValue(zoom.Capabilities.Min);
+            //}
+
+            //var focus = _mediaCapture.VideoDeviceController.Focus;
+
+            //if (focus.Capabilities.Supported)
+            //{
+            //    if (focus.Capabilities.AutoModeSupported)
+            //    {
+            //        focus.TrySetAuto(false);
+            //    }
+
+            //    focus.TrySetValue(focus.Capabilities.Min);
+            //}
+
+            //var exposureControl = _mediaCapture.VideoDeviceController.ExposureControl;
             var bright = _mediaCapture.VideoDeviceController.Brightness;
 
             if (bright.Capabilities.Supported)
             {
                 if (bright.Capabilities.AutoModeSupported)
                 {
-                    bright.TrySetAuto(false);
+                    bright.TrySetAuto(true);
                 }
 
-                bright.TrySetValue(255);
+                //bright.TrySetValue(bright.Capabilities.Max);
             }
 
             var expo = _mediaCapture.VideoDeviceController.Exposure;

@@ -3,9 +3,12 @@ using Miriot.Model;
 using Miriot.Services;
 using Newtonsoft.Json;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
@@ -17,26 +20,26 @@ namespace Miriot.Win10.Services
 {
     public class BluetoothClientService : IBluetoothService
     {
-        public Action<RomeRemoteSystem> Discovered { get; set; }
+        public ObservableCollection<RomeRemoteSystem> Devices { get; set; }
         public Action<string> Removed { get; set; }
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
 
-        private DeviceWatcher deviceWatcher = null;
-        private StreamSocket chatSocket = null;
-        private DataWriter chatWriter = null;
-        private RfcommDeviceService chatService = null;
-        private BluetoothDevice bluetoothDevice;
+        private DeviceWatcher _deviceWatcher = null;
+        private StreamSocket _chatSocket = null;
+        private DataWriter _chatWriter = null;
+        private RfcommDeviceService _chatService = null;
+        private BluetoothDevice _bluetoothDevice;
 
         private void StopWatcher()
         {
-            if (null != deviceWatcher)
+            if (null != _deviceWatcher)
             {
-                if ((DeviceWatcherStatus.Started == deviceWatcher.Status ||
-                     DeviceWatcherStatus.EnumerationCompleted == deviceWatcher.Status))
+                if ((DeviceWatcherStatus.Started == _deviceWatcher.Status ||
+                     DeviceWatcherStatus.EnumerationCompleted == _deviceWatcher.Status))
                 {
-                    deviceWatcher.Stop();
+                    _deviceWatcher.Stop();
                 }
-                deviceWatcher = null;
+                _deviceWatcher = null;
             }
         }
 
@@ -46,9 +49,10 @@ namespace Miriot.Win10.Services
         /// </summary>
         public Task InitializeAsync()
         {
-            if (deviceWatcher == null)
+            if (_deviceWatcher == null)
             {
                 Debug.WriteLine("Device watcher started");
+                Devices = new ObservableCollection<RomeRemoteSystem>();
                 StartUnpairedDeviceWatcher();
             }
             else
@@ -59,58 +63,80 @@ namespace Miriot.Win10.Services
             return Task.FromResult(0);
         }
 
-        private void StartUnpairedDeviceWatcher()
+        private async void StartUnpairedDeviceWatcher()
         {
             // Request additional properties
             string[] requestedProperties = new string[] { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected" };
 
-            deviceWatcher = DeviceInformation.CreateWatcher("(System.Devices.Aep.ProtocolId:=\"{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}\")",
+            _deviceWatcher = DeviceInformation.CreateWatcher(BluetoothLEDevice.GetDeviceSelectorFromPairingState(false),
                                                             requestedProperties,
                                                             DeviceInformationKind.AssociationEndpoint);
 
             // Hook up handlers for the watcher events before starting the watcher
-            deviceWatcher.Added += new TypedEventHandler<DeviceWatcher, DeviceInformation>(async (watcher, deviceInfo) =>
+            _deviceWatcher.Added += new TypedEventHandler<DeviceWatcher, DeviceInformation>(async (watcher, deviceInfo) =>
             {
                 // Make sure device name isn't blank
                 if (deviceInfo.Name != "")
                 {
-                    Discovered(new RomeRemoteSystem(deviceInfo)
+                    try
+                    {
+                        var service = await GattDeviceService.FromIdAsync(deviceInfo.Id);
+                        if (service != null)
+                        {
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    //if (service != null)
+                    //{
+                    //    var rfcommServices = await service?.GetRfcommServicesForIdAsync(
+                    //RfcommServiceId.FromUuid(Constants.SERVICE_UUID), BluetoothCacheMode.Uncached);
+
+                    //    if (rfcommServices?.Services.Count > 0)
+                    //    {
+                    //if (service.Uuid == Constants.SERVICE_UUID)
+                    Devices.Add(new RomeRemoteSystem(deviceInfo)
                     {
                         Id = deviceInfo.Id,
                         DisplayName = deviceInfo.Name,
                     });
+                    //    }
+                    //}
                 }
             });
 
-            deviceWatcher.Updated += new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
+            _deviceWatcher.Updated += new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
             {
-                //await rootPage.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                //{
-                //    foreach (RfcommChatDeviceDisplay rfcommInfoDisp in ResultCollection)
-                //    {
-                //        if (rfcommInfoDisp.Id == deviceInfoUpdate.Id)
-                //        {
-                //            rfcommInfoDisp.Update(deviceInfoUpdate);
-                //            break;
-                //        }
-                //    }
-                //});
+                var temp = Devices.ToList();
+                foreach (var device in temp)
+                {
+                    if (device.Id == deviceInfoUpdate.Id)
+                    {
+                        (device.NativeObject as DeviceInformation).Update(deviceInfoUpdate);
+
+                        var d = Devices.Single(df => df.Id == device.Id);
+                        d = new RomeRemoteSystem(device);
+                        break;
+                    }
+                }
             });
 
-            deviceWatcher.EnumerationCompleted += new TypedEventHandler<DeviceWatcher, Object>(async (watcher, obj) =>
+            _deviceWatcher.EnumerationCompleted += new TypedEventHandler<DeviceWatcher, Object>(async (watcher, obj) =>
             {
             });
 
-            deviceWatcher.Removed += new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
+            _deviceWatcher.Removed += new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
             {
                 Removed?.Invoke(deviceInfoUpdate.Id);
             });
 
-            deviceWatcher.Stopped += new TypedEventHandler<DeviceWatcher, Object>(async (watcher, obj) =>
+            _deviceWatcher.Stopped += new TypedEventHandler<DeviceWatcher, Object>(async (watcher, obj) =>
             {
             });
 
-            deviceWatcher.Start();
+            _deviceWatcher.Start();
         }
 
         /// <summary>
@@ -119,7 +145,7 @@ namespace Miriot.Win10.Services
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public async Task ConnectAsync(RomeRemoteSystem system)
+        public async Task<bool> ConnectAsync(RomeRemoteSystem system)
         {
             // Make sure user has selected a device first
             if (system != null)
@@ -129,7 +155,7 @@ namespace Miriot.Win10.Services
             else
             {
                 Debug.WriteLine("Please select an item to connect to");
-                return;
+                return false;
             }
 
             // Perform device access checks before trying to get the device.
@@ -138,53 +164,55 @@ namespace Miriot.Win10.Services
             if (accessStatus == DeviceAccessStatus.DeniedByUser)
             {
                 Debug.WriteLine("This app does not have access to connect to the remote device (please grant access in Settings > Privacy > Other Devices");
-                return;
+                return false;
             }
 
             // If not, try to get the Bluetooth device
             try
             {
-                bluetoothDevice = await BluetoothDevice.FromIdAsync(system.Id);
+                _bluetoothDevice = await BluetoothDevice.FromIdAsync(system.Id);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 StopWatcher();
-                return;
+                return false;
             }
 
             // If we were unable to get a valid Bluetooth device object,
             // it's most likely because the user has specified that all unpaired devices
             // should not be interacted with.
-            if (bluetoothDevice == null)
+            if (_bluetoothDevice == null)
             {
                 Debug.WriteLine("Bluetooth Device returned null. Access Status = " + accessStatus.ToString());
             }
 
+            if (_bluetoothDevice == null) return false;
+
             // This should return a list of uncached Bluetooth services (so if the server was not active when paired, it will still be detected by this call
-            var rfcommServices = await bluetoothDevice.GetRfcommServicesForIdAsync(
+            var rfcommServices = await _bluetoothDevice?.GetRfcommServicesForIdAsync(
                 RfcommServiceId.FromUuid(Constants.SERVICE_UUID), BluetoothCacheMode.Uncached);
 
-            if (rfcommServices.Services.Count > 0)
+            if (rfcommServices?.Services.Count > 0)
             {
-                chatService = rfcommServices.Services[0];
+                _chatService = rfcommServices.Services[0];
             }
             else
             {
                 Debug.WriteLine("Could not discover the chat service on the remote device");
                 StopWatcher();
-                return;
+                return false;
             }
 
             // Do various checks of the SDP record to make sure you are talking to a device that actually supports the Bluetooth Rfcomm Chat Service
-            var attributes = await chatService.GetSdpRawAttributesAsync();
+            var attributes = await _chatService.GetSdpRawAttributesAsync();
             if (!attributes.ContainsKey(Constants.SERVICE_ATTRIBUTE_ID))
             {
                 Debug.WriteLine(
                     "The Chat service is not advertising the Service Name attribute (attribute id=0x100). " +
                     "Please verify that you are running the BluetoothRfcommChat server.");
                 StopWatcher();
-                return;
+                return false;
             }
             var attributeReader = DataReader.FromBuffer(attributes[Constants.SERVICE_ATTRIBUTE_ID]);
             var attributeType = attributeReader.ReadByte();
@@ -194,7 +222,7 @@ namespace Miriot.Win10.Services
                     "The Chat service is using an unexpected format for the Service Name attribute. " +
                     "Please verify that you are running the BluetoothRfcommChat server.");
                 StopWatcher();
-                return;
+                return false;
             }
 
             var serviceNameLength = attributeReader.ReadByte();
@@ -206,17 +234,19 @@ namespace Miriot.Win10.Services
 
             lock (this)
             {
-                chatSocket = new StreamSocket();
+                _chatSocket = new StreamSocket();
             }
             try
             {
-                await chatSocket.ConnectAsync(chatService.ConnectionHostName, chatService.ConnectionServiceName);
+                await _chatSocket.ConnectAsync(_chatService.ConnectionHostName, _chatService.ConnectionServiceName);
 
-                Debug.WriteLine("Connected to : " + attributeReader.ReadString(serviceNameLength) + bluetoothDevice.Name);
-                chatWriter = new DataWriter(chatSocket.OutputStream);
+                Debug.WriteLine("Connected to : " + attributeReader.ReadString(serviceNameLength) + _bluetoothDevice.Name);
+                _chatWriter = new DataWriter(_chatSocket.OutputStream);
 
-                DataReader chatReader = new DataReader(chatSocket.InputStream);
+                DataReader chatReader = new DataReader(_chatSocket.InputStream);
                 ReceiveStringLoop(chatReader);
+
+                return true;
             }
             catch (Exception ex) when ((uint)ex.HResult == 0x80070490) // ERROR_ELEMENT_NOT_FOUND
             {
@@ -228,6 +258,8 @@ namespace Miriot.Win10.Services
                 Debug.WriteLine("Please verify that there is no other RFCOMM connection to the same device.");
                 StopWatcher();
             }
+
+            return false;
         }
 
         /// <summary>
@@ -242,7 +274,7 @@ namespace Miriot.Win10.Services
         private async void RequestAccessButton_Click(object sender, RoutedEventArgs e)
         {
             // Make sure user has given consent to access device
-            DeviceAccessStatus accessStatus = await bluetoothDevice.RequestAccessAsync();
+            DeviceAccessStatus accessStatus = await _bluetoothDevice.RequestAccessAsync();
 
             if (accessStatus != DeviceAccessStatus.Allowed)
             {
@@ -263,9 +295,9 @@ namespace Miriot.Win10.Services
             {
                 if (message.Length != 0)
                 {
-                    chatWriter.WriteUInt32((uint)message.Length);
-                    chatWriter.WriteString(message);
-                    await chatWriter.StoreAsync();
+                    _chatWriter.WriteUInt32((uint)message.Length);
+                    _chatWriter.WriteString(message);
+                    await _chatWriter.StoreAsync();
                 }
             }
             catch (Exception ex) when ((uint)ex.HResult == 0x80072745)
@@ -303,7 +335,7 @@ namespace Miriot.Win10.Services
             {
                 lock (this)
                 {
-                    if (chatSocket == null)
+                    if (_chatSocket == null)
                     {
                         // Do not print anything here -  the user closed the socket.
                         if ((uint)ex.HResult == 0x80072745)
@@ -321,23 +353,23 @@ namespace Miriot.Win10.Services
 
         private void Disconnect(string disconnectReason)
         {
-            if (chatWriter != null)
+            if (_chatWriter != null)
             {
-                chatWriter.DetachStream();
-                chatWriter = null;
+                _chatWriter.DetachStream();
+                _chatWriter = null;
             }
 
-            if (chatService != null)
+            if (_chatService != null)
             {
-                chatService.Dispose();
-                chatService = null;
+                _chatService.Dispose();
+                _chatService = null;
             }
             lock (this)
             {
-                if (chatSocket != null)
+                if (_chatSocket != null)
                 {
-                    chatSocket.Dispose();
-                    chatSocket = null;
+                    _chatSocket.Dispose();
+                    _chatSocket = null;
                 }
             }
 

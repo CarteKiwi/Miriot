@@ -98,11 +98,8 @@ namespace Miriot.Services
         {
             //_socketService.StopBroadcasting();
             _connectedRemoteSystem = selectedRemoteSystem;
-            await _bluetoothService.ConnectAsync(selectedRemoteSystem);
+            return await _bluetoothService.ConnectAsync(selectedRemoteSystem);
             //Command(RemoteCommands.MiriotConnect);
-            await Task.Delay(500);
-
-            return true;
         }
 
         public async void Discover()

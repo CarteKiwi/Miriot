@@ -26,5 +26,6 @@
     <Capability Name="internetClient" />
     <Capability Name="internetClientServer" />
     <uap3:Capability Name="remoteSystem" />
+    <DeviceCapability Name="bluetooth" />
   </Capabilities>
 </Package>
