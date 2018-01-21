@@ -51,5 +51,20 @@ namespace Miriot.Win10.Views
 
             return Task.FromResult(string.Empty);
         }
+
+        private void BrightnessController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            Camera.AdjustBrightness(e.NewValue);
+        }
+
+        private void ExpositionController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            Camera.AdjustExposition(e.NewValue);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SimpleIoc.Default.GetInstance<INavigationService>().NavigateTo(PageKeys.Main);
+        }
     }
 }

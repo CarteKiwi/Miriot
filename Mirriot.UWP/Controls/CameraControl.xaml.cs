@@ -153,7 +153,7 @@ namespace Miriot.Win10.Controls
                     RegisterOrientationEventHandlers();
                     await StartPreviewAsync();
 
-                    //AdjustSettings();
+                    AdjustSettings();
                 }
             }
         }
@@ -212,12 +212,30 @@ namespace Miriot.Win10.Controls
             {
                 if (bright.Capabilities.AutoModeSupported)
                 {
-                    bright.TrySetAuto(true);
+                    bright.TrySetAuto(false);
                 }
 
-                //bright.TrySetValue(bright.Capabilities.Max);
+                bright.TrySetValue(bright.Capabilities.Max);
             }
+        }
 
+        public void AdjustBrightness(double value)
+        {
+            var bright = _mediaCapture.VideoDeviceController.Brightness;
+
+            if (bright.Capabilities.Supported)
+            {
+                if (bright.Capabilities.AutoModeSupported)
+                {
+                    bright.TrySetAuto(false);
+                }
+
+                bright.TrySetValue(value);
+            }
+        }
+
+        public void AdjustExposition(double value)
+        {
             var expo = _mediaCapture.VideoDeviceController.Exposure;
             if (expo.Capabilities.Supported)
             {
@@ -226,7 +244,7 @@ namespace Miriot.Win10.Controls
                     expo.TrySetAuto(false);
                 }
 
-                expo.TrySetValue(expo.Capabilities.Max);
+                expo.TrySetValue(value);
             }
         }
 
@@ -455,25 +473,32 @@ namespace Miriot.Win10.Controls
                 return null;
             }
 
-            if (_lowLightSupported)
+            try
             {
-                var res = await _advancedCapture.CaptureAsync();
-                return res.Frame.SoftwareBitmap;
+                if (_lowLightSupported)
+                {
+                    var res = await _advancedCapture.CaptureAsync();
+                    return res.Frame.SoftwareBitmap;
+                }
+                else
+                {
+                    // Get information about the preview
+                    var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
+
+                    // Create a video frame in the desired format for the preview frame
+                    VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
+
+                    var currentFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
+
+                    // Collect the resulting frame
+                    SoftwareBitmap previewFrame = currentFrame.SoftwareBitmap;
+
+                    return previewFrame;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Get information about the preview
-                var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
-
-                // Create a video frame in the desired format for the preview frame
-                VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
-
-                var currentFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
-
-                // Collect the resulting frame
-                SoftwareBitmap previewFrame = currentFrame.SoftwareBitmap;
-
-                return previewFrame;
+                return null;
             }
         }
 

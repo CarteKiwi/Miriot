@@ -194,7 +194,7 @@
                         HorizontalAlignment="Stretch"
                         Visibility="{x:Bind Vm.IsConnected, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
                 <Button Command="{x:Bind Vm.ActionNavigateTo}" 
-                        CommandParameter="Settings"
+                        CommandParameter="CameraSettings"
                         Style="{StaticResource EmptyButtonStyle}">
                     <Grid x:Name="UserPicture" RenderTransformOrigin="0.5,0.5">
                         <interactivity:Interaction.Behaviors>
