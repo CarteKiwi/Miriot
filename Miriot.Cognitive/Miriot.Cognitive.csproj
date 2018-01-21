@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ProjectOxford.Emotion" Version="1.0.341" />
+    <PackageReference Include="Microsoft.ProjectOxford.Emotion" Version="2.0.40" />
     <PackageReference Include="Microsoft.ProjectOxford.Face.DotNetStandard" Version="1.0.0" />
     <PackageReference Include="Microsoft.ProjectOxford.Vision" Version="1.0.393" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.0.1-alpha" />
