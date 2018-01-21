@@ -95,6 +95,12 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.0.1, Culture=neutral, PublicKeyToken=d9452de2c18e9148, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MvvmLightLibsStd10.5.4.0.1-alpha\lib\xamarin.ios10\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MvvmLightLibsStd10.5.4.0.1-alpha\lib\xamarin.ios10\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -130,8 +136,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Locator.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="Services\BluetoothService.cs" />
+    <Compile Include="Services\DispatcherService.cs" />
+    <Compile Include="Services\PlatformService.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_about.png" />
@@ -145,10 +155,21 @@
     <BundleResource Include="Resources\xamarin_logo%403x.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Miriot\Miriot.csproj">
+      <Project>{0C3190C6-066B-4F94-B26D-1496E8E73E43}</Project>
+      <Name>Miriot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Miriot.Mobile\Miriot.Mobile.csproj">
       <Project>{d92b67de-450a-44be-b9a7-be18121fb67a}</Project>
       <Name>Miriot.Mobile</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\badge_bg.png" />
+    <Content Include="Resources\magnif.png" />
+    <Content Include="Resources\miriot_remote.png" />
+    <Content Include="Resources\mirror.png" />
+    <Content Include="Resources\mirror_only.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

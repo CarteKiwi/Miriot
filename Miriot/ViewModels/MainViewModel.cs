@@ -62,7 +62,7 @@ namespace Miriot.Core.ViewModels
         public RelayCommand ToggleLedsCommand { get; private set; }
         #endregion
 
-        public Action<IntentResponse> ActionCallback;
+        public Action<LuisResponse> ActionCallback;
 
         public object SpeakStream
         {
@@ -350,7 +350,7 @@ namespace Miriot.Core.ViewModels
             }
             else
             {
-                if (text.Contains("Miriot") || text.Contains("Myriade") || text.Contains("Mariotte"))
+                if (text.Contains("Miriot") || text.Contains("Myriade") || text.Contains("Mariotte") || text.Contains("Mireille hot"))
                 {
                     IsListening = true;
                     SetMessage("J'écoute.", "vous pouvez parler.");
@@ -368,15 +368,15 @@ namespace Miriot.Core.ViewModels
                 IsListening = false;
 
                 // Appel au service LUIS
-                var res = await _luisService.AskLuisAsync(text);
+                var luisResponse = await _luisService.AskLuisAsync(text);
 
                 // Récupération de la première action (intent avec Score le plus élevé)
-                var intent = res?.Intents?.OrderByDescending(e => e.Score).FirstOrDefault();
+                var intent = luisResponse?.TopScoringIntent;
 
                 if (IsListeningFirstName)
                 {
                     if (intent != null && intent.Intent == "CreateProfile")
-                        SetNewProfileMessage(intent);
+                        SetNewProfileMessage(luisResponse.Entities.OrderByDescending(e => e.Score).FirstOrDefault());
                     else
                         RepeatPromptForUnknownFace();
                 }
@@ -384,7 +384,7 @@ namespace Miriot.Core.ViewModels
                 {
                     if (intent != null)
                     {
-                        ActionCallback.Invoke(intent);
+                        ActionCallback.Invoke(luisResponse);
                     }
 
                     SetMessage(string.Empty, string.Empty);
@@ -399,18 +399,9 @@ namespace Miriot.Core.ViewModels
             RepeatPromptForUnknownFace();
         }
 
-        private void SetNewProfileMessage(IntentResponse intent)
+        private void SetNewProfileMessage(LuisEntity entity)
         {
-            var action = intent.Actions.First(e => e.Triggered);
-
-            string name = string.Empty;
-
-            if (action.Parameters != null && action.Parameters.Any())
-                foreach (var p in action.Parameters)
-                {
-                    if (p.Value != null && p.Name == "Firstname")
-                        name = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                }
+            var name = entity.Entity;
 
             User = new User { Name = name, Picture = _lastFrameShot };
 
@@ -525,7 +516,7 @@ namespace Miriot.Core.ViewModels
             await _speechService.StartListeningAsync();
 
             //user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
-            user.Picture = User.Picture;
+            user.Picture = User != null ? User.Picture : user.Picture;
             User = user;
         }
 

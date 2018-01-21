@@ -97,9 +97,9 @@ namespace Miriot.Win10
             _areLedsOn = true;
         }
 
-        private void OnAction(IntentResponse intent)
+        private void OnAction(LuisResponse luis)
         {
-            DoAction(intent);
+            DoAction(luis);
         }
 
         private void ShowGridLines(bool isVisible)
@@ -311,21 +311,21 @@ namespace Miriot.Win10
             return w;
         }
 
-        private void DoAction(IntentResponse intent)
+        private void DoAction(LuisResponse luis)
         {
             TurnOff();
 
-            var t = intent.GetIntentType();
+            var t = luis.TopScoringIntent.GetIntentType();
 
             var w = GetWidgetInstance(t);
 
             if (w is IWidgetAction)
-                ((IWidgetAction)w).DoAction(intent);
+                ((IWidgetAction)w).DoAction(luis);
 
             if (w == null)
             {
                 // Generic actions
-                switch (intent.Intent)
+                switch (luis.TopScoringIntent.Intent)
                 {
                     case "ToggleLight":
                         if (_areLedsOn)

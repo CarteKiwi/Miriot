@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Views;
+using Miriot.Common;
 using Miriot.Core.ViewModels;
 using Miriot.Model;
 using Newtonsoft.Json;
@@ -21,6 +23,9 @@ namespace Miriot.Services
         private MainViewModel _vm;
 
         public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
+
+        public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
+
         public Action<RomeRemoteSystem> Added { get; set; }
 
         public RemoteService(
@@ -32,6 +37,8 @@ namespace Miriot.Services
             _dispatcherService = dispatcherService;
             _platformService = platformService;
             _remoteSystems = new List<RomeRemoteSystem>();
+
+            CommandReceived = OnCommandReceivedAsync;
         }
 
         public void Attach(MainViewModel vm)
@@ -131,7 +138,7 @@ namespace Miriot.Services
 
         internal void Listen()
         {
-            _bluetoothService.CommandReceived = OnCommandReceivedAsync;
+            _bluetoothService.CommandReceived = CommandReceived;
             Task.Run(async () => await _bluetoothService.InitializeAsync());
         }
 
@@ -176,6 +183,9 @@ namespace Miriot.Services
                     var graphUser = await _graphService.GetUserAsync();
 
                     return JsonConvert.SerializeObject(graphUser);
+                case RemoteCommands.GoToCameraPage:
+                    SimpleIoc.Default.GetInstance<INavigationService>().NavigateTo(PageKeys.CameraSettings);
+                    return null;
                 case RemoteCommands.MiriotConnect:
                     //_socketService.ListenTcp();
                     return null;

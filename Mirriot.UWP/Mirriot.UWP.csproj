@@ -260,6 +260,9 @@
       <DependentUpon>WidgetTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\WidgetExtensions.cs" />
+    <Compile Include="Views\CameraSettingsPage.xaml.cs">
+      <DependentUpon>CameraSettingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FirstLaunch.xaml.cs">
       <DependentUpon>FirstLaunch.xaml</DependentUpon>
     </Compile>
@@ -385,6 +388,10 @@
     <Page Include="Resources\ApplicationStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CameraSettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FirstLaunch.xaml">
       <SubType>Designer</SubType>

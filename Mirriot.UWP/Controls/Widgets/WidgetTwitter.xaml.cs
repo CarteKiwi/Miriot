@@ -137,7 +137,7 @@ namespace Miriot.Win10.Controls
             var statut = await TwitterService.Instance.TweetStatusAsync("Tweet from Miriot");
         }
 
-        public void DoAction(IntentResponse intent)
+        public void DoAction(LuisResponse luis)
         {
             // TODO: Switch state
         }

@@ -1,5 +1,7 @@
 ﻿
 using Foundation;
+using GalaSoft.MvvmLight.Threading;
+using Miriot.iOS;
 using UIKit;
 
 namespace Miriot.Mobile.iOS
@@ -7,9 +9,21 @@ namespace Miriot.Mobile.iOS
 	[Register("AppDelegate")]
 	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
 	{
-		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
+        private static Locator _locator;
+        public static Locator Locator
+        {
+            get => _locator ?? (_locator = new Locator());
+
+            set { _locator = value; }
+        }
+
+        public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
-			global::Xamarin.Forms.Forms.Init();
+            DispatcherHelper.Initialize(this);
+
+            Locator = new Locator();
+
+            global::Xamarin.Forms.Forms.Init();
 			LoadApplication(new App());
 
 			return base.FinishedLaunching(app, options);

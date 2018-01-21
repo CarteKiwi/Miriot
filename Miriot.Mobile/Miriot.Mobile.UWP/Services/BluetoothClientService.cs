@@ -20,15 +20,17 @@ namespace Miriot.Win10.Services
 {
     public class BluetoothClientService : IBluetoothService
     {
-        public ObservableCollection<RomeRemoteSystem> Devices { get; set; }
-        public Action<string> Removed { get; set; }
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
+        public Action<RomeRemoteSystem> Discovered { get; set; }
+        public Action<RomeRemoteSystem> Updated { get; set; }
+        public Action<string> Removed { get; set; }
 
         private DeviceWatcher _deviceWatcher = null;
         private StreamSocket _chatSocket = null;
         private DataWriter _chatWriter = null;
         private RfcommDeviceService _chatService = null;
         private BluetoothDevice _bluetoothDevice;
+        private ObservableCollection<RomeRemoteSystem> _devices { get; set; }
 
         private void StopWatcher()
         {
@@ -52,7 +54,7 @@ namespace Miriot.Win10.Services
             if (_deviceWatcher == null)
             {
                 Debug.WriteLine("Device watcher started");
-                Devices = new ObservableCollection<RomeRemoteSystem>();
+                _devices = new ObservableCollection<RomeRemoteSystem>();
                 StartUnpairedDeviceWatcher();
             }
             else
@@ -97,7 +99,7 @@ namespace Miriot.Win10.Services
                     //    if (rfcommServices?.Services.Count > 0)
                     //    {
                     //if (service.Uuid == Constants.SERVICE_UUID)
-                    Devices.Add(new RomeRemoteSystem(deviceInfo)
+                    Discovered?.Invoke(new RomeRemoteSystem(deviceInfo)
                     {
                         Id = deviceInfo.Id,
                         DisplayName = deviceInfo.Name,
@@ -109,15 +111,17 @@ namespace Miriot.Win10.Services
 
             _deviceWatcher.Updated += new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
             {
-                var temp = Devices.ToList();
+                var temp = _devices.ToList();
                 foreach (var device in temp)
                 {
                     if (device.Id == deviceInfoUpdate.Id)
                     {
                         (device.NativeObject as DeviceInformation).Update(deviceInfoUpdate);
 
-                        var d = Devices.Single(df => df.Id == device.Id);
+                        var d = _devices.Single(df => df.Id == device.Id);
                         d = new RomeRemoteSystem(device);
+
+                        Updated?.Invoke(d);
                         break;
                     }
                 }

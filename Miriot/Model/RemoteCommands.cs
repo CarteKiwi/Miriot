@@ -10,6 +10,9 @@
         GraphService_GetUser,
         UpdateUser,
         LoadUser,
-        MiriotConfiguring
+        MiriotConfiguring,
+        GoToCameraPage,
+        GoToMainPage,
+        CameraAdjustBrightness,
     }
 }

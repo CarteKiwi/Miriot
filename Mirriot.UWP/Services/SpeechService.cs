@@ -79,11 +79,11 @@ namespace Miriot.Win10.Services
         {
             if (args.Status != SpeechRecognitionResultStatus.Success)
             {
-                if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
-                {
+                //if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
+                //{
                     //Enable continuous listening
                     StartListeningAsync();
-                }
+                //}
             }
         }
 

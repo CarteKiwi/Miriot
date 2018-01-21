@@ -153,7 +153,7 @@ namespace Miriot.Win10.Controls
                     RegisterOrientationEventHandlers();
                     await StartPreviewAsync();
 
-                    AdjustSettings();
+                    //AdjustSettings();
                 }
             }
         }

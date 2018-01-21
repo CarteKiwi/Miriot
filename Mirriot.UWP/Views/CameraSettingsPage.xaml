@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="Miriot.Win10.Views.CameraSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrl="using:Miriot.Win10.Controls"
+    xmlns:local="using:Miriot.Win10.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{StaticResource Accent2Brush}">
+
+        <!--Camera control-->
+        <ctrl:CameraControl x:Name="Camera" 
+                            ShowPreview="True" 
+                            OptimizeForLowLight="True"/>
+        
+    </Grid>
+</Page>

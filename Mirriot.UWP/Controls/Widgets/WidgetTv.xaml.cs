@@ -216,21 +216,9 @@ namespace Miriot.Win10.Controls
             TvView.AddWebAllowedObject("NotifyApp", winRTObject);
         }
 
-        internal void TurnOn(IntentResponse intent)
+        internal void TurnOn(LuisEntity entity)
         {
-            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
-
-            string channel = string.Empty;
-
-            if (action.Parameters != null && action.Parameters.Any())
-                foreach (var p in action.Parameters)
-                {
-                    if (p.Value != null)
-                    {
-                        if (p.Name == "Channel")
-                            channel = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                    }
-                }
+            var channel = entity.Entity;
 
             var channelUri = "http://streaming-hub.com/";
             string key;
@@ -280,19 +268,19 @@ namespace Miriot.Win10.Controls
             LoadChannel(key, channelUri);
         }
 
-        public void DoAction(IntentResponse intent)
+        public void DoAction(LuisResponse luis)
         {
-            if (intent.Intent == "TurnOnTv")
+            if (luis.TopScoringIntent.Intent == "TurnOnTv")
             {
-                TurnOn(intent);
+                TurnOn(luis.Entities.OrderByDescending(e=>e.Score).FirstOrDefault());
             }
 
-            if (intent.Intent == "FullScreenTv")
+            if (luis.TopScoringIntent.Intent == "FullScreenTv")
             {
                 IsFullscreen = true;
             }
 
-            if (intent.Intent == "ReduceScreenTv")
+            if (luis.TopScoringIntent.Intent == "ReduceScreenTv")
             {
                 IsFullscreen = false;
             }

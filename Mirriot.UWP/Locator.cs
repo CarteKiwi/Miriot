@@ -37,6 +37,7 @@ namespace Miriot.Win10
         {
             var navigationService = new NavigationService();
             navigationService.Configure(PageKeys.Main, typeof(MainPage));
+            navigationService.Configure(PageKeys.CameraSettings, typeof(CameraSettingsPage));
 
             return navigationService;
         }

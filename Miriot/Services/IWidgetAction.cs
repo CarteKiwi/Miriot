@@ -4,6 +4,6 @@ namespace Miriot.Services
 {
     public interface IWidgetAction
     {
-        void DoAction(IntentResponse intent);
+        void DoAction(LuisResponse luis);
     }
 }
