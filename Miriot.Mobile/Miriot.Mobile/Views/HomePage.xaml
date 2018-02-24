@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                      x:TypeArguments="viewModels:ConnectViewModel"
                       xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
                       xmlns:core="using:Miriot.Core.ViewModels.Widgets"
                       xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
@@ -13,18 +12,18 @@
         <StackLayout VerticalOptions="FillAndExpand">
 
             <RelativeLayout Margin="0,10,0,15" HorizontalOptions="Center">
-                <Image Source="Resources/mirror.png" 
+                <Image Source="mirror.png" 
                        x:Name="Panda"
                        HeightRequest="230"
                        HorizontalOptions="Center"/>
 
                 <Grid RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Width,Factor=.7, Constant=0}"
                       RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Height,Factor=.7, Constant=0}">
-                    <Image Source="Resources/badge_bg.png" 
+                    <Image Source="badge_bg.png" 
                            x:Name="Badge"
                            HeightRequest="60"
                            HorizontalOptions="Center"/>
-                    <Image Source="Resources/magnif.png" 
+                    <Image Source="magnif.png" 
                            x:Name="Magnif"
                            HeightRequest="30"
                            VerticalOptions="Center"
@@ -71,7 +70,7 @@
                                              VerticalOptions="Center"
                                              HeightRequest="50"
                                              Orientation="Horizontal">
-                                    <Image Source="Resources/mirror_only.png"
+                                    <Image Source="mirror_only.png"
                                            Margin="0,2,5,0"
                                            HeightRequest="35"
                                            VerticalOptions="Center"

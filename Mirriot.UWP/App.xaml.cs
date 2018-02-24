@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Views;
 using Miriot.Core.ViewModels;
 using Miriot.Model;
 using Miriot.Services;
+using Miriot.Win10.Views;
 using Newtonsoft.Json;
 using System;
 using Windows.ApplicationModel;
@@ -96,7 +97,7 @@ namespace Miriot.Win10
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(WifiSettingsPage), e.Arguments);
             }
             // Ensure the current window is active
             Window.Current.Activate();

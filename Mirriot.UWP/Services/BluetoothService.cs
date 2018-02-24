@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Bluetooth.Rfcomm;
+using Windows.Devices.Enumeration;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 
@@ -29,7 +30,7 @@ namespace Miriot.Win10.Services
         public async Task InitializeAsync()
         {
             GattServiceProviderResult result = await GattServiceProvider.CreateAsync(Constants.SERVICE_UUID);
-
+            
             if (result.Error == BluetoothError.Success)
             {
                 _serviceProvider = result.ServiceProvider;

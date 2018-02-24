@@ -1,5 +1,5 @@
-﻿using Microsoft.ProjectOxford.Emotion;
-using Microsoft.ProjectOxford.Emotion.Contract;
+﻿using Microsoft.ProjectOxford.Common.Contract;
+using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
 using Miriot.Common;

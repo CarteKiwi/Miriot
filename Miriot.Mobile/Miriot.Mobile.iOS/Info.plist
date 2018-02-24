@@ -7,7 +7,7 @@
 	<key>CFBundleName</key>
 	<string>Miriot.Mobile.iOS</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.companyname.Miriot.Mobile</string>
+	<string>com.gdm.Miriot.Mobile</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
@@ -43,6 +43,6 @@
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false />
+	<false/>
 </dict>
 </plist>

@@ -236,6 +236,7 @@
     <Compile Include="Services\SpeechService.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
     <Compile Include="Services\TwitterWrapperService.cs" />
+    <Compile Include="Services\WifiService.cs" />
     <Compile Include="Utils\ColorBloomTransitionHelper.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />
@@ -260,6 +261,9 @@
       <DependentUpon>WidgetTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\WidgetExtensions.cs" />
+    <Compile Include="Views\WifiSettingsPage.xaml.cs">
+      <DependentUpon>WifiSettingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CameraSettingsPage.xaml.cs">
       <DependentUpon>CameraSettingsPage.xaml</DependentUpon>
     </Compile>
@@ -274,6 +278,7 @@
     <Compile Include="Utils\OAuth2AccessToken.cs" />
     <Compile Include="Utils\OAuth2Helper.cs" />
     <Compile Include="WidgetDataTemplateSelector.cs" />
+    <Compile Include="WiFiNetworkDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -386,6 +391,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\ApplicationStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\WifiSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

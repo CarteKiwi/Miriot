@@ -1,6 +1,6 @@
-﻿using GalaSoft.MvvmLight.Threading;
-using Miriot.Services;
+﻿using Miriot.Services;
 using System;
+using Xamarin.Forms;
 
 namespace Miriot.iOS.Services
 {
@@ -8,7 +8,7 @@ namespace Miriot.iOS.Services
     {
         public void Invoke(Action action)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(action);
+            Device.BeginInvokeOnMainThread(action);
         }
     }
 }

@@ -11,8 +11,8 @@
   <ItemGroup>
     <PackageReference Include="DLToolkit.Forms.Controls.FlowListView" Version="2.0.9" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.17.2" />
-    <PackageReference Include="Xamarin.Forms" Version="2.4.0.38779" />
-    <PackageReference Include="Xamarin.Forms.Alias" Version="2.5.1.87875" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
   </ItemGroup>
 
   <ItemGroup>

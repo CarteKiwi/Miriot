@@ -19,8 +19,6 @@ namespace Miriot.Mobile.iOS
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
-            DispatcherHelper.Initialize(this);
-
             Locator = new Locator();
 
             global::Xamarin.Forms.Forms.Init();

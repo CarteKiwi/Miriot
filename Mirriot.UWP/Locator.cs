@@ -31,12 +31,14 @@ namespace Miriot.Win10
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<IPlatformService, PlatformService>();
             SimpleIoc.Default.Register<IBluetoothService, BluetoothService>();
+            SimpleIoc.Default.Register<IWifiService, WifiService>();
         }
 
         private static INavigationService CreateNavigationService()
         {
             var navigationService = new NavigationService();
             navigationService.Configure(PageKeys.Main, typeof(MainPage));
+            navigationService.Configure(PageKeys.WifiSettings, typeof(WifiSettingsPage));
             navigationService.Configure(PageKeys.CameraSettings, typeof(CameraSettingsPage));
 
             return navigationService;

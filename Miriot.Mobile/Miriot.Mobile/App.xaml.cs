@@ -5,7 +5,6 @@ using Miriot.Core;
 using Miriot.Mobile.Views;
 
 using Xamarin.Forms;
-using Xamarin.Forms.Alias;
 using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
@@ -28,13 +27,8 @@ namespace Miriot.Mobile
             var nav = InitializeNavigationService();
 
             Locator = new ViewModelLocator();
-            
-            Alias.Init();
 
-            if (Device.RuntimePlatform == Device.iOS)
-                MainPage = new HomePage();
-            else
-                MainPage = new NavigationPage(new HomePage());
+            MainPage = new NavigationPage(new HomePage());
 
             nav.Initialize((NavigationPage)MainPage);
         }

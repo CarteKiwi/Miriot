@@ -7,11 +7,13 @@ namespace Miriot.iOS
 {
     public class Locator
     {
-        static Locator()
+        public Locator()
         {
+            SimpleIoc.Default.Register<IPlatformService, PlatformService>();
+            SimpleIoc.Default.Register<IConfigurationService, ConfigurationService>();
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
-            SimpleIoc.Default.Register<IPlatformService, PlatformService>();
+            SimpleIoc.Default.Register<IBluetoothService, BluetoothClientService>();
         }
     }
 }

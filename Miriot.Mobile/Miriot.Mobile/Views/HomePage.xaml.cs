@@ -11,11 +11,16 @@ namespace Miriot.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HomePage
     {
+        protected ConnectViewModel ViewModel { get; set; }
+
         private CancellationTokenSource _cancellationToken;
 
         public HomePage()
         {
             InitializeComponent();
+            ViewModel = SimpleIoc.Default.GetInstance<ConnectViewModel>();
+            BindingContext = ViewModel;
+
             NavigationPage.SetHasNavigationBar(this, false);
         }
 

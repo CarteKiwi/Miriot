@@ -36,6 +36,7 @@
     <!--<uap:Capability Name="phoneCall"/>-->
     <uap3:Capability Name="userNotificationListener" />
     <rescap:Capability Name="cellularMessaging" />
+    <rescap:Capability Name="wiFiControl" />
     <DeviceCapability Name="webcam" />
     <DeviceCapability Name="microphone" />
     <DeviceCapability Name="bluetooth" />
