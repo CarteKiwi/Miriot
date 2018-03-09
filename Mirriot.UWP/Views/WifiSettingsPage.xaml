@@ -1,0 +1,64 @@
+﻿<Page
+    x:Class="Miriot.Win10.Views.WifiSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrl="using:Miriot.Win10.Controls"
+    xmlns:local="using:Miriot.Win10.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <Binding Path="SettingsViewModel" Source="{StaticResource Locator}"/>
+    </Page.DataContext>
+    
+    <Page.Resources>
+        <DataTemplate x:Key="ResultsListViewTemplate">
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" MinWidth="100"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Column="0" Grid.Row="0" Height="32" Width="32" Margin="0,5" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <Image Source="{Binding Path=WiFiImage}"
+                           Stretch="UniformToFill"/>
+                </Border>
+
+                <Border Grid.Column="1" Grid.Row="0"  Margin="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Ssid:" Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding Path=Ssid}" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+    </Page.Resources>
+    
+    <Grid Background="{StaticResource Accent2Brush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Margin="20">
+            <TextBlock TextWrapping="Wrap"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       Foreground="White">
+          Initiate scans and view results on the first WiFi Adapter enumerated by your system.
+            </TextBlock>
+        </StackPanel>
+
+        <ListView x:Name="ResultsListView"
+                  Grid.Row="2"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ItemTemplate="{StaticResource ResultsListViewTemplate}"
+                  ItemsSource="{x:Bind Vm.Wifis, Mode=OneWay}">
+        </ListView>
+    </Grid>
+</Page>

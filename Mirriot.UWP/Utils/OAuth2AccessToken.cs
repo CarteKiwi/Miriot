@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public class OAuth2AccessToken
     {

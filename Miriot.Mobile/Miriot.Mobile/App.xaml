@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Application xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Miriot.Mobile.App">
+<Application xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:conv="clr-namespace:Miriot.Mobile.Converters"
+             x:Class="Miriot.Mobile.App">
   <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="Primary">#2196F3</Color>
-            <Color x:Key="PrimaryDark">#1976D2</Color>
-            <Color x:Key="Accent">#96d1ff</Color>
-            <Color x:Key="LightBackgroundColor">#FAFAFA</Color>
-            <Color x:Key="DarkBackgroundColor">#C0C0C0</Color>
-            <Color x:Key="MediumGrayTextColor">#4d4d4d</Color>
-            <Color x:Key="LightTextColor">#999999</Color>
+            <!--<Color x:Key="Primary">#eeeeee</Color>
+            <Color x:Key="Accent">#d74e60</Color>
+            <Color x:Key="BgColor">#44424d</Color>
+            <Color x:Key="BgDarkerColor">#35343b</Color>-->
 
+            <Color x:Key="Primary">#4b6c90</Color>
+            <Color x:Key="Accent">#bdc9d3</Color>
+            <Color x:Key="BgColor">#eeeeee</Color>
+            <Color x:Key="BgDarkerColor">#35343b</Color>
+            
             <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="BarBackgroundColor" Value="White" />
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
+
+            <conv:IntToStateConverter x:Key="IntToStateConverter"/>
+            <conv:InvertBoolConverter x:Key="InvertBoolConverter"/>
+            <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
         </ResourceDictionary>
+
     </Application.Resources>
 </Application>

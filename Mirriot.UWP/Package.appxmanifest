@@ -14,39 +14,31 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Miriot.App">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Miriot.Win10.App">
       <uap:VisualElements DisplayName="Miriot" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Miriot" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#343638" />
       </uap:VisualElements>
       <uap:ApplicationContentUriRules>
         <uap:Rule Match="https://*.suismoi.fr" Type="include" WindowsRuntimeAccess="all" />
-        <uap:Rule Match="http://miriot.suismoi.fr" Type="include" WindowsRuntimeAccess="all" />
+        <uap:Rule Match="http://Miriot.suismoi.fr" Type="include" WindowsRuntimeAccess="all" />
       </uap:ApplicationContentUriRules>
-      <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Miriot.Agent.PhoneBackgroundTask">
-          <BackgroundTasks>
-            <Task Type="general" />
-            <Task Type="systemEvent" />
-            <Task Type="pushNotification" />
-            <Task Type="deviceUse" />
-            <uap:Task Type="chatMessageNotification" />
-            <uap:Task Type="phoneCall" />
-          </BackgroundTasks>
-        </Extension>
-      </Extensions>
     </Application>
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="internetClientServer" />
+    <Capability Name="privateNetworkClientServer" />
     <uap:Capability Name="chat" />
     <uap:Capability Name="blockedChatMessages" />
-    <uap3:Capability Name="userNotificationListener" />
     <!--<rescap:Capability Name="cellularMessaging" />-->
     <!--<uap:Capability Name="phoneCall"/>-->
+    <uap3:Capability Name="userNotificationListener" />
     <rescap:Capability Name="cellularMessaging" />
+    <rescap:Capability Name="wiFiControl" />
     <DeviceCapability Name="webcam" />
     <DeviceCapability Name="microphone" />
+    <DeviceCapability Name="bluetooth" />
   </Capabilities>
 </Package>

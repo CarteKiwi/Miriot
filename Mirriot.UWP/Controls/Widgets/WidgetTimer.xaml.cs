@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Miriot.Core.ViewModels.Widgets;
+using System;
 using System.Diagnostics;
 using Windows.UI.Xaml;
-using Miriot.Common.Model;
-using Miriot.Core.ViewModels.Widgets;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetTimer
     {
@@ -29,7 +28,7 @@ namespace Miriot.Controls
                 w.Stop();
         }
 
-        public WidgetTimer()
+        public WidgetTimer() : base(null)
         {
             InitializeComponent();
         }

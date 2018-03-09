@@ -1,8 +1,8 @@
-﻿using Miriot.Utils;
+﻿using Miriot.Win10.Utils;
 using System;
 using Windows.UI.Xaml.Data;
 
-namespace Miriot.Converters
+namespace Miriot.Win10.Converters
 {
     public class ByteArrayToImageConverter : IValueConverter
     {

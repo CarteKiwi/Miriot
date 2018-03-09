@@ -1,15 +1,12 @@
-﻿using Windows.UI.Xaml;
+﻿using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
-using Miriot.Core.ViewModels.Widgets;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public class WidgetBase : UserControl, IWidgetBase
+    public class WidgetBase : UserControl
     {
-        public WidgetModel OriginalWidget { get; set; }
-
         public WidgetBase()
         {
         }
@@ -17,10 +14,12 @@ namespace Miriot.Controls
         public WidgetBase(WidgetModel widget)
         {
             Margin = new Thickness(20);
-            OriginalWidget = widget;
 
             if (widget != null)
+            {
                 SetPosition(widget.X, widget.Y);
+                State = widget.State;
+            }
         }
 
         private WidgetStates _state;
@@ -36,10 +35,13 @@ namespace Miriot.Controls
 
         public virtual void OnStateChanged() { }
 
-        public virtual void SetPosition(int x, int y)
+        public virtual void SetPosition(int? x, int? y)
         {
-            Grid.SetColumn(this, x);
-            Grid.SetRow(this, y);
+            if (x != null)
+                Grid.SetColumn(this, x.Value);
+
+            if (y != null)
+                Grid.SetRow(this, y.Value);
         }
     }
 }

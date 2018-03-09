@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public class OAuth2Helper
     {

@@ -1,7 +1,8 @@
-﻿using Windows.ApplicationModel.Resources;
+﻿using Miriot.Resources;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Resources;
 
-namespace Miriot.UWP
+namespace Miriot.Win10
 {
     public class LocalizedStrings : CustomXamlResourceLoader
     {
@@ -9,7 +10,8 @@ namespace Miriot.UWP
 
         protected override object GetResource(string resourceId, string objectType, string propertyName, string propertyType)
         {
-            return ResourceLoader.GetString(resourceId);
+            return Strings.ResourceManager.GetString(resourceId);
+            //return ResourceLoader.GetString(resourceId);
         }
     }
 }

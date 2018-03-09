@@ -1,13 +1,12 @@
-﻿using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Practices.ServiceLocation;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
-using Miriot.Controls;
-using Miriot.Core.Messages;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels;
 using Miriot.Core.ViewModels.Widgets;
-using Miriot.Utils;
+using Miriot.Services;
+using Miriot.Win10.Controls;
+using Miriot.Win10.Utils;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -16,6 +15,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Gpio;
 using Windows.Foundation;
 using Windows.Media.SpeechSynthesis;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -24,15 +24,16 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-namespace Miriot
+namespace Miriot.Win10
 {
-    public sealed partial class MainPage
+    public sealed partial class MainPage : Page
     {
         private bool _isProcessing;
         private CoreDispatcher _dispatcher;
         private ColorBloomTransitionHelper _transition;
         private readonly IFrameAnalyzer<ServiceResponse> _frameAnalyzer;
         private int _noFaceDetectedCount;
+        private bool _areLedsOn;
 
         private MainViewModel Vm => DataContext as MainViewModel;
 
@@ -43,7 +44,7 @@ namespace Miriot
             InitializeTransitionHelper();
 
             Loaded += MainPage_Loaded;
-            _frameAnalyzer = ServiceLocator.Current.GetInstance<IFrameAnalyzer<ServiceResponse>>();
+            _frameAnalyzer = SimpleIoc.Default.GetInstance<IFrameAnalyzer<ServiceResponse>>();
         }
 
         #endregion
@@ -63,34 +64,124 @@ namespace Miriot
             Vm.ActionCallback = OnAction;
 
             Vm.PropertyChanged += VmOnPropertyChanged;
-
-            TurnOnLeds();
+            Vm.Widgets.CollectionChanged += WidgetsChanged;
         }
 
-        private void TurnOnLeds()
+        private void TurnOffLeds()
         {
+            if (!_areLedsOn) return;
+
             var gpio = GpioController.GetDefault();
 
             if (gpio == null) return;
 
-            var pin = gpio.OpenPin(21);
+            var pin = gpio.OpenPin(23);
             pin.SetDriveMode(GpioPinDriveMode.Output);
-            pin.Write(GpioPinValue.Low);
+            pin.Write(GpioPinValue.High);
+
+            _areLedsOn = false;
         }
 
-        private void OnAction(ActionMessage msg)
+        private void TurnOnLeds()
         {
-            DoAction(msg.Intent);
+            if (_areLedsOn) return;
+
+            var gpio = GpioController.GetDefault();
+
+            if (gpio == null) return;
+
+            var pin = gpio.OpenPin(23);
+            pin.SetDriveMode(GpioPinDriveMode.Output);
+            pin.Write(GpioPinValue.Low);
+
+            _areLedsOn = true;
+        }
+
+        private void OnAction(LuisResponse luis)
+        {
+            DoAction(luis);
+        }
+
+        private void ShowGridLines(bool isVisible)
+        {
+            if (isVisible)
+            {
+                ShowGridLine(1);
+                ShowGridLine(2);
+                ShowGridLine(3);
+                ShowGridLine(4);
+            }
+        }
+
+        private void ShowGridLine(int number)
+        {
+            var rect = new Windows.UI.Xaml.Shapes.Line()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                StrokeThickness = 1,
+                Stroke = new SolidColorBrush(Colors.White),
+                StrokeDashCap = PenLineCap.Round,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeDashOffset = 40,
+                StrokeLineJoin = PenLineJoin.Round,
+                StrokeDashArray = new DoubleCollection() { 8 }
+            };
+
+            var txt = new TextBlock();
+            var txt2 = new TextBlock();
+
+            if (number == 1)
+            {
+                txt.Text = "1";
+                txt2.Text = "2";
+
+                rect.Y1 = 0;
+                rect.Y2 = this.ActualHeight;
+                rect.HorizontalAlignment = HorizontalAlignment.Right;
+                rect.VerticalAlignment = VerticalAlignment.Stretch;
+                Grid.SetRowSpan(rect, 3);
+            }
+
+            if (number == 2)
+            {
+                rect.Y1 = 0;
+                rect.Y2 = this.ActualHeight;
+                rect.HorizontalAlignment = HorizontalAlignment.Right;
+                rect.VerticalAlignment = VerticalAlignment.Stretch;
+                Grid.SetRowSpan(rect, 3);
+                Grid.SetColumn(rect, 1);
+            }
+
+            if (number == 3)
+            {
+                rect.X1 = 0;
+                rect.X2 = this.ActualWidth;
+                rect.HorizontalAlignment = HorizontalAlignment.Stretch;
+                rect.VerticalAlignment = VerticalAlignment.Bottom;
+                Grid.SetColumnSpan(rect, 3);
+            }
+
+            if (number == 4)
+            {
+                rect.X1 = 0;
+                rect.X2 = this.ActualWidth;
+                rect.HorizontalAlignment = HorizontalAlignment.Stretch;
+                rect.VerticalAlignment = VerticalAlignment.Bottom;
+                Grid.SetColumnSpan(rect, 3);
+                Grid.SetRow(rect, 1);
+            }
+
+            WidgetZone.Children.Add(rect);
         }
 
         private void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Vm.Widgets))
+            if (e.PropertyName == nameof(Vm.IsConfiguring))
             {
-                if (Vm.Widgets != null)
+                if (Vm.IsConfiguring)
                 {
-                    Vm.Widgets.CollectionChanged -= WidgetsChanged;
-                    Vm.Widgets.CollectionChanged += WidgetsChanged;
+                    ShowGridLines(Vm.IsConfiguring);
                 }
             }
 
@@ -98,7 +189,7 @@ namespace Miriot
             {
                 if (Vm.SpeakStream != null)
                 {
-                    MediaElementCtrl.SetSource(Vm.SpeakStream, ((SpeechSynthesisStream)Vm.SpeakStream).ContentType);
+                    MediaElementCtrl.SetSource((IRandomAccessStream)Vm.SpeakStream, ((SpeechSynthesisStream)Vm.SpeakStream).ContentType);
                     MediaElementCtrl.Play();
                 }
             }
@@ -109,6 +200,11 @@ namespace Miriot
             if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 WidgetZone.Children.Clear();
+
+                if (Vm.IsConfiguring)
+                {
+                    ShowGridLines(Vm.IsConfiguring);
+                }
             }
             else if (e.NewItems.Count > 0)
             {
@@ -118,6 +214,8 @@ namespace Miriot
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
         {
+            TurnOnLeds();
+
             await RunOnUiThread(() =>
             {
                 if (Vm.CurrentState == States.Active)
@@ -132,6 +230,8 @@ namespace Miriot
 
         private async void OnNoFaceDetected(object sender, EventArgs e)
         {
+            TurnOffLeds();
+
             await RunOnUiThread(() =>
             {
                 _noFaceDetectedCount++;
@@ -165,7 +265,7 @@ namespace Miriot
             });
         }
 
-        private void SetToothZone(Rectangle userFaceRectangle)
+        private void SetToothZone(System.Drawing.Rectangle userFaceRectangle)
         {
             Canvas.SetTop(ToothIndicator, userFaceRectangle.Top);
             Canvas.SetLeft(ToothIndicator, userFaceRectangle.Left);
@@ -211,22 +311,28 @@ namespace Miriot
             return w;
         }
 
-        private void DoAction(IntentResponse intent)
+        private void DoAction(LuisResponse luis)
         {
             TurnOff();
 
-            var t = intent.GetIntentType();
+            var t = luis.TopScoringIntent.GetIntentType();
 
             var w = GetWidgetInstance(t);
 
             if (w is IWidgetAction)
-                ((IWidgetAction)w).DoAction(intent);
+                ((IWidgetAction)w).DoAction(luis);
 
             if (w == null)
             {
                 // Generic actions
-                switch (intent.Intent)
+                switch (luis.TopScoringIntent.Intent)
                 {
+                    case "ToggleLight":
+                        if (_areLedsOn)
+                            TurnOffLeds();
+                        else
+                            TurnOnLeds();
+                        break;
                     case "TakePhoto":
                         TakePhoto();
                         break;
@@ -294,7 +400,7 @@ namespace Miriot
             //    w.OriginalWidget.Infos.Add(JsonConvert.SerializeObject(new OAuthWidgetInfo { Token = ((IWidgetOAuth)w).Token }));
             //}
 
-            await Vm.UpdateUserAsync();
+            //await Vm.UpdatePersonAsync();
         }
 
         private void CleanUi()

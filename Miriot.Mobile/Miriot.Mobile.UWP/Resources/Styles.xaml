@@ -1,0 +1,11 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Miriot.Mobile.UWP.Resources">
+
+    <AcrylicBrush x:Key="PrimaryAcrylic"
+                  BackgroundSource="Backdrop"
+                  TintColor="#4b6c90"
+                  TintOpacity="0.3"
+                  FallbackColor="Red"/>
+</ResourceDictionary>

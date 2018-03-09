@@ -1,8 +1,8 @@
-﻿using Miriot.Core.Services.Interfaces;
+﻿using Miriot.Services;
 using System;
 using Windows.UI.Xaml.Data;
 
-namespace Miriot.Converters
+namespace Miriot.Win10.Converters
 {
     public class WidgetStateToBoolConverter : IValueConverter
     {

@@ -1,6 +1,17 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Views;
+using Miriot.Core.ViewModels;
+using Miriot.Model;
+using Miriot.Services;
+using Miriot.Win10.Views;
+using Newtonsoft.Json;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
+using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -8,16 +19,14 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Resources;
-using Miriot.UWP;
 
-namespace Miriot
+namespace Miriot.Win10
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
-
         private static Locator _locator;
         public static Locator Locator
         {
@@ -88,7 +97,7 @@ namespace Miriot
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(WifiSettingsPage), e.Arguments);
             }
             // Ensure the current window is active
             Window.Current.Activate();

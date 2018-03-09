@@ -1,15 +1,13 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
-using Windows.Storage.Streams;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class SpeechService : ISpeechService
     {
@@ -45,7 +43,7 @@ namespace Miriot.Services
 
             // Compile the dictation topic constraint, which optimizes for dictated speech.
             var listConstraint = new SpeechRecognitionListConstraint(new[] { "Miriot" });
-            //_speechRecognizer.Constraints.Add(listConstraint);
+            _speechRecognizer.Constraints.Add(listConstraint);
             _speechRecognizer.Constraints.Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, ""));
 
             await _speechRecognizer.CompileConstraintsAsync();
@@ -81,11 +79,11 @@ namespace Miriot.Services
         {
             if (args.Status != SpeechRecognitionResultStatus.Success)
             {
-                if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
-                {
+                //if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
+                //{
                     //Enable continuous listening
                     StartListeningAsync();
-                }
+                //}
             }
         }
 
@@ -128,7 +126,7 @@ namespace Miriot.Services
         /// </summary>
         /// <param name="text">Text to be spoken</param>
         /// <returns>nothing</returns>
-        public async Task<IRandomAccessStream> SynthesizeTextToStreamAsync(string text)
+        public async Task<object> SynthesizeTextToStreamAsync(string text)
         {
             if (_speechSynthesizer == null) return null;
 
