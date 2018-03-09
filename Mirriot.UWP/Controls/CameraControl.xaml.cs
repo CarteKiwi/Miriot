@@ -1,7 +1,9 @@
-﻿using Miriot.Core.Services.Interfaces;
-using Miriot.Utils;
+﻿using Miriot.Services;
+using Miriot.Win10.Utils;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Devices.Enumeration;
@@ -11,16 +13,19 @@ using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.Capture;
+using Windows.Media.Devices;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Devices = Windows.Devices;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class CameraControl : ICameraService
+    public sealed partial class CameraControl : UserControl, ICameraService
     {
         #region Variables
         private MediaCapture _mediaCapture;
@@ -36,9 +41,21 @@ namespace Miriot.Controls
         private readonly SimpleOrientationSensor _orientationSensor = SimpleOrientationSensor.GetDefault();
         private SimpleOrientation _deviceOrientation = SimpleOrientation.NotRotated;
         private DisplayOrientations _displayOrientation = DisplayOrientations.Portrait;
+
+        private AdvancedPhotoCapture _advancedCapture;
+        private bool _lowLightSupported;
         #endregion
 
-        #region ShowPreview DP
+        #region Dependency Properties
+        public bool OptimizeForLowLight
+        {
+            get { return (bool)GetValue(OptimizeForLowLightProperty); }
+            set { SetValue(OptimizeForLowLightProperty, value); }
+        }
+
+        public static readonly DependencyProperty OptimizeForLowLightProperty =
+            DependencyProperty.Register("OptimizeForLowLight", typeof(bool), typeof(CameraControl), new PropertyMetadata(false));
+
         public bool ShowPreview
         {
             get { return (bool)GetValue(ShowPreviewProperty); }
@@ -57,7 +74,7 @@ namespace Miriot.Controls
         public CameraControl()
         {
             InitializeComponent();
-            
+
             Loaded += async (a, b) =>
             {
                 _displayInformation = DisplayInformation.GetForCurrentView();
@@ -103,7 +120,7 @@ namespace Miriot.Controls
                             default:
                                 _cameraId = device.Id;
                                 break;
-                            case Panel.Back:
+                            case Devices.Enumeration.Panel.Back:
                                 break;
                         }
                     }
@@ -127,10 +144,107 @@ namespace Miriot.Controls
                     // Only mirror the preview if the camera is on the front panel
                     _mirroringPreview = true;
 
+                    if (OptimizeForLowLight)
+                    {
+                        await InitializeForLowLight();
+                    }
+
                     PreviewControl.Source = _mediaCapture;
                     RegisterOrientationEventHandlers();
                     await StartPreviewAsync();
+
+                    AdjustSettings();
                 }
+            }
+        }
+
+        private async Task InitializeForLowLight()
+        {
+            _lowLightSupported =
+                _mediaCapture.VideoDeviceController.AdvancedPhotoControl.SupportedModes.Contains(Windows.Media.Devices.AdvancedPhotoMode.LowLight);
+
+            _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
+
+            if (_lowLightSupported)
+            {
+                // Choose LowLight mode
+                var settings = new AdvancedPhotoCaptureSettings { Mode = AdvancedPhotoMode.LowLight };
+                _mediaCapture.VideoDeviceController.AdvancedPhotoControl.Configure(settings);
+
+                // Prepare for an advanced capture
+                _advancedCapture =
+                    await _mediaCapture.PrepareAdvancedPhotoCaptureAsync(ImageEncodingProperties.CreateUncompressed(MediaPixelFormat.Nv12));
+            }
+        }
+
+        private void AdjustSettings()
+        {
+            if (!OptimizeForLowLight) return;
+
+            //var zoom = _mediaCapture.VideoDeviceController.Zoom;
+
+            //if(zoom.Capabilities.Supported)
+            //{
+            //    if (zoom.Capabilities.AutoModeSupported)
+            //    {
+            //        zoom.TrySetAuto(false);
+            //    }
+
+            //    zoom.TrySetValue(zoom.Capabilities.Min);
+            //}
+
+            //var focus = _mediaCapture.VideoDeviceController.Focus;
+
+            //if (focus.Capabilities.Supported)
+            //{
+            //    if (focus.Capabilities.AutoModeSupported)
+            //    {
+            //        focus.TrySetAuto(false);
+            //    }
+
+            //    focus.TrySetValue(focus.Capabilities.Min);
+            //}
+
+            //var exposureControl = _mediaCapture.VideoDeviceController.ExposureControl;
+            var bright = _mediaCapture.VideoDeviceController.Brightness;
+
+            if (bright.Capabilities.Supported)
+            {
+                if (bright.Capabilities.AutoModeSupported)
+                {
+                    bright.TrySetAuto(false);
+                }
+
+                bright.TrySetValue(bright.Capabilities.Max);
+            }
+        }
+
+        public void AdjustBrightness(double value)
+        {
+            var bright = _mediaCapture.VideoDeviceController.Brightness;
+
+            if (bright.Capabilities.Supported)
+            {
+                if (bright.Capabilities.AutoModeSupported)
+                {
+                    bright.TrySetAuto(false);
+                }
+
+                bright.TrySetValue(value);
+            }
+        }
+
+        public void AdjustExposition(double value)
+        {
+            var expo = _mediaCapture.VideoDeviceController.Exposure;
+            if (expo.Capabilities.Supported)
+            {
+                if (expo.Capabilities.AutoModeSupported)
+                {
+                    expo.TrySetAuto(false);
+                }
+
+                expo.TrySetValue(value);
             }
         }
 
@@ -345,7 +459,7 @@ namespace Miriot.Controls
             }
         }
 
-        public async Task<VideoFrame> GetLatestFrame()
+        public async Task<object> GetLatestFrame()
         {
             if (!_isInitialized)
             {
@@ -359,19 +473,61 @@ namespace Miriot.Controls
                 return null;
             }
 
-            // Get information about the preview
-            var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
+            try
+            {
+                if (_lowLightSupported)
+                {
+                    var res = await _advancedCapture.CaptureAsync();
+                    return res.Frame.SoftwareBitmap;
+                }
+                else
+                {
+                    // Get information about the preview
+                    var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
 
-            //var supportedBitmapFormats = FaceDetector.GetSupportedBitmapPixelFormats();
-            //var f = (supportedBitmapFormats.First());
+                    // Create a video frame in the desired format for the preview frame
+                    VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
 
-            // Create a video frame in the desired format for the preview frame
-            VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Nv12, (int)previewProperties.Width, (int)previewProperties.Height);
+                    var currentFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
 
-            VideoFrame previewFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
+                    // Collect the resulting frame
+                    SoftwareBitmap previewFrame = currentFrame.SoftwareBitmap;
 
-            return previewFrame;
+                    return previewFrame;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
+
+        public async Task<byte[]> GetEncodedBytesAsync(object frame)
+        {
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(((SoftwareBitmap)frame), BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+
+            byte[] array = null;
+
+            // First: Use an encoder to copy from SoftwareBitmap to an in-mem stream (FlushAsync)
+            // Next:  Use ReadAsync on the in-mem stream to get byte[] array
+
+            using (var ms = new InMemoryRandomAccessStream())
+            {
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, ms);
+                encoder.SetSoftwareBitmap(bitmapBgra8);
+
+                try
+                {
+                    await encoder.FlushAsync();
+                }
+                catch (Exception ex) { return new byte[0]; }
+
+                array = new byte[ms.Size];
+                await ms.ReadAsync(array.AsBuffer(), (uint)ms.Size, InputStreamOptions.None);
+            }
+            return array;
+        }
+
         #endregion Methods
     }
 }

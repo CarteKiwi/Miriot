@@ -22,7 +22,7 @@ namespace Miriot.Core.Services
         {
             if (_isInitialized) return;
 
-            var config = await _configurationService.GetKeysAsync();
+            var config = await _configurationService.GetKeysByProviderAsync("cs");
             _luisKey = config["luis"];
 
             _isInitialized = true;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
 using Miriot.Common;
-using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,9 +13,8 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Miriot.Core.ViewModels.Widgets;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetTwitter : IWidgetOAuth, IWidgetExclusive, IWidgetAction, INotifyPropertyChanged
     {
@@ -26,6 +25,8 @@ namespace Miriot.Controls
         public string Token { get; set; }
 
         private ObservableCollection<ITwitterResult> _tweets;
+        private readonly TwitterModel _widget;
+
         public ObservableCollection<ITwitterResult> Tweets
         {
             get => _tweets;
@@ -34,22 +35,21 @@ namespace Miriot.Controls
 
         public WidgetTwitter(TwitterModel widget) : base(widget)
         {
-            State = WidgetStates.Minimal;
-
             InitializeComponent();
 
             Margin = new Thickness(0);
 
             Loaded += WidgetTwitter_Loaded;
+            this._widget = widget;
         }
 
         private async void WidgetTwitter_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                await OriginalWidget.LoadInfos();
+                await this._widget.Load();
 
-                TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://miriot.suismoi.fr");
+                TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://Miriot.Win10.suismoi.fr");
 
                 await LoadTweetsAsync();
                 await GetStream();
@@ -67,7 +67,7 @@ namespace Miriot.Controls
             switch (State)
             {
                 default:
-                case WidgetStates.Minimal:
+                case WidgetStates.Compact:
                     SetPosition(1, 2);
                     VisualStateManager.GoToState(this, "MinimalState", true);
                     break;
@@ -119,7 +119,7 @@ namespace Miriot.Controls
                         {
                             _tweets.Insert(0, tweet);
 
-                            if (State == WidgetStates.Minimal)
+                            if (State == WidgetStates.Compact)
                                 TweetReceivedSb.Begin();
                         }
                     }
@@ -137,12 +137,12 @@ namespace Miriot.Controls
             var statut = await TwitterService.Instance.TweetStatusAsync("Tweet from Miriot");
         }
 
-        public void DoAction(IntentResponse intent)
+        public void DoAction(LuisResponse luis)
         {
             // TODO: Switch state
         }
 
-        public override void SetPosition(int x, int y)
+        public override void SetPosition(int? x, int? y)
         {
             Grid.SetRowSpan(this, 2);
             base.SetPosition(x, y);

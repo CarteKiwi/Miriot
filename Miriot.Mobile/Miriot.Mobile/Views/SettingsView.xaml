@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Name="Container"
+    x:Class="Miriot.Mobile.Views.SettingsView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:a="clr-namespace:Xamarin.Forms.Alias;assembly=Xamarin.Forms.Alias"
+    xmlns:core="using:Miriot.Core.ViewModels.Widgets"
+    xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+    xmlns:sel="clr-namespace:Miriot.Mobile"
+    xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource Primary}"/>
+            </Style>
+
+            <Style x:Key="ToggleSwitchSubtitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="HorizontalOptions" Value="LayoutOptions.FillAndExpand"/>
+            </Style>
+
+            <DataTemplate x:Key="DefaultTemplate">
+                <Grid HorizontalOptions="Fill">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Label Text="{Binding Title}"
+                           FontSize="16"
+                           HorizontalOptions="StartAndExpand"
+                           VerticalOptions="Center"
+                           FontAttributes="Italic"/>
+
+                    <Switch Margin="0,0,0,0" 
+                            HorizontalOptions="End"
+                            Grid.Column="1"
+                            IsToggled="{Binding IsActive, Mode=TwoWay}">
+                    </Switch>
+
+                    <StackLayout Orientation="Horizontal"
+                                 Grid.Row="1"
+                                 Grid.ColumnSpan="2"
+                                 Margin="0,0,0,0">
+
+                        <Label Text="Position: "
+                               HorizontalOptions="Start" VerticalOptions="Center"
+                               FontSize="15"
+                               Margin="0,0,0,0"/>
+
+                        <Picker BackgroundColor="Transparent"
+                                SelectedIndex="{Binding Position, Mode=TwoWay}"
+                                TextColor="{DynamicResource Primary}">
+                            <Picker.Items>
+                                <x:String>-</x:String>
+                                <x:String>1</x:String>
+                                <x:String>2</x:String>
+                                <x:String>3</x:String>
+                                <x:String>4</x:String>
+                                <x:String>5</x:String>
+                                <x:String>6</x:String>
+                                <x:String>8</x:String>
+                                <x:String>9</x:String>
+                            </Picker.Items>
+                        </Picker>
+
+                    </StackLayout>
+
+                </Grid>
+            </DataTemplate>
+
+            <!--Template Selector-->
+            <sel:WidgetTemplateSelector x:Key="WidgetTemplateSelector" 
+                                        DefaultTemplate="{StaticResource DefaultTemplate}"/>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ScrollView Margin="0,0,0,20">
+        <StackLayout>
+            <!--Widgets title-->
+            <Grid Margin="15,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <ctrl:EllipseView Fill="Transparent"
+                     HeightRequest="30"
+                     WidthRequest="30"
+                     Stroke="{DynamicResource Primary}"
+                     Margin="10,0,10,0"
+                     HorizontalAlignment="Center"
+                     StrokeThickness="1"/>
+
+                <Label Text="&#xE74C;" 
+                       FontSize="15"
+                       TextColor="{DynamicResource Primary}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontFamily="Segoe MDL2 Assets"/>
+
+                <Label Text="Widgets"
+                       Grid.Column="1"
+                       TextColor="{DynamicResource Primary}"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center"/>
+
+            </Grid>
+
+            <!--Widgets list-->
+            <ctrl:ItemsControl Margin="30,20,12,20" 
+                               ItemsSource="{Binding Widgets, Mode=OneWay}"
+                               ItemTemplate="{StaticResource WidgetTemplateSelector}">
+            </ctrl:ItemsControl>
+
+            <Grid BackgroundColor="{DynamicResource Primary}" HeightRequest=".5" VerticalOptions="Start"/>
+
+            <!--Delete option-->
+            <Grid Grid.Row="3" Margin="15,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <ctrl:EllipseView Fill="Transparent"
+                             HeightRequest="30"
+                             WidthRequest="30"
+                             Stroke="{DynamicResource Primary}"
+                             Margin="10,0,10,0"
+                             HorizontalAlignment="Center"
+                             StrokeThickness="1"/>
+
+                <Label Text="&#xE107;" 
+                       FontSize="15"
+                       TextColor="{DynamicResource Primary}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontFamily="Segoe MDL2 Assets"/>
+
+                <Label Text="Supprimer le compte"
+                       TextColor="{DynamicResource Primary}"
+                       Grid.Column="1"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center"/>
+
+                <Button Text="Supprimer"
+                        TextColor="RosyBrown"
+                        Grid.Column="2"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End"
+                        Command="{Binding ActionDelete}"
+                        Margin="0,0,20,0"/>
+            </Grid>
+
+            <Grid BackgroundColor="{DynamicResource Primary}" HeightRequest=".5" VerticalOptions="Start"/>
+
+        </StackLayout>
+    </ScrollView>
+</ContentView>

@@ -1,6 +1,16 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Views;
+using Miriot.Core.ViewModels;
+using Miriot.Model;
+using Miriot.Services;
+using Newtonsoft.Json;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
+using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -8,16 +18,14 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Resources;
-using Miriot.UWP;
 
-namespace Miriot
+namespace Miriot.Win10
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
-
         private static Locator _locator;
         public static Locator Locator
         {

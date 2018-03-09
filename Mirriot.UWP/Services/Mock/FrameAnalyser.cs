@@ -1,13 +1,11 @@
-﻿using Miriot.Core.Services.Interfaces;
-using Miriot.Utils;
+﻿using Miriot.Services;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Graphics.Imaging;
-using Windows.System.Threading;
 
-namespace Miriot.Services.Mock
+namespace Miriot.Win10.Services.Mock
 {
     public class FrameAnalyser<T> : IFrameAnalyzer<T>
     {
@@ -15,7 +13,7 @@ namespace Miriot.Services.Mock
         public event EventHandler<T> UsersIdentified;
         public event EventHandler NoFaceDetected;
 
-        public Func<SoftwareBitmap, Task<T>> AnalysisFunction { get; set; }
+        public Func<byte[], Task<T>> AnalysisFunction { get; set; }
 
         public Task AttachAsync(ICameraService camera)
         {
@@ -23,7 +21,7 @@ namespace Miriot.Services.Mock
             return Task.FromResult(true);
         }
 
-        public async void ProcessCurrentVideoFrame(ThreadPoolTimer timer)
+        public async void ProcessCurrentVideoFrame(Timer timer)
         {
             OnPreAnalysis?.Invoke(this, null);
 
@@ -32,7 +30,7 @@ namespace Miriot.Services.Mock
 
             var array = File.ReadAllBytes(uri);
             
-            var output = await AnalysisFunction(await array.ToSoftwareBitmap());
+            var output = await AnalysisFunction(array);
             UsersIdentified?.Invoke(this, output);
         }
 

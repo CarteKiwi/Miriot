@@ -1,12 +1,12 @@
 ﻿using System;
 using Miriot.Common;
 using Miriot.Common.Model;
-using Miriot.Controls;
+using Miriot.Win10.Controls;
 using Miriot.Core.ViewModels.Widgets;
 using System.Collections.Generic;
 using Miriot.Core;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public static class WidgetExtensions
     {
@@ -37,7 +37,6 @@ namespace Miriot.Utils
             {
                 case "PlaySong":
                     return typeof(WidgetDeezer);
-               
                 case "TurnOnTv":
                 case "FullScreenTv":
                 case "ReduceScreenTv":

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <DataTemplate x:Key="DefaultTemplate">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+          </Grid.RowDefinitions>
+
+          <Label Text="{Binding Title}"
+                 FontSize="16"
+                 VerticalOptions="Center"/>
+
+          <Switch Margin="0,0,0,0"
+                  HorizontalOptions="End"
+                  Grid.Column="1"
+                  IsToggled="{Binding IsActive, Mode=TwoWay}">
+          </Switch>
+
+          <StackLayout Orientation="Horizontal"
+                       Grid.Row="1"
+                       Grid.ColumnSpan="2"
+                       Margin="0,-10,0,0">
+
+            <Label Text="Position: "
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
+
+            <Picker BackgroundColor="Transparent"
+                    SelectedIndex="{Binding Position, Mode=TwoWay}"
+                    TextColor="{DynamicResource Primary}">
+              <Picker.Items>
+                <x:String>-</x:String>
+                <x:String>1</x:String>
+                <x:String>2</x:String>
+                <x:String>3</x:String>
+                <x:String>4</x:String>
+                <x:String>5</x:String>
+                <x:String>6</x:String>
+                <x:String>8</x:String>
+                <x:String>9</x:String>
+              </Picker.Items>
+            </Picker>
+          </StackLayout>
+
+          <StackLayout Orientation="Horizontal"
+                       Grid.Row="2"
+                       Grid.ColumnSpan="2"
+                       Margin="0,-10,0,0">
+
+            <Label Text="Affichage: "
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
+
+            <Picker BackgroundColor="Transparent"
+                    ItemsSource="{Binding States}"
+                    SelectedIndex="{Binding State, Mode=TwoWay, Converter={StaticResource IntToStateConverter}}"
+                    TextColor="{DynamicResource Primary}">
+            </Picker>
+          </StackLayout>
+
+          <Grid Margin="0,0,0,15"
+                IsVisible="{Binding IsActive, Mode=OneWay}"
+                Grid.Row="3"
+                Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--<ctrl:EllipseView HeightRequest="32" WidthRequest="32"
+                              StrokeThickness="1"
+                              Stroke="White">
+              <ctrl:EllipseView.Fill>
+                <ImageBrush ImageSource="{Binding User.Photo, 
+                      FallbackValue='ms-appx:///Assets/Square44x44Logo.scale-200.png',
+                      Converter={StaticResource ByteArrayToImageConverter}}"/>
+              </ctrl:EllipseView.Fill>
+            </ctrl:EllipseView>-->
+            
+            <Label Grid.Column="1"
+                   Grid.Row="0"
+                   Margin="5"
+                   Text="{Binding User.Name}"
+                   VerticalOptions="Center"
+                   FontSize="15"/>
+          </Grid>
+        </Grid>
+      </DataTemplate>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+</ContentPage>

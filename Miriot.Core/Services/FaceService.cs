@@ -36,7 +36,7 @@ namespace Miriot.Core.Services
         {
             if (_isInitialized) return;
 
-            var config = await _configurationService.GetKeysAsync();
+            var config = await _configurationService.GetKeysByProviderAsync("cs");
             _oxfordFaceKey = config["face"];
             _oxfordEmotionKey = config["emotion"];
 

@@ -1,19 +1,18 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Practices.ServiceLocation;
 using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Services;
-using Miriot.Utils;
-using Miriot.Views;
+using Miriot.Win10.Services;
+using Miriot.Win10.Views;
+using Windows.Media;
 
-namespace Miriot
+namespace Miriot.Win10
 {
     public class Locator
     {
         static Locator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            Cognitive.Bootstrap.Load();
 
             var navigationService = CreateNavigationService();
             SimpleIoc.Default.Register(() => navigationService);
@@ -27,17 +26,18 @@ namespace Miriot
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
 #else
             SimpleIoc.Default.Register<ISpeechService, SpeechService>();
-            SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, FrameAnalyser<ServiceResponse>>();
+            SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Utils.FrameAnalyser<ServiceResponse>>();
 #endif
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<IPlatformService, PlatformService>();
+            SimpleIoc.Default.Register<IBluetoothService, BluetoothService>();
         }
 
         private static INavigationService CreateNavigationService()
         {
             var navigationService = new NavigationService();
             navigationService.Configure(PageKeys.Main, typeof(MainPage));
-            navigationService.Configure(PageKeys.Settings, typeof(SettingsPage));
+            navigationService.Configure(PageKeys.CameraSettings, typeof(CameraSettingsPage));
 
             return navigationService;
         }

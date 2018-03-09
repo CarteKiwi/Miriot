@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      x:TypeArguments="viewModels:ProfileViewModel"
+                      xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
+                      xmlns:core="using:Miriot.Core.ViewModels.Widgets"
+                      xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+                      xmlns:sel="clr-namespace:Miriot.Mobile"
+                      xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
+                      xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
+                      x:Class="Miriot.Mobile.Views.ProfilePage"
+                      BackgroundColor="{DynamicResource BgColor}">
+    <ContentPage.Content>
+        <Grid>
+            <Image Source="{Binding User.Picture, Converter={StaticResource ByteArrayToImageConverter}}"
+                   HorizontalOptions="FillAndExpand"
+                   Aspect="AspectFill"
+                   VerticalOptions="Start"/>
+
+            <Grid VerticalOptions="FillAndExpand"
+                  RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <ctrl:AcrylicGrid TintColor="{DynamicResource Primary}"
+                                  RowSpacing="0"
+                                  BlurOpacity="0.6"
+                                  HorizontalOptions="FillAndExpand">
+                    <ctrl:AcrylicGrid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </ctrl:AcrylicGrid.RowDefinitions>
+
+                    <StackLayout Margin="15" 
+                                 HorizontalOptions="Center">
+                        <ctrl:EllipseView Image="{Binding User.Picture, Mode=OneWay}"
+                                  HeightRequest="80"
+                                  WidthRequest="80"
+                                  Stroke="White"
+                                  Margin="10"
+                                  HorizontalOptions="Center"
+                                  StrokeThickness="2"/>
+
+                        <Label Text="{Binding User.Name}"
+                               FontSize="Micro"
+                               TextColor="{DynamicResource BgColor}"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"/>
+                    </StackLayout>
+
+                    <Grid BackgroundColor="White" 
+                          Opacity="0.4"
+                          HeightRequest="1"
+                          VerticalOptions="End"/>
+
+                    <Grid Grid.Row="1"
+                          HorizontalOptions="FillAndExpand"
+                          VerticalOptions="FillAndExpand"
+                          BackgroundColor="White" Opacity="0.2"/>
+
+                    <Grid Grid.Row="1"
+                          VerticalOptions="End"
+                          HorizontalOptions="FillAndExpand"
+                          Padding="10">
+
+                        <Picker ItemsSource="{Binding Configurations}"
+                                ItemDisplayBinding="{Binding Name}" 
+                                BackgroundColor="Transparent"
+                                HorizontalOptions="Center"
+                                WidthRequest="300"
+                                TextColor="White"
+                                SelectedItem="{Binding SelectedConfiguration}">
+                        </Picker>
+
+                        <Label Text="&#xE74E;" 
+                               x:Name="SaveLabel"
+                               Margin="0,0,20,0"
+                               FontSize="20"
+                               TextColor="White"
+                               HorizontalOptions="End"
+                               VerticalOptions="Center"
+                               FontFamily="Segoe MDL2 Assets">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ActionSave}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+
+                </ctrl:AcrylicGrid>
+
+                <Grid Grid.Row="1"
+                      BackgroundColor="{DynamicResource BgColor}"
+                      HorizontalOptions="Fill">
+                    <base:SettingsView />
+                </Grid>
+            </Grid>
+
+            <!--Rename screen (displayed when HasNoConfiguration = true)-->
+            <Grid IsVisible="{Binding HasNoConfiguration}"
+                  VerticalOptions="FillAndExpand">
+                <Grid Opacity="1" BackgroundColor="{DynamicResource BgColor}"/>
+                <StackLayout VerticalOptions="FillAndExpand">
+
+                    <Image Source="Resources/mirror.png" 
+                           Margin="0,20,0,0"
+                           HeightRequest="230"
+                           HorizontalOptions="Center"/>
+
+                    <Label Text="{sel:LocalizedStrings GiveAName}"
+                           Font="Segoe UI"
+                           FontSize="Micro"
+                           TextColor="{DynamicResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="CenterAndExpand"/>
+
+                    <Editor Text="{Binding SelectedConfiguration.Name, Mode=TwoWay}"
+                            Margin="20"/>
+
+                    <Label Text="{sel:LocalizedStrings GiveANameMessage}"
+                           Font="Segoe UI"
+                           FontSize="Micro"
+                           TextColor="{DynamicResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="CenterAndExpand"/>
+                </StackLayout>
+
+                <Button Command="{Binding ActionEditName}" 
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="{DynamicResource BgColor}"
+                        HeightRequest="45"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="End"
+                        Text="Enregistrer"/>
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
+</base:BaseContentPage>

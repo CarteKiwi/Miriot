@@ -1,6 +1,6 @@
 ﻿using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,9 @@ using System.Linq;
 using System.Net.Http;
 using Windows.UI.Xaml.Controls;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetWeather : IWidgetBase
+    public sealed partial class WidgetWeather
     {
         private readonly string _key = "84bc189921c14c7a98fdea2a98aa11ba";
         private string _location = "paris";
@@ -30,7 +30,7 @@ namespace Miriot.Controls
 
         private void RetrieveData()
         {
-            _model.LoadInfos();
+            _model.Load();
         }
 
         private async void GetWeather()
@@ -106,12 +106,6 @@ namespace Miriot.Controls
                 ico = "A";
 
             PictoFont.Text = ico;
-        }
-
-        public override void SetPosition(int x, int y)
-        {
-            Grid.SetColumn(this, x);
-            Grid.SetRow(this, y);
         }
     }
 }

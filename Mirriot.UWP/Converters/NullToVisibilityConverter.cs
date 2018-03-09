@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace Miriot.Converters
+namespace Miriot.Win10.Converters
 {
     public class NullToVisibilityConverter : IValueConverter
     {

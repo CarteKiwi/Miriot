@@ -1,0 +1,28 @@
+﻿<forms:WindowsPage
+    x:Class="Miriot.Mobile.UWP.MainPage"
+    x:Name="page"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:forms="using:Xamarin.Forms.Platform.UWP"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Miriot.Mobile.UWP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Line HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       StrokeThickness="2"
+                       Stroke="Black"
+              X1="0"
+              X2="{Binding ActualWidth, ElementName=page}"
+                   Height="1"
+                       StrokeDashCap="Round"
+                       StrokeStartLineCap="Round"
+                       StrokeDashOffset="40"
+                       StrokeLineJoin="Round"
+                       StrokeDashArray="8"/>
+
+    </Grid>
+</forms:WindowsPage>

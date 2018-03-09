@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      x:TypeArguments="viewModels:ConnectViewModel"
+                      xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
+                      xmlns:core="using:Miriot.Core.ViewModels.Widgets"
+                      xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+                      xmlns:sel="clr-namespace:Miriot.Mobile"
+                      xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
+                      x:Class="Miriot.Mobile.Views.HomePage"
+                      BackgroundColor="{DynamicResource BgColor}">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand">
+
+            <RelativeLayout Margin="0,10,0,15" HorizontalOptions="Center">
+                <Image Source="Resources/mirror.png" 
+                       x:Name="Panda"
+                       HeightRequest="230"
+                       HorizontalOptions="Center"/>
+
+                <Grid RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Width,Factor=.7, Constant=0}"
+                      RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=Panda, Property=Height,Factor=.7, Constant=0}">
+                    <Image Source="Resources/badge_bg.png" 
+                           x:Name="Badge"
+                           HeightRequest="60"
+                           HorizontalOptions="Center"/>
+                    <Image Source="Resources/magnif.png" 
+                           x:Name="Magnif"
+                           HeightRequest="30"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"/>
+                </Grid>
+            </RelativeLayout>
+
+            <Label Text="{sel:LocalizedStrings DetectingMiriot}"
+                   Font="Segoe UI"
+                   FontSize="Small"
+                   TextColor="{DynamicResource Primary}"
+                   LineBreakMode="WordWrap"
+                   VerticalOptions="Start" 
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="{sel:LocalizedStrings SelectMiriot}"
+                   Font="Segoe UI"
+                   FontSize="Micro"
+                   TextColor="{DynamicResource Primary}"
+                   LineBreakMode="WordWrap"
+                   VerticalOptions="Start" 
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Grid VerticalOptions="StartAndExpand"
+                  IsVisible="{Binding HasAtLeastOneRemoteSystem, Converter={StaticResource InvertBoolConverter}}">
+                <Label Text="{sel:LocalizedStrings NoMirrorDetected}"
+                       Font="Segoe UI"
+                       FontSize="Micro"
+                       TextColor="{DynamicResource Primary}"
+                       VerticalOptions="Center"
+                       HorizontalOptions="CenterAndExpand"/>
+            </Grid>
+
+            <ListView x:Name="List" 
+                      Margin="0,20"
+                      HorizontalOptions="Fill"
+                      ItemsSource="{Binding RemoteSystems}"
+                      ItemSelected="RemoteSystemSelected">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout HorizontalOptions="Fill"
+                                             VerticalOptions="Center"
+                                             HeightRequest="50"
+                                             Orientation="Horizontal">
+                                    <Image Source="Resources/mirror_only.png"
+                                           Margin="0,2,5,0"
+                                           HeightRequest="35"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="EndAndExpand"/>
+                                    <Label Text="{Binding DisplayName}" TextColor="{DynamicResource Primary}" 
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="StartAndExpand"/>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackLayout Orientation="Vertical"
+                         Margin="20,0,20,20"
+                         HorizontalOptions="CenterAndExpand"
+                         IsVisible="{Binding HasTimedOut, Mode=OneWay}">
+                <Label Text="{Binding Message, Mode=OneWay}"
+                       Font="Segoe UI"
+                       FontSize="Micro"
+                       TextColor="{DynamicResource Primary}"
+                       LineBreakMode="WordWrap"
+                       VerticalOptions="Start" 
+                       HorizontalOptions="CenterAndExpand" />
+
+                <Label Text="{Binding MessageTimeout, Mode=OneWay}"
+                       Font="Segoe UI"
+                       FontSize="12"
+                       TextColor="{DynamicResource Primary}"
+                       LineBreakMode="WordWrap"
+                       VerticalOptions="Start" 
+                       HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
+
+            <Label Text="{Binding Message}"
+                   Font="Segoe UI"
+                   FontSize="Micro"
+                   TextColor="{DynamicResource Primary}"
+                   IsVisible="{Binding HasTimedOut, Mode=OneWay, Converter={StaticResource InvertBoolConverter}}"
+                   HorizontalOptions="CenterAndExpand"/>
+
+            <Button Command="{Binding ConnectCommand}" 
+                    IsEnabled="{Binding HasAtLeastOneRemoteSystem, Mode=OneWay}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource Accent}"
+                    HeightRequest="45"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    Text="Continuer"/>
+
+        </StackLayout>
+    </ContentPage.Content>
+</base:BaseContentPage>

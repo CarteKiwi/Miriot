@@ -1,5 +1,5 @@
 ﻿<Application
-    x:Class="Miriot.App"
+    x:Class="Miriot.Win10.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:pcl="using:Miriot.Core"
@@ -19,7 +19,7 @@
             <x:String x:Key="ida:ClientID">ca026d51-8d86-4f85-a697-7be9c0a86453</x:String>
             <!--<x:String x:Key="ida:ClientID">d0becb7a-3f4f-418c-a6ca-d9d39400478a</x:String>-->
             <x:String x:Key="ida:AADInstance">https://login.microsoftonline.com/</x:String>
-            <x:String x:Key="ida:RedirectUri">https://miriot.suismoi.fr/</x:String>
+            <x:String x:Key="ida:RedirectUri">https://Miriot.Win10.suismoi.fr/</x:String>
             <!-- Add your developer tenant domain here. -->
             <x:String x:Key="ida:Domain">cellenza.com</x:String>
             
