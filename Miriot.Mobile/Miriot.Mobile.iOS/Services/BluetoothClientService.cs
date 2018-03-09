@@ -1,5 +1,6 @@
 ﻿using CoreBluetooth;
 using CoreFoundation;
+using ExternalAccessory;
 using Foundation;
 using Miriot.Common;
 using Miriot.Model;
@@ -41,12 +42,18 @@ namespace Miriot.iOS.Services
 
         public Task InitializeAsync()
         {
-            myDel = new MySimpleCBCentralManagerDelegate();
-            _manager = new CBCentralManager(myDel, DispatchQueue.CurrentQueue);
-            myDel.Discovered = (s) =>
+            EAAccessoryManager.SharedAccessoryManager.ShowBluetoothAccessoryPicker(null, null);
+
+            var devices = EAAccessoryManager.SharedAccessoryManager.ConnectedAccessories;
+
+            foreach (var d in devices)
             {
-                Discovered?.Invoke(s);
-            };
+                Discovered?.Invoke(new RomeRemoteSystem(d)
+                {
+                    DisplayName = d.Name,
+                    Id = d.ConnectionID.ToString()
+                });
+            }
 
             return Task.FromResult(false);
         }
@@ -59,16 +66,6 @@ namespace Miriot.iOS.Services
             {
                 _connectedPeripheral.WriteValue(new NSData("COUCOU", NSDataBase64DecodingOptions.None), null);
             }
-        }
-
-        private void _manager_DiscoveredPeripheral(object sender, CBDiscoveredPeripheralEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Peripheral.Name))
-                Discovered?.Invoke(new RomeRemoteSystem(e.Peripheral)
-                {
-                    DisplayName = e.Peripheral.Name,
-                    Id = e.Peripheral.Identifier.ToString()
-                });
         }
     }
 
