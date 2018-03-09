@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:conv="using:Miriot.Converters">
+    xmlns:conv="using:Miriot.Win10.Converters">
 
     <!--Converters-->
     <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
@@ -12,6 +12,7 @@
     <conv:WidgetStateToBoolConverter x:Key="WidgetStateToBoolConverter"/>
     <conv:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
     <conv:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
+    <conv:DoubleInvertConverter x:Key="DoubleInvertConverter"/>
 
     <FontFamily x:Key="WeatherFont">/Fonts/WeatherTime.ttf#WeatherTime</FontFamily>
     

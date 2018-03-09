@@ -1,12 +1,11 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.Twitter;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using System;
-using System.Linq;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using Windows.Security.Credentials;
 using TwitterUser = Miriot.Common.Model.Widgets.Twitter.TwitterUser;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class TwitterWrapperService : ITwitterService
     {
@@ -20,7 +19,7 @@ namespace Miriot.Services
         public void Initialize()
         {
             // Initialize service
-            TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://miriot.suismoi.fr");
+            TwitterService.Instance.Initialize("n4J84SiGTLXHFh7F5mex5PGLZ", "8ht8N38Sh8hrNYgww3XRYS8X6gIcoywFoJYDcAoBoSfZXaKibt", "https://Miriot.Win10.suismoi.fr");
 
             IsInitialized = true;
         }
@@ -33,7 +32,14 @@ namespace Miriot.Services
 
         public void Logout()
         {
-            TwitterService.Instance.Logout();
+            try
+            {
+                TwitterService.Instance.Logout();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         public async Task<TwitterUser> GetUserAsync()

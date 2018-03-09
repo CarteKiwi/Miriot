@@ -1,19 +1,15 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.ProjectOxford.Face;
 using Miriot.Common;
 using Miriot.Common.Model;
 using Miriot.Core.Messages;
 using Miriot.Core.Services.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
@@ -21,6 +17,7 @@ using Windows.Networking.Connectivity;
 using Windows.Storage.Streams;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
+using Miriot.Core.ViewModels.Widgets;
 
 namespace Miriot.Core.ViewModels
 {
@@ -35,11 +32,12 @@ namespace Miriot.Core.ViewModels
         private readonly IFaceService _faceService;
         private readonly IVisionService _visionService;
         private readonly ISpeechService _speechService;
+        private readonly ILuisService _luisService;
         private string _title;
         private string _subTitle;
         private bool _isListeningYesNo;
         private User _user;
-        private ObservableCollection<Widget> _widgets;
+        private ObservableCollection<WidgetModel> _widgets;
         private bool _isInternetAvailable;
         private States _currentState;
         private CancellationTokenSource _cancellationToken;
@@ -49,6 +47,7 @@ namespace Miriot.Core.ViewModels
         private SemaphoreSlim _toothbrushingSemaphore;
         private bool _isToothbrushing;
         private bool _isListening;
+        private IRandomAccessStream _speakStream;
         #endregion
 
         #region Commands
@@ -57,14 +56,15 @@ namespace Miriot.Core.ViewModels
         public RelayCommand<States> StateChangedCommand { get; private set; }
         public RelayCommand<string> ActionNavigateTo { get; private set; }
         public RelayCommand ResetCommand { get; private set; }
+        public RelayCommand ToggleLedsCommand { get; private set; }
         #endregion
 
-        private IRandomAccessStream _speakStream;
+        public Action<ActionMessage> ActionCallback;
 
         public IRandomAccessStream SpeakStream
         {
             get => _speakStream;
-            set
+            private set
             {
                 Set(() => SpeakStream, ref _speakStream, value);
             }
@@ -91,7 +91,7 @@ namespace Miriot.Core.ViewModels
             }
         }
 
-        public ObservableCollection<Widget> Widgets
+        public ObservableCollection<WidgetModel> Widgets
         {
             get => _widgets;
             private set => Set(() => Widgets, ref _widgets, value);
@@ -148,8 +148,10 @@ namespace Miriot.Core.ViewModels
             IFrameAnalyzer<ServiceResponse> frameService,
             IFaceService faceService,
             IVisionService visionService,
-            ISpeechService speechService)
+            ISpeechService speechService,
+            ILuisService luisService)
         {
+            _luisService = luisService;
             _fileService = fileService;
             _platformService = platformService;
             _dispatcherService = dispatcherService;
@@ -290,7 +292,7 @@ namespace Miriot.Core.ViewModels
                 IsListening = false;
 
                 // Appel au service LUIS
-                var res = await AskLuisAsync(text);
+                var res = await _luisService.AskLuisAsync(text);
 
                 // Récupération de la première action (intent avec Score le plus élevé)
                 var intent = res?.Intents?.OrderByDescending(e => e.Score).FirstOrDefault();
@@ -306,7 +308,7 @@ namespace Miriot.Core.ViewModels
                 {
                     if (intent != null)
                     {
-                        Messenger.Default.Send(new ActionMessage(intent));
+                        ActionCallback.Invoke(new ActionMessage(intent));
                     }
 
                     SetMessage(string.Empty, string.Empty);
@@ -316,25 +318,6 @@ namespace Miriot.Core.ViewModels
             IsLoading = false;
         }
 
-        private async Task<LuisResponse> AskLuisAsync(string words)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://api.projectoxford.ai/luis/v1/");
-                    var res = await client.GetAsync($"application?id=e2fa615c-2c3a-4f2d-a82b-5151223d4cca&subscription-key=48511b6fad9a4cb7acf6e3e583d95efd&q={words}");
-                    var c = await res.Content.ReadAsStringAsync();
-
-                    return JsonConvert.DeserializeObject<LuisResponse>(c);
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public void Repeat()
         {
             RepeatPromptForUnknownFace();
@@ -342,7 +325,7 @@ namespace Miriot.Core.ViewModels
 
         private void SetNewProfileMessage(IntentResponse intent)
         {
-            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
+            var action = intent.Actions.First(e => e.Triggered);
 
             string name = string.Empty;
 
@@ -458,11 +441,11 @@ namespace Miriot.Core.ViewModels
 
         private async Task LoadWidgets(IEnumerable<Widget> widgets)
         {
-            Widgets = new ObservableCollection<Widget>();
+            Widgets = new ObservableCollection<WidgetModel>();
 
             foreach (var widget in widgets)
             {
-                Widgets.Add(widget);
+                Widgets.Add(widget.ToModel());
 
                 // Wait 100ms to create a better transition effect
                 await Task.Delay(100, _cancellationToken.Token);

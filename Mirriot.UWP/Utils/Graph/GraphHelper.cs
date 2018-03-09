@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace Miriot.Utils.Graph
+namespace Miriot.Win10.Utils.Graph
 {
     public class GraphHelper
     {

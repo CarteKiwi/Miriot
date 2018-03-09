@@ -4,7 +4,6 @@ using Miriot.Common.Model.Widgets;
 using Miriot.Core.Services.Interfaces;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace Miriot.Core.ViewModels.Widgets
         public string Token
         {
             get { return _token; }
-            set { Set(() => Token, ref _token, value); }
+            set { Set(ref _token, value); }
         }
 
         public GraphUser User
@@ -30,9 +29,12 @@ namespace Miriot.Core.ViewModels.Widgets
             set => Set(ref _user, value);
         }
 
-        public CalendarModel()
+        public override string Title => "Calendrier & mails";
+
+        public override WidgetType Type => WidgetType.Calendar;
+
+        public CalendarModel(Widget widget) : base(widget)
         {
-            Title = "Calendrier & mails";
         }
 
         public override WidgetInfo GetInfos()
@@ -45,9 +47,9 @@ namespace Miriot.Core.ViewModels.Widgets
             return new OAuthWidgetInfo { Token = cred.Password, Username = temp.UserName };
         }
 
-        public override async Task LoadInfos(List<string> infos)
+        public override async Task LoadInfos()
         {
-            var info = infos?.FirstOrDefault();
+            var info = _infos?.FirstOrDefault();
             if (string.IsNullOrEmpty(info) || info == "null") return;
 
             var cred = JsonConvert.DeserializeObject<OAuthWidgetInfo>(info);
@@ -74,9 +76,16 @@ namespace Miriot.Core.ViewModels.Widgets
         public override async void OnDisabled()
         {
             User = null;
-            var auth = ServiceLocator.Current.GetInstance<IGraphService>();
-            await auth.LogoutAsync();
-            base.OnDisabled();
+
+            try
+            {
+                var auth = ServiceLocator.Current.GetInstance<IGraphService>();
+                await auth.LogoutAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private async Task Initialize()

@@ -1,39 +1,36 @@
-﻿using Miriot.UWP;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Views;
+using Miriot.Core.ViewModels;
+using Miriot.Model;
+using Miriot.Services;
+using Miriot.Win10.Views;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Resources;
 
-namespace Miriot
+namespace Miriot.Win10
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
-
         private static Locator _locator;
         public static Locator Locator
         {
-            get
-            {
-                return _locator ?? (_locator = new Locator());
-            }
+            get => _locator ?? (_locator = new Locator());
 
             set { _locator = value; }
         }
@@ -44,8 +41,8 @@ namespace Miriot
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
         }
 
         /// <summary>
@@ -55,11 +52,10 @@ namespace Miriot
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Windows.UI.Xaml.Resources.CustomXamlResourceLoader.Current = new LocalizedStrings();
+            CustomXamlResourceLoader.Current = new LocalizedStrings();
 
             Locator = new Locator();
             
-
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.BackgroundColor = Colors.Black;
             titleBar.ForegroundColor = Colors.Black;
@@ -101,7 +97,7 @@ namespace Miriot
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(WifiSettingsPage), e.Arguments);
             }
             // Ensure the current window is active
             Window.Current.Activate();

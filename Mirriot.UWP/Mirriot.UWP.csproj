@@ -7,12 +7,12 @@
     <ProjectGuid>{EFC31295-A4CE-426C-AE3C-7E1C4999A4BD}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Miriot</RootNamespace>
-    <AssemblyName>Miriot</AssemblyName>
+    <RootNamespace>Miriot.Win10</RootNamespace>
+    <AssemblyName>Miriot.Win10</AssemblyName>
     <DefaultLanguage>fr-FR</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -100,8 +100,6 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="Connected Services\Office365\ConnectedService.json" />
-    <None Include="Miriot.pfx" />
-    <None Include="Mirriot.UWP_TemporaryKey.pfx" />
     <Content Include="Assets\CircleOpacityMask.png" />
     <Content Include="Assets\cross.png" />
     <Content Include="Assets\Horoscope\Aries.png" />
@@ -116,8 +114,52 @@
     <Content Include="Assets\Horoscope\Capricorn.png" />
     <Content Include="Assets\Horoscope\Aquarius.png" />
     <Content Include="Assets\Horoscope\Pisces.png" />
+    <Content Include="Assets\LargeTile.scale-100.png" />
+    <Content Include="Assets\LargeTile.scale-125.png" />
+    <Content Include="Assets\LargeTile.scale-150.png" />
+    <Content Include="Assets\LargeTile.scale-200.png" />
+    <Content Include="Assets\LargeTile.scale-400.png" />
+    <Content Include="Assets\miriot_logo.png" />
+    <Content Include="Assets\miriot_logo_bw.png" />
+    <Content Include="Assets\miriot_remote.png" />
+    <Content Include="Assets\SmallTile.scale-100.png" />
+    <Content Include="Assets\SmallTile.scale-125.png" />
+    <Content Include="Assets\SmallTile.scale-150.png" />
+    <Content Include="Assets\SmallTile.scale-200.png" />
+    <Content Include="Assets\SmallTile.scale-400.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-125.png" />
+    <Content Include="Assets\SplashScreen.scale-150.png" />
+    <Content Include="Assets\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\StoreLogo.scale-125.png" />
+    <Content Include="Assets\StoreLogo.scale-150.png" />
+    <Content Include="Assets\StoreLogo.scale-200.png" />
+    <Content Include="Assets\StoreLogo.scale-400.png" />
     <Content Include="Assets\TwitterLogo.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\wifi.png" />
+    <Content Include="Configuration.xml" />
     <Content Include="Controls\Widgets\Templates\HoroscopeTemplate.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -134,11 +176,16 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\BluetoothService.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Controls\CameraControl.xaml.cs">
       <DependentUpon>CameraControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\IotLoader.xaml.cs">
       <DependentUpon>IotLoader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Lights.xaml.cs">
+      <DependentUpon>Lights.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Widgets\TwitterTemplateSelector.cs" />
     <Compile Include="Controls\Widgets\WidgetTwitter.xaml.cs">
@@ -168,6 +215,7 @@
     <Compile Include="Controls\Widgets\WidgetSncf.xaml.cs">
       <DependentUpon>WidgetSncf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\DoubleInvertConverter.cs" />
     <Compile Include="Converters\RelativeTimeConverter.cs" />
     <Compile Include="Converters\ByteArrayToImageConverter.cs" />
     <Compile Include="Converters\BoolInvertConverter.cs" />
@@ -182,10 +230,13 @@
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\Mock\FrameAnalyser.cs" />
+    <Compile Include="Services\Mock\FakeSpeechService.cs" />
     <Compile Include="Services\PlatformService.cs" />
+    <Compile Include="Services\SecurityService.cs" />
     <Compile Include="Services\SpeechService.cs" />
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
     <Compile Include="Services\TwitterWrapperService.cs" />
+    <Compile Include="Services\WifiService.cs" />
     <Compile Include="Utils\ColorBloomTransitionHelper.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />
@@ -209,6 +260,16 @@
     <Compile Include="Controls\Widgets\WidgetTime.xaml.cs">
       <DependentUpon>WidgetTime.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\WidgetExtensions.cs" />
+    <Compile Include="Views\WifiSettingsPage.xaml.cs">
+      <DependentUpon>WifiSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CameraSettingsPage.xaml.cs">
+      <DependentUpon>CameraSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FirstLaunch.xaml.cs">
+      <DependentUpon>FirstLaunch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -216,16 +277,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\OAuth2AccessToken.cs" />
     <Compile Include="Utils\OAuth2Helper.cs" />
-    <Compile Include="Views\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WidgetDataTemplateSelector.cs" />
+    <Compile Include="WiFiNetworkDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="Mirriot_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Avengers\1.png" />
@@ -261,7 +319,6 @@
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +331,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\IotLoader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Lights.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -333,43 +394,57 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\WifiSettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CameraSettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FirstLaunch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Miriot.Common\Miriot.Common.csproj">
-      <Project>{342667a9-e42e-4ec7-ba7d-7cd0996d2472}</Project>
-      <Name>Miriot.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Miriot.Core\Miriot.Core.csproj">
-      <Project>{de42a784-5e55-4d6c-9e41-55eee811ca57}</Project>
-      <Name>Miriot.Core</Name>
+    <ProjectReference Include="..\Miriot.Cognitive\Miriot.Cognitive.csproj">
+      <Project>{56693705-0d1f-4cec-b492-57465ce1af84}</Project>
+      <Name>Miriot.Cognitive</Name>
     </ProjectReference>
     <ProjectReference Include="..\Miriot.JavascriptHandler\Miriot.JavascriptHandler.csproj">
       <Project>{f264ae09-e519-4f11-b7fc-b2dcaf065efd}</Project>
       <Name>Miriot.JavascriptHandler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Miriot\Miriot.csproj">
+      <Project>{b89dc383-614a-49b2-a745-b7681441e4b7}</Project>
+      <Name>Miriot</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsDesktop, Version=10.0.14393.0">
-      <Name>Windows Desktop Extensions for the UWP</Name>
+    <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
+      <Name>Windows Desktop Extensions for the UWP %28WindowsDesktop, Version=10.0.16299.0%29</Name>
     </SDKReference>
-    <SDKReference Include="WindowsIoT, Version=10.0.14393.0">
-      <Name>Windows IoT Extensions for the UWP</Name>
+    <SDKReference Include="WindowsIoT, Version=10.0.16299.0">
+      <Name>Windows IoT Extensions for the UWP %28WindowsIoT, Version=10.0.16299.0%29</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
-      <Name>Windows Mobile Extensions for the UWP</Name>
+    <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
+      <Name>Windows Mobile Extensions for the UWP %28WindowsMobile, Version=10.0.16299.0%29</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ChakraBridge">
-      <HintPath>..\..\..\JsBridge\dist\ChakraBridge.winmd</HintPath>
+    <Reference Include="Microsoft.OneDrive.Sdk.Authentication.WinRT">
+      <HintPath>..\Libs\Microsoft.OneDrive.Sdk.Authentication.WinRT.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OneDrive.Sdk.Authentication.WinStore">
+      <HintPath>..\Libs\Microsoft.OneDrive.Sdk.Authentication.WinStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Toolkit.Services">
+      <HintPath>..\Libs\Microsoft.Toolkit.Services.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Toolkit.Uwp.Services, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -384,19 +459,19 @@
       <Version>3.1.3</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.4.9.5</Version>
+      <Version>1.6.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Azure.ActiveDirectory.GraphClient">
       <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Graph">
-      <Version>1.4.0</Version>
+      <Version>1.6.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
-      <Version>3.14.0</Version>
+      <Version>3.17.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.1.0</Version>
+      <Version>6.0.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Office365.Discovery">
       <Version>1.0.22</Version>
@@ -405,16 +480,19 @@
       <Version>2.0.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ProjectOxford.Face">
-      <Version>1.2.1.2</Version>
+      <Version>1.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp">
-      <Version>1.4.1</Version>
+      <Version>2.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Connectivity">
+      <Version>2.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Animations">
-      <Version>1.4.1</Version>
+      <Version>2.1.0</Version>
     </PackageReference>
-    <PackageReference Include="MvvmLightLibs">
-      <Version>5.4.0-alpha</Version>
+    <PackageReference Include="MvvmLightLibsStd10">
+      <Version>5.4.0.1-alpha</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
@@ -423,13 +501,13 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
-      <Version>1.20.0</Version>
+      <Version>1.21.0</Version>
     </PackageReference>
     <PackageReference Include="winrtxamltoolkit">
-      <Version>2.0.0</Version>
+      <Version>2.3.0</Version>
     </PackageReference>
     <PackageReference Include="XamlAnimatedGif">
-      <Version>1.1.6</Version>
+      <Version>1.1.10</Version>
     </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
@@ -451,7 +529,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Mock|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\ARM\Mock\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;CODE_ANALYSIS;MOCK</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -464,7 +542,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Mock|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Mock\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;CODE_ANALYSIS;MOCK</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -475,10 +553,11 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Miriot.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

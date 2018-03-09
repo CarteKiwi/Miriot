@@ -2,7 +2,7 @@
 using Windows.UI.Xaml.Data;
 using Miriot.Common;
 
-namespace Miriot.Converters
+namespace Miriot.Win10.Converters
 {
     public class StateToBoolConverter : IValueConverter
     {

@@ -20,13 +20,6 @@ namespace Miriot.Agent
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             _deferral = taskInstance.GetDeferral();
-            //
-            // TODO: Insert code to start one or more asynchronous methods using the
-            //       await keyword, for example:
-            //
-            // await ExampleMethodAsync();
-            //
-
 
             //var sms = new SmsMessageReceivedTrigger(new SmsFilterRules(SmsFilterActionType.Accept));
             //SmsMessageRegistration s = SmsMessageRegistration.Register("1", new SmsFilterRules(SmsFilterActionType.Accept));

@@ -1,8 +1,8 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "Microsoft.ProjectOxford.Common": "1.0.308",
-    "Microsoft.ProjectOxford.Vision": "1.0.370",
+    "Microsoft.ProjectOxford.Common": "1.0.324",
+    "Microsoft.ProjectOxford.Vision": "1.0.393",
     "MvvmLightLibs": "5.4.0-alpha"
   },
   "frameworks": {

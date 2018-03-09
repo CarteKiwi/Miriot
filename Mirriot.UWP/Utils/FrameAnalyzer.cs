@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Miriot.Services;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -7,9 +8,8 @@ using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.FaceAnalysis;
 using Windows.System.Threading;
-using Miriot.Core.Services.Interfaces;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public class FrameAnalyser<T> : IFrameAnalyzer<T>
     {
@@ -18,13 +18,13 @@ namespace Miriot.Utils
         public event EventHandler<T> UsersIdentified;
         public event EventHandler NoFaceDetected;
 
-        private FaceTracker _faceTracker;
+        private FaceDetector _faceDetector;
         private ThreadPoolTimer _frameProcessingTimer;
         private readonly SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         private ICameraService _camera;
         private int _detectedFacesInLastFrame;
 
-        public Func<SoftwareBitmap, Task<T>> AnalysisFunction { get; set; }
+        public Func<byte[], Task<T>> AnalysisFunction { get; set; }
 
         public FrameAnalyser(IFileService fileService)
         {
@@ -34,8 +34,10 @@ namespace Miriot.Utils
         public async Task AttachAsync(ICameraService camera)
         {
             _camera = camera;
-            _faceTracker = await FaceTracker.CreateAsync();
+            _faceDetector = await FaceDetector.CreateAsync();
+
             var timerInterval = TimeSpan.FromMilliseconds(300);
+
             _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
         }
 
@@ -46,13 +48,15 @@ namespace Miriot.Utils
                 return;
             }
 
-            VideoFrame currentFrame = await GetVideoFrameSafe();
+            var latestFrame = await _camera.GetLatestFrame();
+
+            SoftwareBitmap currentFrame = latestFrame as SoftwareBitmap;
 
             // Use FaceDetector.GetSupportedBitmapPixelFormats and IsBitmapPixelFormatSupported to dynamically
             // determine supported formats
             const BitmapPixelFormat faceDetectionPixelFormat = BitmapPixelFormat.Nv12;
 
-            if (currentFrame == null || currentFrame.SoftwareBitmap.BitmapPixelFormat != faceDetectionPixelFormat)
+            if (currentFrame == null || currentFrame.BitmapPixelFormat != faceDetectionPixelFormat)
             {
                 _frameProcessingSemaphore.Release();
                 return;
@@ -60,7 +64,7 @@ namespace Miriot.Utils
 
             try
             {
-                IList<DetectedFace> detectedFaces = await _faceTracker.ProcessNextFrameAsync(currentFrame);
+                IList<DetectedFace> detectedFaces = await _faceDetector.DetectFacesAsync(currentFrame);
 
                 if (detectedFaces.Count == 0)
                 {
@@ -70,7 +74,8 @@ namespace Miriot.Utils
                 {
                     OnPreAnalysis?.Invoke(this, null);
 
-                    var output = await AnalysisFunction(currentFrame.SoftwareBitmap);
+                    var bytes = await _camera.GetEncodedBytesAsync(currentFrame);
+                    var output = await AnalysisFunction(bytes);// currentFrame.SoftwareBitmap.ToByteArray());
                     UsersIdentified?.Invoke(this, output);
                 }
 
@@ -89,29 +94,17 @@ namespace Miriot.Utils
             currentFrame.Dispose();
         }
 
-        private async Task<VideoFrame> GetVideoFrameSafe()
-        {
-            try
-            {
-                return await _camera.GetLatestFrame();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return null;
-            }
-        }
-
         public void Cleanup()
         {
-            _frameProcessingTimer.Cancel();
             _frameProcessingTimer = null;
         }
 
         public async Task<byte[]> GetFrame()
         {
-            var frame = await GetVideoFrameSafe();
-            return await _fileService.EncodedBytes(frame?.SoftwareBitmap);
+            SoftwareBitmap frame = await _camera.GetLatestFrame() as SoftwareBitmap;
+            var bytes = await _camera.GetEncodedBytesAsync(frame);
+            frame.Dispose();
+            return bytes;
         }
     }
 }

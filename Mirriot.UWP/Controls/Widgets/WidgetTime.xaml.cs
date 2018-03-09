@@ -1,15 +1,15 @@
-﻿using Miriot.Common.Model;
+﻿using Miriot.Core.ViewModels.Widgets;
 using System;
 using System.Globalization;
 using Windows.UI.Xaml;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetTime
     {
         private bool _secondDisplayed;
 
-        public WidgetTime(Widget widget) : base(widget)
+        public WidgetTime(TimeModel widget) : base(widget)
         {
             InitializeComponent();
 

@@ -82,7 +82,9 @@
                StrokeThickness="1"
                Stroke="White">
         <Ellipse.Fill>
-          <ImageBrush ImageSource="{Binding User.Photo}"/>
+          <ImageBrush ImageSource="{Binding User.Photo, 
+                      FallbackValue='ms-appx:///Assets/Square44x44Logo.scale-200.png',
+                      Converter={StaticResource ByteArrayToImageConverter}}"/>
         </Ellipse.Fill>
       </Ellipse>
       <TextBlock Grid.Column="1"

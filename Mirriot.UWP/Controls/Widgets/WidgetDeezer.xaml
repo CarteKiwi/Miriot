@@ -1,10 +1,10 @@
 ﻿<controls:WidgetBase
-    x:Class="Miriot.Controls.WidgetDeezer"
+    x:Class="Miriot.Win10.Controls.WidgetDeezer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Miriot.Controls"
+    xmlns:controls="using:Miriot.Win10.Controls"
     mc:Ignorable="d"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"

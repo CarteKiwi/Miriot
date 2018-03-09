@@ -6,19 +6,23 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
+using Miriot.Common;
+using Miriot.Core.ViewModels.Widgets;
+using Miriot.Common.Model.Widgets.Deezer;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetDeezer : IWidgetExclusive
+    public sealed partial class WidgetDeezer : IWidgetAction, IWidgetExclusive
     {
+        private bool _isPlaying;
         private readonly Random _rnd = new Random();
 
         public bool IsFullscreen { get; set; }
 
         public bool IsExclusive { get; set; }
 
-        public WidgetDeezer(Widget widget) : base(widget)
+        public WidgetDeezer(DeezerModel widget) : base(widget)
         {
             InitializeComponent();
             IsExclusive = true;
@@ -26,7 +30,13 @@ namespace Miriot.Controls
 
         public async Task StopAsync()
         {
+            _isPlaying = false;
             //await Browser.InvokeScriptAsync("Stop", null);
+        }
+
+        public async void DoAction(LuisResponse luis)
+        {
+            await FindTrackAsync(luis.Entities.OrderByDescending(e => e.Score).FirstOrDefault().Entity);
         }
 
         public async Task FindTrackAsync(string search)
@@ -64,6 +74,10 @@ namespace Miriot.Controls
 
         public async Task Play(DeezerTrack track)
         {
+            if (_isPlaying)
+                await StopAsync();
+
+            _isPlaying = true;
             var path = track?.album?.cover_medium;
 
             if (path == null)
@@ -81,52 +95,5 @@ namespace Miriot.Controls
             Title.Text = track.title;
             ArtworkImg.ImageSource = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
         }
-    }
-
-    public class DeezerResponse
-    {
-        public DeezerTrack[] data { get; set; }
-    }
-
-    public class DeezerTrack
-    {
-        public string id { get; set; }
-        public bool readable { get; set; }
-        public string title { get; set; }
-        public string title_short { get; set; }
-        public string title_version { get; set; }
-        public string link { get; set; }
-        public string duration { get; set; }
-        public string rank { get; set; }
-        public bool explicit_lyrics { get; set; }
-        public string preview { get; set; }
-        public Artist artist { get; set; }
-        public Album album { get; set; }
-        public string type { get; set; }
-    }
-
-    public class Artist
-    {
-        public string id { get; set; }
-        public string name { get; set; }
-        public string link { get; set; }
-        public string picture { get; set; }
-        public string picture_small { get; set; }
-        public string picture_medium { get; set; }
-        public string picture_big { get; set; }
-        public string tracklist { get; set; }
-        public string type { get; set; }
-    }
-
-    public class Album
-    {
-        public string id { get; set; }
-        public string title { get; set; }
-        public string cover { get; set; }
-        public string cover_small { get; set; }
-        public string cover_medium { get; set; }
-        public string cover_big { get; set; }
-        public string tracklist { get; set; }
-        public string type { get; set; }
     }
 }

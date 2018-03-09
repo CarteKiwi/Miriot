@@ -4,7 +4,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.UI.Xaml.Data;
 
-namespace Miriot.Converters
+namespace Miriot.Win10.Converters
 {
     /// <summary>
     /// Time converter to display elapsed time relatively to the present.

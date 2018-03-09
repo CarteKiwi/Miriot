@@ -1,4 +1,5 @@
 ﻿using Miriot.Common.Model;
+using Miriot.Core.ViewModels.Widgets;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetSncf
     {
@@ -17,11 +18,11 @@ namespace Miriot.Controls
         private DateTime? _nextDepartureDate;
         private bool _isBusy;
 
-        public WidgetSncf(Widget widget) : base(widget)
+        public WidgetSncf(SncfModel widget) : base(widget)
         {
             InitializeComponent();
 
-            DispatcherTimer timer = new DispatcherTimer {Interval = new TimeSpan(1000)};
+            DispatcherTimer timer = new DispatcherTimer { Interval = new TimeSpan(1000) };
             timer.Tick += Timer_Tick;
             timer.Start();
         }
@@ -46,6 +47,12 @@ namespace Miriot.Controls
                     var response = await client.GetAsync("coverage/sncf/stop_areas/stop_area:" + gareId + "/departures?datetime=" + DateTime.Now.ToUniversalTime());
                     var r = response.IsSuccessStatusCode ? (await response.Content.ReadAsStringAsync()) : null;
 
+                    if(r == null)
+                    {
+                        Debug.WriteLine("Widget Sncf: " + response.ReasonPhrase);
+                        return;
+                    }
+
                     var stopAsnieres = JsonConvert.DeserializeObject<SncfResponse>(r);
                     var trainToParis = stopAsnieres.departures.Where(e => e.display_informations.direction.Contains("Paris")).Take(2);
 
@@ -58,7 +65,7 @@ namespace Miriot.Controls
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Widget Sncf:" + ex.Message);
+                Debug.WriteLine("Widget Sncf: " + ex.Message);
             }
 
             _isBusy = false;

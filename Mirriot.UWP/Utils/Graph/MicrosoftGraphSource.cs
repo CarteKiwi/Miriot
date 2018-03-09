@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Graph;
-using Miriot.Controls;
+using Miriot.Win10.Controls;
 
-namespace Miriot.Utils.Graph
+namespace Miriot.Win10.Utils.Graph
 {
     public class MicrosoftGraphSource<T> : IIncrementalSource<T>
     {

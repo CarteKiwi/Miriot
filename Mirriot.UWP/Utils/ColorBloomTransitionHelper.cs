@@ -6,9 +6,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using Miriot.Utils.ImageLoader;
+using Miriot.Win10.Utils.ImageLoader;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     /// <summary>
     /// A helper class encapsulating the function and visuals for a Color Bloom transition animation.

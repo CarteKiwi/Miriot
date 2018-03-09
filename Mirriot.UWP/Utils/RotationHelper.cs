@@ -2,7 +2,7 @@
 using Windows.Graphics.Display;
 using Windows.Storage.FileProperties;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public class RotationHelper
     {

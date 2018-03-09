@@ -1,4 +1,5 @@
-﻿using Miriot.Utils;
+﻿using Miriot.Core.ViewModels.Widgets;
+using Miriot.Win10.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,16 +10,14 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
-using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetFitbit : IWidgetBase
+    public sealed partial class WidgetFitbit
     {
         public OAuth2AccessToken AccessToken;
 
-        public WidgetFitbit(Widget widget) : base(widget)
+        public WidgetFitbit(FitbitModel widget) : base(widget)
         {
             InitializeComponent();
             Load();
@@ -28,7 +27,7 @@ namespace Miriot.Controls
         {
             try
             {
-                OAuth2Helper authenticator = new OAuth2Helper("227H9T", "74e4a047fce979dd36a0edbd626c3939", "http://miriot.suismoi.fr");
+                OAuth2Helper authenticator = new OAuth2Helper("227H9T", "74e4a047fce979dd36a0edbd626c3939", "http://Miriot.suismoi.fr");
                 string[] scopes = new[] { "profile", "weight" };
 
                 string authUrl = authenticator.GenerateAuthUrl(scopes, null);
@@ -104,14 +103,6 @@ namespace Miriot.Controls
                 return w;
             }
         }
-
-        public void SetPosition(int x, int y)
-        {
-            Grid.SetColumn(this, x);
-            Grid.SetRow(this, y);
-        }
-
-        public Widget OriginalWidget { get; set; }
     }
 
     public class Weights

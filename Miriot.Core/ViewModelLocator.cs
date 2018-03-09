@@ -12,6 +12,7 @@ namespace Miriot.Core
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
+            SimpleIoc.Default.Register<ILuisService, LuisService>();
             SimpleIoc.Default.Register<IFaceService, FaceService>();
             SimpleIoc.Default.Register<IVisionService, VisionService>();
 

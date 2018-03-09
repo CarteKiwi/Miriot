@@ -1,6 +1,8 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using GalaSoft.MvvmLight.Ioc;
 using Miriot.Common;
+using Miriot.Services;
 using Miriot.Core.ViewModels;
+using Miriot.Core.ViewModels.Widgets;
 using Miriot.JavascriptHandler;
 using System;
 using System.Collections.Generic;
@@ -11,12 +13,10 @@ using Windows.Foundation.Collections;
 using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Miriot.Core.Services.Interfaces;
-using Miriot.Common.Model;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
-    public sealed partial class WidgetTv : IWidgetExclusive
+    public sealed partial class WidgetTv : IWidgetAction, IWidgetExclusive
     {
         //private FFmpegInteropMSS FFmpegMSS;
         private string _urlHub;
@@ -47,7 +47,7 @@ namespace Miriot.Controls
 
         public bool IsExclusive { get; set; }
 
-        public WidgetTv(Widget widget, Dictionary<string, string> cachedUrls) : base(widget)
+        public WidgetTv(WidgetModel widget, Dictionary<string, string> cachedUrls) : base(widget)
         {
             InitializeComponent();
 
@@ -184,7 +184,7 @@ namespace Miriot.Controls
             TvView.Stop();
             MainGrid.Children.Remove(TvView);
             GC.Collect();
-            TvView.Source = new Uri("http://miriot.suismoi.fr", UriKind.Absolute);
+            TvView.Source = new Uri("http://Miriot.suismoi.fr", UriKind.Absolute);
 
             if (_cachedUrls.ContainsKey(_currentChannelKey))
                 _cachedUrls[_currentChannelKey] = source;
@@ -193,9 +193,9 @@ namespace Miriot.Controls
 
             try
             {
-                var vm = ServiceLocator.Current.GetInstance<MainViewModel>();
-                vm.User.UserData.CachedTvUrls = _cachedUrls;
-                Task.Run(async () => await vm.UpdateUserAsync());
+                var vm = SimpleIoc.Default.GetInstance<MainViewModel>();
+                //vm.User.UserData.CachedTvUrls = _cachedUrls;
+                //Task.Run(async () => await vm.UpdatePersonAsync());
             }
             catch (Exception)
             {
@@ -216,21 +216,9 @@ namespace Miriot.Controls
             TvView.AddWebAllowedObject("NotifyApp", winRTObject);
         }
 
-        internal void TurnOn(IntentResponse intent)
+        internal void TurnOn(LuisEntity entity)
         {
-            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
-
-            string channel = string.Empty;
-
-            if (action.Parameters != null && action.Parameters.Any())
-                foreach (var p in action.Parameters)
-                {
-                    if (p.Value != null)
-                    {
-                        if (p.Name == "Channel")
-                            channel = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                    }
-                }
+            var channel = entity.Entity;
 
             var channelUri = "http://streaming-hub.com/";
             string key;
@@ -278,6 +266,24 @@ namespace Miriot.Controls
 
             _urlHub = channelUri;
             LoadChannel(key, channelUri);
+        }
+
+        public void DoAction(LuisResponse luis)
+        {
+            if (luis.TopScoringIntent.Intent == "TurnOnTv")
+            {
+                TurnOn(luis.Entities.OrderByDescending(e=>e.Score).FirstOrDefault());
+            }
+
+            if (luis.TopScoringIntent.Intent == "FullScreenTv")
+            {
+                IsFullscreen = true;
+            }
+
+            if (luis.TopScoringIntent.Intent == "ReduceScreenTv")
+            {
+                IsFullscreen = false;
+            }
         }
     }
 }
