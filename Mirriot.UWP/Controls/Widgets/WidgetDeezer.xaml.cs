@@ -6,12 +6,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using Miriot.Common.Model;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Common;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Common.Model.Widgets.Deezer;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetDeezer : IWidgetAction, IWidgetExclusive
     {
@@ -34,26 +34,9 @@ namespace Miriot.Controls
             //await Browser.InvokeScriptAsync("Stop", null);
         }
 
-        public async void DoAction(IntentResponse intent)
+        public async void DoAction(LuisResponse luis)
         {
-            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
-
-            string search = string.Empty;
-            string genre = string.Empty;
-
-            if (action.Parameters != null && action.Parameters.Any())
-                foreach (var p in action.Parameters)
-                {
-                    if (p.Value != null)
-                    {
-                        if (p.Name == "Search")
-                            search = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                        if (p.Name == "Genre")
-                            genre = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                    }
-                }
-
-            await FindTrackAsync(search);
+            await FindTrackAsync(luis.Entities.OrderByDescending(e => e.Score).FirstOrDefault().Entity);
         }
 
         public async Task FindTrackAsync(string search)

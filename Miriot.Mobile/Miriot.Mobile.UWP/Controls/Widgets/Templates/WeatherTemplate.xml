@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <DataTemplate x:Key="DefaultTemplate">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+          </Grid.RowDefinitions>
+
+          <Label Text="{Binding Title}"
+                 FontSize="16"
+                 VerticalOptions="Center"/>
+
+          <Switch Margin="0,0,0,0"
+                  HorizontalOptions="End"
+                  Grid.Column="1"
+                  IsToggled="{Binding IsActive, Mode=TwoWay}">
+          </Switch>
+
+          <StackLayout Orientation="Horizontal"
+                       Grid.Row="1"
+                       Grid.ColumnSpan="2"
+                       Margin="0,-10,0,0">
+
+            <Label Text="Position: "
+                   HorizontalOptions="Start" VerticalOptions="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
+
+            <Picker BackgroundColor="Transparent"
+                    SelectedIndex="{Binding Position, Mode=TwoWay}"
+                    TextColor="{DynamicResource Primary}">
+              <Picker.Items>
+                <x:String>-</x:String>
+                <x:String>1</x:String>
+                <x:String>2</x:String>
+                <x:String>3</x:String>
+                <x:String>4</x:String>
+                <x:String>5</x:String>
+                <x:String>6</x:String>
+                <x:String>8</x:String>
+                <x:String>9</x:String>
+              </Picker.Items>
+            </Picker>
+          </StackLayout>
+
+          <StackLayout Orientation="Horizontal"
+                      Grid.Row="2"
+                      Grid.ColumnSpan="2"
+                      Margin="0,-10,0,0">
+
+            <Label Text="Ville"
+                       HorizontalOptions="Start" VerticalOptions="Center"
+                       FontSize="15"
+                       Margin="0,0,0,0"/>
+
+            <Entry Text="{Binding Location, Mode=TwoWay}"
+                     Grid.Row="2"
+                     Grid.Column="1"
+                     BackgroundColor="Transparent"
+                     HorizontalOptions="End" VerticalOptions="Center"
+                     FontSize="15" WidthRequest="250"
+                     Margin="0,0,0,0"/>
+          </StackLayout>
+
+        </Grid>
+      </DataTemplate>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+</ContentPage>

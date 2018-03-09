@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
 
-namespace Miriot.Utils
+namespace Miriot.Win10.Utils
 {
     public class UltrasonicDistanceSensor
     {

@@ -4,8 +4,9 @@
     {
         public MainPage()
         {
-            this.InitializeComponent();
-            LoadApplication(new Miriot.Mobile.App());
+            InitializeComponent();
+            var app = new Mobile.App();
+            LoadApplication(app);
         }
     }
 }

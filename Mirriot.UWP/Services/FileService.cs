@@ -1,4 +1,5 @@
-﻿using Miriot.Core.Services.Interfaces;
+﻿using Miriot.Services;
+using Miriot.Win10.Utils;
 using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class FileService : IFileService
     {
@@ -15,12 +16,12 @@ namespace Miriot.Services
             return File.ReadAllBytes(filePath);
         }
 
-        public async Task<byte[]> EncodedBytes(SoftwareBitmap softwareBitmap)
+        public async Task<byte[]> EncodedBytes(byte[] bitmapArray)
         {
-            if (softwareBitmap == null)
+            if (bitmapArray == null)
                 return null;
 
-            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+            SoftwareBitmap bitmapBgra8 = SoftwareBitmap.Convert(await bitmapArray.ToSoftwareBitmapAsync(), BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
             
             byte[] array = null;
 

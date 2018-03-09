@@ -1,20 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using GalaSoft.MvvmLight.Ioc;
+using Miriot.Core.ViewModels;
+using Miriot.Model;
+using System.Threading;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Miriot.Standard.Views
+namespace Miriot.Mobile.Views
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class HomePage : ContentPage
-	{
-		public HomePage ()
-		{
-			InitializeComponent ();
-		}
-	}
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class HomePage
+    {
+        private CancellationTokenSource _cancellationToken;
+
+        public HomePage()
+        {
+            InitializeComponent();
+
+            NavigationPage.SetHasNavigationBar(this, false);
+        }
+
+        protected override void OnAppearing()
+        {
+            _cancellationToken = new CancellationTokenSource();
+            ViewModel.Initialize();
+
+            RotateElement(Badge, _cancellationToken);
+
+            base.OnAppearing();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            _cancellationToken.Cancel();
+        }
+
+        private async Task RotateElement(VisualElement element, CancellationTokenSource cancellation)
+        {
+            while (!cancellation.IsCancellationRequested)
+            {
+                await element.RotateTo(360, 2000, Easing.Linear);
+                await element.RotateTo(0, 0);
+            }
+        }
+
+        public void RemoteSystemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            ViewModel.SelectCommand.Execute((RomeRemoteSystem)e.SelectedItem);
+        }
+    }
 }

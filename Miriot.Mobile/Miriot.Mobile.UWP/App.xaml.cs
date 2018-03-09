@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using GalaSoft.MvvmLight.Threading;
+using Miriot.Win10;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Miriot.Mobile.UWP
@@ -22,6 +14,14 @@ namespace Miriot.Mobile.UWP
     /// </summary>
     sealed partial class App : Application
     {
+        private static Locator _locator;
+        public static Locator Locator
+        {
+            get => _locator ?? (_locator = new Locator());
+
+            set { _locator = value; }
+        }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -39,6 +39,9 @@ namespace Miriot.Mobile.UWP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            DispatcherHelper.Initialize();
+            Locator = new Locator();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -68,6 +71,7 @@ namespace Miriot.Mobile.UWP
                 // parameter
                 rootFrame.Navigate(typeof(MainPage), e.Arguments);
             }
+
             // Ensure the current window is active
             Window.Current.Activate();
         }

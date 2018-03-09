@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetHoroscope
     {
@@ -18,7 +18,7 @@ namespace Miriot.Controls
 
             InitializeComponent();
 
-            _model.LoadInfos();
+            _model.Load();
 
             Get();
         }

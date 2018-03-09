@@ -1,16 +1,16 @@
 ﻿using Miriot.Common;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using Miriot.Core.ViewModels.Widgets;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Media.Streaming.Adaptive;
 
-namespace Miriot.Controls
+namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetRadio : IWidgetAction, IWidgetExclusive
     {
-        public WidgetRadio(RadioModel widget): base (widget)
+        public WidgetRadio(RadioModel widget) : base(widget)
         {
             InitializeComponent();
             IsExclusive = true;
@@ -34,23 +34,14 @@ namespace Miriot.Controls
             IconSb.Begin();
         }
 
-        public void DoAction(IntentResponse intent)
+        public void DoAction(LuisResponse luis)
         {
-            TurnOn(intent);
+            TurnOn(luis.Entities.OrderByDescending(e => e.Score).First());
         }
 
-        private void TurnOn(IntentResponse intent)
+        private void TurnOn(LuisEntity entity)
         {
-            var action = intent.Actions.FirstOrDefault(e => e.Triggered);
-
-            string channel = string.Empty;
-
-            if (action.Parameters != null && action.Parameters.Any())
-                foreach (var p in action.Parameters)
-                {
-                    if (p.Value != null && p.Name == "Channel")
-                        channel = p.Value.OrderByDescending(e => e.Score).First().Entity;
-                }
+            var channel = entity.Entity;
 
             string channelUri;
             switch (channel)

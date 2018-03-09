@@ -1,11 +1,10 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using Miriot.Core.Services.Interfaces;
+using Miriot.Services;
 using System.Threading.Tasks;
 using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
-using Windows.Storage.Streams;
 
-namespace Miriot.Services
+namespace Miriot.Win10.Services
 {
     public class FakeSpeechService : ISpeechService
     {
@@ -44,7 +43,7 @@ namespace Miriot.Services
         /// </summary>
         /// <param name="text">Text to be spoken</param>
         /// <returns>nothing</returns>
-        public async Task<IRandomAccessStream> SynthesizeTextToStreamAsync(string text)
+        public async Task<object> SynthesizeTextToStreamAsync(string text)
         {
             return null;
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Composition;
 
-namespace Miriot.Utils.ImageLoader
+namespace Miriot.Win10.Utils.ImageLoader
 {
     public interface IManagedSurface : IDisposable
     {
