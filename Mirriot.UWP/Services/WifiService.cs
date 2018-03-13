@@ -81,7 +81,7 @@ namespace Miriot.Win10.Services
 
                     await ScanAsync();
 
-                    return _wifis;
+                    return _wifis.OrderByDescending(w => w.SignalBars);
                 }
                 else
                 {
@@ -113,7 +113,8 @@ namespace Miriot.Win10.Services
                 {
                     Bssid = networkDisplay.Bssid,
                     Ssid = network.Ssid,
-                    IsSecure = network.SecuritySettings.NetworkAuthenticationType != NetworkAuthenticationType.Open80211
+                    IsSecure = network.SecuritySettings.NetworkAuthenticationType != NetworkAuthenticationType.Open80211,
+                    SignalBars = network.SignalBars
                 });
             }
         }
