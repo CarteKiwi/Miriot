@@ -42,7 +42,10 @@ namespace Miriot.iOS.Services
 
         public Task InitializeAsync()
         {
-            EAAccessoryManager.SharedAccessoryManager.ShowBluetoothAccessoryPicker(null, null);
+            EAWiFiUnconfiguredAccessoryBrowser aa = new EAWiFiUnconfiguredAccessoryBrowser();
+            aa.DidFindUnconfiguredAccessories += Aa_DidFindUnconfiguredAccessories;
+            aa.StartSearchingForUnconfiguredAccessories(null);
+            // EAAccessoryManager.SharedAccessoryManager.ShowBluetoothAccessoryPicker(null, null);
 
             var devices = EAAccessoryManager.SharedAccessoryManager.ConnectedAccessories;
 
@@ -56,6 +59,11 @@ namespace Miriot.iOS.Services
             }
 
             return Task.FromResult(false);
+        }
+
+        private void Aa_DidFindUnconfiguredAccessories(object sender, EAWiFiUnconfiguredAccessoryBrowserEventArgs e)
+        {
+            
         }
 
         public void SendReceiveAsync(string value)
