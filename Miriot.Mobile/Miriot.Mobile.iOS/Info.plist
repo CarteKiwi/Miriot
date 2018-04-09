@@ -44,5 +44,14 @@
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>XSLaunchImageAssets</key>
+	<string>Assets.xcassets/LaunchImage.launchimage</string>
+	<key>UISupportedExternalAccessoryProtocols</key>
+	<array>
+		<string>Miriot</string>
+		<string>4D93B7BA-A8CD-4C95-A11E-4B9B3EFB3417</string>
+	</array>
 </dict>
 </plist>
