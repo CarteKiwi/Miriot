@@ -4,7 +4,9 @@ using Miriot.Services;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -20,138 +22,134 @@ namespace Miriot.Win10.Services
         public Action<RomeRemoteSystem> Discovered { get; set; }
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
 
-        private RfcommServiceProvider _provider;
+        private GattServiceProvider _serviceProvider;
         private StreamSocketListener _listener;
         private StreamSocket _socket;
         private DataWriter _writer;
+        private GattLocalCharacteristic _writeCharacteristic;
+        private GattLocalCharacteristic _readCharacteristic;
 
         public async Task InitializeAsync()
         {
-            // Initialize the provider for the hosted RFCOMM service
-            _provider = await RfcommServiceProvider.CreateAsync(RfcommServiceId.FromUuid(Constants.SERVICE_UUID));
+            GattServiceProviderResult result = await GattServiceProvider.CreateAsync(Constants.SERVICE_UUID);
 
-            // Create a listener for this service and start listening
-            _listener = new StreamSocketListener();
-            _listener.ConnectionReceived += OnConnectionReceivedAsync;
-
-            await _listener.BindServiceNameAsync(_provider.ServiceId.AsString(), SocketProtectionLevel.BluetoothEncryptionAllowNullAuthentication);
-
-            // Set the SDP attributes and start advertising
-            InitializeServiceSdpAttributes(_provider);
-            _provider.StartAdvertising(_listener, true);
-        }
-
-        void InitializeServiceSdpAttributes(RfcommServiceProvider provider)
-        {
-            var writer = new DataWriter();
-
-            // First write the attribute type
-            writer.WriteByte(Constants.SERVICE_ATTRIBUTE_TYPE);
-
-            // The length of the UTF-8 encoded Service Name SDP Attribute.
-            writer.WriteByte((byte)Constants.SERVICE_NAME.Length);
-
-            // The UTF-8 encoded Service Name value.
-            writer.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
-            writer.WriteString(Constants.SERVICE_NAME);
-
-            var data = writer.DetachBuffer();
-            provider.SdpRawAttributes.Add(Constants.SERVICE_ATTRIBUTE_ID, data);
-        }
-
-        private async void OnConnectionReceivedAsync(
-            StreamSocketListener listener,
-            StreamSocketListenerConnectionReceivedEventArgs args)
-        {
-            // Stop advertising/listening so that we're only serving one client
-            _provider.StopAdvertising();
-            listener.Dispose();
-            listener = null;
-
-            _socket = args.Socket;
-
-            // Note - this is the supported way to get a Bluetooth device from a given socket
-            var remoteDevice = await BluetoothDevice.FromHostNameAsync(_socket.Information.RemoteHostName);
-
-            _writer = new DataWriter(_socket.OutputStream);
-            var reader = new DataReader(_socket.InputStream);
-            bool remoteDisconnection = false;
-
-            Debug.WriteLine("Connected to Client: " + remoteDevice.Name);
-
-            // Infinite read buffer loop
-            while (true)
+            if (result.Error == BluetoothError.Success)
             {
-                try
+                var tt = new DataWriter();
+                tt.WriteString("coucou");
+                var titi = tt.DetachBuffer();
+
+                var b = Encoding.UTF8.GetBytes("hello");
+
+                _serviceProvider = result.ServiceProvider;
+                byte[] value = new byte[] { 0x21 };
+                var readParameters = new GattLocalCharacteristicParameters
                 {
-                    // Based on the protocol we've defined, the first uint is the size of the message
-                    uint readLength = await reader.LoadAsync(sizeof(uint));
+                    CharacteristicProperties = (GattCharacteristicProperties.Read),
+                    ReadProtectionLevel = GattProtectionLevel.Plain,
+                };
 
-                    // Check if the size of the data is expected (otherwise the remote has already terminated the connection)
-                    if (readLength < sizeof(uint))
-                    {
-                        remoteDisconnection = true;
-                        break;
-                    }
-                    uint currentLength = reader.ReadUInt32();
-
-                    // Load the rest of the message since you already know the length of the data expected.  
-                    readLength = await reader.LoadAsync(currentLength);
-
-                    // Check if the size of the data is expected (otherwise the remote has already terminated the connection)
-                    if (readLength < currentLength)
-                    {
-                        remoteDisconnection = true;
-                        break;
-                    }
-                    string message = reader.ReadString(currentLength);
-
-                    var parameter = JsonConvert.DeserializeObject<RemoteParameter>(message);
-
-                    string serializedData = await CommandReceived(parameter);
+                GattLocalCharacteristicResult characteristicResult = await _serviceProvider.Service.CreateCharacteristicAsync(Constants.SERVICE_READ_UUID, readParameters);
+                if (characteristicResult.Error != BluetoothError.Success)
+                {
+                    // An error occurred.
+                    return;
                 }
-                // Catch exception HRESULT_FROM_WIN32(ERROR_OPERATION_ABORTED).
-                catch (Exception ex) when ((uint)ex.HResult == 0x800703E3)
+
+                _readCharacteristic = characteristicResult.Characteristic;
+                _readCharacteristic.ReadRequested += ReadCharacteristic_ReadRequested;
+
+                //var t = new JsonTextReader();
+
+                //            var buffer = Windows.Security.Cryptography.CryptographicBuffer.ConvertStringToBinary(
+                //"What fools these mortals be", Windows.Security.Cryptography.BinaryStringEncoding.Utf8);
+
+                var writeParameters = new GattLocalCharacteristicParameters
                 {
-                    Debug.WriteLine("Client Disconnected Successfully");
-                    break;
+                    CharacteristicProperties = (GattCharacteristicProperties.Write),
+                    WriteProtectionLevel = GattProtectionLevel.Plain,
+                };
+
+                characteristicResult = await _serviceProvider.Service.CreateCharacteristicAsync(Constants.SERVICE__WWRITE_UUID, writeParameters);
+                if (characteristicResult.Error != BluetoothError.Success)
+                {
+                    // An error occurred.
+                    return;
+                }
+                _writeCharacteristic = characteristicResult.Characteristic;
+                _writeCharacteristic.ReadRequested += ReadCharacteristic_ReadRequested;
+                _writeCharacteristic.WriteRequested += WriteCharacteristic_WriteRequested;
+
+            }
+
+            GattServiceProviderAdvertisingParameters advParameters = new GattServiceProviderAdvertisingParameters
+            {
+                IsDiscoverable = true,
+                IsConnectable = true
+            };
+
+            _serviceProvider.StartAdvertising(advParameters);
+        }
+        private string _data;
+        private async void WriteCharacteristic_WriteRequested(GattLocalCharacteristic sender, GattWriteRequestedEventArgs args)
+        {
+
+            var deferral = args.GetDeferral();
+
+            try
+            {
+                var request = await args.GetRequestAsync();
+                var reader = DataReader.FromBuffer(request.Value);
+                
+                string message = reader.ReadString(request.Value.Length);
+                
+                var parameter = JsonConvert.DeserializeObject<RemoteParameter>(message);
+
+                string serializedData = await CommandReceived(parameter);
+                _data = serializedData;
+                //var dw = new DataWriter();
+                //dw.WriteString(serializedData);
+                
+                //await _writeCharacteristic.NotifyValueAsync(dw.DetachBuffer());
+
+                if (request.Option == GattWriteOption.WriteWithResponse)
+                {
+                    request.Respond();
                 }
             }
-
-            reader.DetachStream();
-            if (remoteDisconnection)
+            catch (Exception ex)
             {
-                Disconnect();
-                Debug.WriteLine("Client disconnected");
+
+            }
+            finally
+            {
+                deferral.Complete();
             }
         }
 
-        private async void Disconnect()
+        private async void ReadCharacteristic_ReadRequested(GattLocalCharacteristic sender, GattReadRequestedEventArgs args)
         {
-            if (_provider != null)
-            {
-                _provider.StopAdvertising();
-                _provider = null;
-            }
+            var deferral = args.GetDeferral();
 
-            if (_listener != null)
+            try
             {
-                _listener.Dispose();
-                _listener = null;
-            }
+                var dw = new DataWriter();
+                dw.WriteString(_data);
 
-            if (_writer != null)
-            {
-                _writer.DetachStream();
-                _writer = null;
+                var request = await args.GetRequestAsync();
+                request.RespondWithValue(dw.DetachBuffer());
             }
-
-            if (_socket != null)
+            catch (Exception ex)
             {
-                _socket.Dispose();
-                _socket = null;
+
+            }
+            finally
+            {
+                deferral.Complete();
             }
         }
+
+
 
         private async void SendMessage(string message)
         {
@@ -174,7 +172,6 @@ namespace Miriot.Win10.Services
                 }
             }
         }
-
         public Task<bool> ConnectAsync(RomeRemoteSystem system)
         {
             throw new NotImplementedException();

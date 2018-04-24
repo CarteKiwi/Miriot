@@ -11,10 +11,10 @@ namespace Miriot.Services
 {
     public class MiriotService
     {
-        public static string RestUrl = "http://localhost:50388/api/{0}/{1}";
+        //public static string RestUrl = "http://localhost:50388/api/{0}/{1}";
         private static string UserController = "users";
         private static string ConfigurationController = "configurations";
-        //public static string RestUrl = "http://miriot.azurewebsites.net/api/users/{0}";
+        public static string RestUrl = "http://miriot.azurewebsites.net/api/{0}/{1}";
         private HttpClient _client;
         private readonly IDialogService _dialogService;
 
