@@ -17,6 +17,8 @@ namespace Miriot.iOS.Services
 {
     public class BluetoothClientService : IBluetoothService
     {
+        private const int ConnectionTimeout = 30000;
+
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
         public Action<RomeRemoteSystem> Discovered { get; set; }
 
@@ -25,64 +27,141 @@ namespace Miriot.iOS.Services
         TaskCompletionSource<bool> _tsc = null;
         TaskCompletionSource<string> _tsc2 = null;
 
-        public async Task<bool> ConnectAsync(RomeRemoteSystem system)
+        public async Task Scan(int scanDuration, string serviceUuid = "")
         {
-            _tsc = new TaskCompletionSource<bool>();
+            Debug.WriteLine("Scanning started");
+            var uuids = string.IsNullOrEmpty(serviceUuid)
+                ? new CBUUID[0]
+                : new[] { CBUUID.FromString(serviceUuid) };
+            _manager.ScanForPeripherals(uuids);
 
+            await Task.Delay(scanDuration);
+            this.StopScan();
+        }
+
+        public void StopScan()
+        {
             _manager.StopScan();
-            myDel.Connected = (s) =>
+            Debug.WriteLine("Scanning stopped");
+        }
+
+        public async Task ConnectTo(CBPeripheral peripheral)
+        {
+            var taskCompletion = new TaskCompletionSource<bool>();
+            var task = taskCompletion.Task;
+            EventHandler<CBPeripheralEventArgs> connectedHandler = (s, e) =>
             {
                 if (e.Peripheral.Identifier?.ToString() == peripheral.Identifier?.ToString())
                 {
-                    _tsc.TrySetResult(true);
+                    _connectedPeripheral = e.Peripheral;
+                    taskCompletion.SetResult(true);
                 }
             };
-            _connectedPeripheral = (CBPeripheral)system.NativeObject;
 
-            _manager.ConnectPeripheral((CBPeripheral)system.NativeObject);
-
-            return await _tsc.Task;
+            try
+            {
+                _manager.ConnectedPeripheral += connectedHandler;
+                _manager.ConnectPeripheral(peripheral);
+                await this.WaitForTaskWithTimeout(task, ConnectionTimeout);
+                Debug.WriteLine($"Bluetooth device connected = {peripheral.Name}");
+            }
+            finally
+            {
+                _manager.ConnectedPeripheral -= connectedHandler;
+            }
         }
 
-        MySimpleCBCentralManagerDelegate myDel;
+        public void Disconnect(CBPeripheral peripheral)
+        {
+            _manager.CancelPeripheralConnection(peripheral);
+            Debug.WriteLine($"Device {peripheral.Name} disconnected");
+        }
 
-        public Task InitializeAsync() 
-        { 
-            myDel = new MySimpleCBCentralManagerDelegate(); 
-            _manager = new CBCentralManager(myDel, DispatchQueue.CurrentQueue); 
-            myDel.Discovered = (s) => 
-            { 
-                Discovered?.Invoke(s); 
-            }; 
- 
-            return Task.FromResult(false); 
-        } 
- 
+        public async Task<bool> ConnectAsync(RomeRemoteSystem system)
+        {
+            await ConnectTo((CBPeripheral)system.NativeObject);
+            return true;
+        }
+
+        public Task InitializeAsync()
+        {
+            _manager = new CBCentralManager(DispatchQueue.CurrentQueue);
+            _manager.UpdatedState += UpdatedState;
+            _manager.DiscoveredPeripheral += DiscoveredPeripheral;
+            return Task.FromResult(true);
+        }
+
+        public async Task<CBService> GetService(CBPeripheral peripheral, string serviceUuid)
+        {
+            var service = this.GetServiceIfDiscovered(peripheral, serviceUuid);
+            if (service != null)
+            {
+                return service;
+            }
+
+            var taskCompletion = new TaskCompletionSource<bool>();
+            var task = taskCompletion.Task;
+            EventHandler<NSErrorEventArgs> handler = (s, e) =>
+            {
+                if (this.GetServiceIfDiscovered(peripheral, serviceUuid) != null)
+                {
+                    taskCompletion.SetResult(true);
+                }
+            };
+
+            try
+            {
+                peripheral.DiscoveredService += handler;
+                peripheral.DiscoverServices(new[] { CBUUID.FromString(serviceUuid) });
+                await this.WaitForTaskWithTimeout(task, ConnectionTimeout);
+                return this.GetServiceIfDiscovered(peripheral, serviceUuid);
+            }
+            finally
+            {
+                peripheral.DiscoveredService -= handler;
+            }
+        }
+
+        public CBService GetServiceIfDiscovered(CBPeripheral peripheral, string serviceUuid)
+        {
+            serviceUuid = serviceUuid.ToLowerInvariant();
+            return peripheral.Services
+                ?.FirstOrDefault(x => x.UUID?.Uuid?.ToLowerInvariant() == serviceUuid);
+        }
+
+        public async Task<CBCharacteristic[]> GetCharacteristics(CBPeripheral peripheral, CBService service, int scanTime)
+        {
+            peripheral.DiscoverCharacteristics(service);
+            await Task.Delay(scanTime);
+            return service.Characteristics;
+        }
 
         public async Task<string> GetAsync(string value)
         {
-            var service = _connectedPeripheral.Services.FirstOrDefault(e => e.UUID.ToString() == Constants.SERVICE_UUID.ToString());
-
-            if(service != null)
+            try
             {
-                var characteristic = service.Characteristics.FirstOrDefault(c => c.UUID.ToString() == Constants.SERVICE__WWRITE_UUID.ToString());
-       
-                _tsc2 = new TaskCompletionSource<string>();
-                myDel.ValueUpdated = async (v)=>
+                var s = await GetService(_connectedPeripheral, Constants.SERVICE_UUID.ToString());
+
+                var c = await GetCharacteristics(_connectedPeripheral, s, 10000);
+                var characteristic = c.First(e => e.UUID.ToString() == Constants.SERVICE__WWRITE_UUID.ToString());
+
+                if (await WriteValue(_connectedPeripheral, characteristic, NSData.FromString(value)))
                 {
+                    characteristic = c.First(e => e.UUID.ToString() == Constants.SERVICE_READ_UUID.ToString());
                     var res = await ReadValue(_connectedPeripheral, characteristic);
-                    _tsc2.TrySetResult(res);
-                };
+                    return res;
+                }
+            }
+            catch (Exception ex)
+            {
 
-                _connectedPeripheral.WriteValue(NSData.FromString(value), characteristic, CBCharacteristicWriteType.WithResponse);
-                //characteristic.Value = new NSData(value, NSDataBase64DecodingOptions.None);
-
-                return await _tsc2.Task;
-                //_connectedPeripheral.WriteValue(new NSData("COUCOU", NSDataBase64DecodingOptions.None), null);
+            }
+            finally
+            {
+                Disconnect(_connectedPeripheral);
             }
 
-            return ("");
-
+            return "";
         }
 
         public async Task<string> ReadValue(CBPeripheral peripheral, CBCharacteristic characteristic)
@@ -102,7 +181,7 @@ namespace Miriot.iOS.Services
                 peripheral.UpdatedCharacterteristicValue += handler;
                 peripheral.ReadValue(characteristic);
                 await this.WaitForTaskWithTimeout(task, ConnectionTimeout);
-                return characteristic.Value.ToString();
+                return characteristic.Value?.ToString();
             }
             finally
             {
@@ -135,7 +214,6 @@ namespace Miriot.iOS.Services
             }
         }
 
-        private const int ConnectionTimeout = 10000; 
 
         private async Task WaitForTaskWithTimeout(Task task, int timeout)
         {
@@ -145,111 +223,29 @@ namespace Miriot.iOS.Services
                 throw new TimeoutException();
             }
         }
-    }
 
-    public class MySimpleCBCentralManagerDelegate : CBCentralManagerDelegate
-    {
-        public Action<RomeRemoteSystem> Discovered { get; set; }
-        public Action<CBPeripheral> Connected { get; set; }
-        public Action<NSData> ValueUpdated { get; set; }
-
-        public override void UpdatedState(CBCentralManager mgr)
+        private async void UpdatedState(object sender, EventArgs args)
         {
-            if (mgr.State == CBCentralManagerState.PoweredOn)
+            Debug.WriteLine($"State = {_manager.State}");
+
+            if (_manager.State == CBCentralManagerState.PoweredOn)
             {
-                //Passing in null scans for all peripherals. Peripherals can be targeted by using CBUIIDs
-                CBUUID[] cbuuids = { CBUUID.FromString(Constants.SERVICE_UUID.ToString()) };
-                mgr.ScanForPeripherals(cbuuids); //Initiates async calls of DiscoveredPeripheral
-                //Timeout after 30 seconds
-                //var timer = new Timer(30 * 1000);
-                //timer.Elapsed += (sender, e) => mgr.StopScan();
+                await Scan(30000, Constants.SERVICE_UUID.ToString());
             }
-            else
-            {
-                //Invalid state -- Bluetooth powered down, unavailable, etc.
-                System.Console.WriteLine("Bluetooth is not available");
-            }
+            //this.StateChanged?.Invoke(sender, this.manager.State);
         }
 
-        public override void DiscoveredPeripheral(CBCentralManager central, CBPeripheral peripheral, NSDictionary advertisementData, NSNumber RSSI)
+        public void DiscoveredPeripheral(object sender, CBDiscoveredPeripheralEventArgs args)
         {
-            Console.WriteLine("Discovered {0}, data {1}, RSSI {2}", peripheral.Name, advertisementData, RSSI);
+            var device = $"{args.Peripheral.Name} - {args.Peripheral.Identifier?.Description}";
+            Debug.WriteLine($"Discovered {device}");
 
-            if (!string.IsNullOrEmpty(peripheral.Name))
-                Discovered?.Invoke(new RomeRemoteSystem(peripheral)
+            if (!string.IsNullOrEmpty(args.Peripheral.Name))
+                Discovered?.Invoke(new RomeRemoteSystem(args.Peripheral)
                 {
-                    DisplayName = peripheral.Name,
-                    Id = peripheral.Identifier.ToString()
+                    DisplayName = args.Peripheral.Name,
+                    Id = args.Peripheral.Identifier.ToString()
                 });
-        }
-
-        public override void ConnectedPeripheral(CBCentralManager central, CBPeripheral peripheral)
-        {
-            Connected?.Invoke(peripheral);
-
-            var connectedPeripheral = peripheral;
-
-            if (connectedPeripheral.Delegate == null)
-            {
-                connectedPeripheral.Delegate = new SimplePeripheralDelegate();
-                ((SimplePeripheralDelegate)connectedPeripheral.Delegate).ValueUpdated = (a) =>
-                {
-                    ValueUpdated?.Invoke(a);
-                };
-                connectedPeripheral.DiscoverServices();
-            }
-        }
-    }
-
-    public class SimplePeripheralDelegate : CBPeripheralDelegate
-    {
-        public Action<NSData> ValueUpdated { get; set; }
-       
-        public override void DiscoveredService(CBPeripheral peripheral, NSError error)
-        {
-            System.Console.WriteLine("Discovered a service");
-            foreach (var service in peripheral.Services)
-            {
-                if(service.UUID.ToString() == Constants.SERVICE_UUID.ToString())
-                {
-                    Console.WriteLine("OLA");
-                }
-
-                Console.WriteLine(service.ToString());
-                peripheral.DiscoverCharacteristics(service);
-            }
-        }
-
-        public override void DiscoveredCharacteristic(CBPeripheral peripheral, CBService service, NSError error)
-        {
-            System.Console.WriteLine("Discovered characteristics of " + peripheral);
-            foreach (var c in service.Characteristics)
-            {
-                Console.WriteLine(c.ToString());
-                peripheral.ReadValue(c);
-            }
-        }
-
-		public override void WroteCharacteristicValue(CBPeripheral peripheral, CBCharacteristic characteristic, NSError error)
-		{
-            ValueUpdated?.Invoke(characteristic.Value);
-		}
-
-		public override void UpdatedValue(CBPeripheral peripheral, CBDescriptor descriptor, NSError error)
-        {
-            Console.WriteLine("Value of characteristic from desc " + descriptor.Characteristic + " is " + descriptor.Value);
-        }
-
-        public override void UpdatedCharacterteristicValue(CBPeripheral peripheral, CBCharacteristic characteristic, NSError error)
-        {
-            ValueUpdated?.Invoke(characteristic.Value);
-            Console.WriteLine("Value of characteristic " + characteristic.ToString() + " is " + characteristic.Value);
-        }
-
-        public override void UpdatedNotificationState(CBPeripheral peripheral, CBCharacteristic characteristic, NSError error)
-        {
-            Console.WriteLine("notifffff of characteristic " + characteristic.ToString() + " is " + characteristic.Value);
-           
         }
     }
 }
