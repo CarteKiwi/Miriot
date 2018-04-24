@@ -6,6 +6,7 @@ using Miriot.Common.Model;
 using Miriot.Core.ViewModels;
 using Miriot.Services;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -95,7 +96,10 @@ namespace Miriot.ViewModels
             var wifis = await _wifiService.GetWifiAsync();
 
             foreach (var w in wifis)
-                Wifis.Add(w);
+            {
+                if (Wifis.FirstOrDefault(wifi => wifi.Bssid == w.Bssid) == null)
+                    Wifis.Add(w);
+            }
         }
 
         private async Task ConnectWifiAsync(string bssid, string pwd)
