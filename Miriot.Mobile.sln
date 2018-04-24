@@ -9,11 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Mobile.iOS", "Miriot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Mobile.UWP", "Miriot.Mobile\Miriot.Mobile.UWP\Miriot.Mobile.UWP.csproj", "{B5377782-F1CA-4738-BE9F-952030988A5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot.Mobile", "Miriot.Mobile\Miriot.Mobile\Miriot.Mobile.csproj", "{D92B67DE-450A-44BE-B9A7-BE18121FB67A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Mobile", "Miriot.Mobile\Miriot.Mobile\Miriot.Mobile.csproj", "{D92B67DE-450A-44BE-B9A7-BE18121FB67A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot", "Miriot\Miriot.csproj", "{0C3190C6-066B-4F94-B26D-1496E8E73E43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot", "Miriot\Miriot.csproj", "{0C3190C6-066B-4F94-B26D-1496E8E73E43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miriot.Cognitive", "Miriot.Cognitive\Miriot.Cognitive.csproj", "{BF1C43BD-495E-4FD7-B390-0444FF450B82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miriot.Cognitive", "Miriot.Cognitive\Miriot.Cognitive.csproj", "{BF1C43BD-495E-4FD7-B390-0444FF450B82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

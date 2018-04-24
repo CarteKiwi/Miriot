@@ -10,5 +10,6 @@ namespace Miriot.Services
         Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
         Action<RomeRemoteSystem> Discovered { get; set; }
         Task<bool> ConnectAsync(RomeRemoteSystem system);
+        Task<string> GetAsync(string parameter);
     }
 }

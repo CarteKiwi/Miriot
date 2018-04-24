@@ -26,8 +26,6 @@ namespace Miriot.Mobile.Views
             ViewModel.Initialize();
 
             RotateElement(Badge, _cancellationToken);
-
-            base.OnAppearing();
         }
 
         protected override void OnDisappearing()
