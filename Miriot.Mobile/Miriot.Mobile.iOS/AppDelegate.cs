@@ -1,6 +1,7 @@
 ﻿
 using Foundation;
 using GalaSoft.MvvmLight.Threading;
+using ImageCircle.Forms.Plugin.iOS;
 using Miriot.iOS;
 using UIKit;
 
@@ -22,7 +23,8 @@ namespace Miriot.Mobile.iOS
             Locator = new Locator();
 
             global::Xamarin.Forms.Forms.Init();
-			LoadApplication(new App());
+            ImageCircleRenderer.Init();
+            LoadApplication(new App());
 
 			return base.FinishedLaunching(app, options);
 		}

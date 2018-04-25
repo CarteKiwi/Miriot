@@ -5,6 +5,7 @@
                       xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
                       xmlns:core="using:Miriot.Core.ViewModels.Widgets"
                       xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+                      xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
                       xmlns:sel="clr-namespace:Miriot.Mobile"
                       xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
                       xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
@@ -12,11 +13,11 @@
                       BackgroundColor="{DynamicResource BgColor}">
     <ContentPage.Content>
         <Grid>
-            <Image Source="{Binding User.Picture, Converter={StaticResource ByteArrayToImageConverter}}"
-                   HorizontalOptions="FillAndExpand"
-                   Aspect="AspectFill"
-                   VerticalOptions="Start"/>
-
+            <ctrl:BlurredImage Source="{Binding User.Picture, Converter={StaticResource ByteArrayToImageConverter}}"
+                               HorizontalOptions="FillAndExpand"
+                               Aspect="AspectFill"
+                               VerticalOptions="Start"/>
+            
             <Grid VerticalOptions="FillAndExpand"
                   RowSpacing="0">
                 <Grid.RowDefinitions>
@@ -35,13 +36,24 @@
 
                     <StackLayout Margin="15" 
                                  HorizontalOptions="Center">
-                        <ctrl:EllipseView Image="{Binding User.Picture, Mode=OneWay}"
-                                  HeightRequest="80"
-                                  WidthRequest="80"
-                                  Stroke="White"
-                                  Margin="10"
-                                  HorizontalOptions="Center"
-                                  StrokeThickness="2"/>
+                        <controls:CircleImage Source="{Binding User.Picture, Converter={StaticResource ByteArrayToImageConverter}}" 
+                                              BorderThickness="2"
+                                              BorderColor="White"
+                                              Margin="10"
+                                              Aspect="AspectFill">
+                            <controls:CircleImage.WidthRequest>
+                                <OnPlatform x:TypeArguments="x:Double">
+                                    <On Platform="Android, iOS">80</On>
+                                    <On Platform="WinPhone">80</On>
+                                </OnPlatform>
+                            </controls:CircleImage.WidthRequest>
+                            <controls:CircleImage.HeightRequest>
+                                <OnPlatform x:TypeArguments="x:Double">
+                                    <On Platform="Android, iOS">80</On>
+                                    <On Platform="WinPhone">80</On>
+                                </OnPlatform>
+                            </controls:CircleImage.HeightRequest>
+                        </controls:CircleImage>
 
                         <Label Text="{Binding User.Name}"
                                FontSize="Micro"
