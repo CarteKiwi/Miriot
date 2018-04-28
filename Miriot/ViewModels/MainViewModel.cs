@@ -726,6 +726,7 @@ namespace Miriot.Core.ViewModels
 
         public override void Cleanup()
         {
+            _remoteService.Stop();
             NetworkChange.NetworkAvailabilityChanged -= OnNetworkStatusChanged;
             OnReset();
             base.Cleanup();

@@ -205,5 +205,10 @@ namespace Miriot.Services
                     return JsonConvert.SerializeObject(sys);
             }
         }
+
+        internal void Stop()
+        {
+            _bluetoothService.StopAdv();
+        }
     }
 }
