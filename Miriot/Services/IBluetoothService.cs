@@ -11,5 +11,6 @@ namespace Miriot.Services
         Action<RomeRemoteSystem> Discovered { get; set; }
         Task<bool> ConnectAsync(RomeRemoteSystem system);
         Task<string> GetAsync(string parameter);
+        void StopAdv();
     }
 }

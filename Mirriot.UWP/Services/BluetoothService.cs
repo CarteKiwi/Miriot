@@ -176,5 +176,15 @@ namespace Miriot.Win10.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<string> GetAsync(string parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopAdv()
+        {
+            _serviceProvider.StopAdvertising();
+        }
     }
 }
