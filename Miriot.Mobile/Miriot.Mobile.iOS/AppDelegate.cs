@@ -3,13 +3,14 @@ using Foundation;
 using GalaSoft.MvvmLight.Threading;
 using ImageCircle.Forms.Plugin.iOS;
 using Miriot.iOS;
+using Plugin.BluetoothLE;
 using UIKit;
 
 namespace Miriot.Mobile.iOS
 {
-	[Register("AppDelegate")]
-	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
-	{
+    [Register("AppDelegate")]
+    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    {
         private static Locator _locator;
         public static Locator Locator
         {
@@ -19,14 +20,14 @@ namespace Miriot.Mobile.iOS
         }
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
-		{
+        {
             Locator = new Locator();
-
+            CrossBleAdapter.AdapterScanner.FindAdapters();
             global::Xamarin.Forms.Forms.Init();
             ImageCircleRenderer.Init();
             LoadApplication(new App());
 
-			return base.FinishedLaunching(app, options);
-		}
-	}
+            return base.FinishedLaunching(app, options);
+        }
+    }
 }

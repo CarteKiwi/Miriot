@@ -53,9 +53,9 @@
 		<string>Miriot</string>
 		<string>4D93B7BA-A8CD-4C95-A11E-4B9B3EFB3417</string>
 	</array>
-  <key>UIAppFonts</key>
-  <array>
-      <string>SEGMDL2.ttf</string>
-  </array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>SEGMDL2.ttf</string>
+	</array>
 </dict>
 </plist>
