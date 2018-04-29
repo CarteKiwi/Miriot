@@ -90,9 +90,10 @@ namespace Miriot.Win10.Services
             
             // Add custom data to the advertisement
             var manufacturerData = new BluetoothLEManufacturerData();
+            manufacturerData.CompanyId = 0xFFFE;
 
             var writer = new DataWriter();
-            writer.WriteString("Miriot@GDM");
+            writer.WriteString("Miriot");
 
             // Make sure that the buffer length can fit within an advertisement payload (~20 bytes). 
             // Otherwise you will get an exception.
