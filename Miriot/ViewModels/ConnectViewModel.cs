@@ -178,6 +178,7 @@ namespace Miriot.Core.ViewModels
                 await Task.Run(async () =>
                 {
                     var userId = await _remoteService.CommandAsync<string>(RemoteCommands.GetUser);
+                    var miriotId = await _remoteService.CommandAsync<string>(RemoteCommands.GetMiriotId);
 
                     if (Guid.TryParse(userId, out Guid userGuid) && userGuid != Guid.Empty)
                     {
@@ -185,13 +186,13 @@ namespace Miriot.Core.ViewModels
 
                         RunOnUiThread(() =>
                         {
-                            if (user?.Id != Guid.Empty)
+                            if (user != null && user.Id != Guid.Empty)
                             {
                                 Message = string.Empty;
                                 _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
                                 {
                                     User = user,
-                                    Id = SelectedRemoteSystem.Id
+                                    Id = miriotId
                                 });
                             }
                             else

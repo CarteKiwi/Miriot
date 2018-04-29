@@ -45,13 +45,16 @@ namespace Miriot.iOS.Services
                      if (!string.IsNullOrEmpty(scanResult.Device.Name)
                          && scanResult.AdvertisementData.ManufacturerData != null)
                      {
-                         var data = Encoding.UTF8.GetString(scanResult.AdvertisementData.ManufacturerData);
-                         if (scanResult.Device.Name.Contains("PC"))
+                         var data = Encoding.ASCII.GetString(scanResult.AdvertisementData.ManufacturerData);
+
+                         if (data.Contains("Miriot"))
+                         {
                              Discovered?.Invoke(new RomeRemoteSystem(scanResult.Device)
                              {
                                  DisplayName = scanResult.Device.Name,
                                  Id = scanResult.Device.Uuid.ToString()
                              });
+                         }
                      }
                  });
         }

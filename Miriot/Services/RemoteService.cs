@@ -76,9 +76,6 @@ namespace Miriot.Services
                 return default(T);
             }
 
-            //Debug.WriteLine("Sending " + command + " to " + _connectedRemoteSystem.EndPoint.Address + ":" + _connectedRemoteSystem.EndPoint.Port);
-            //string response = await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
-
             var parameter = JsonConvert.SerializeObject(new RemoteParameter() { Command = command });
 
             string response = await _bluetoothService.GetAsync(parameter);
