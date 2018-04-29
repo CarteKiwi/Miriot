@@ -12,9 +12,10 @@ using System;
 namespace Miriot.Api.Migrations
 {
     [DbContext(typeof(MiriotContext))]
-    partial class MiriotContextModelSnapshot : ModelSnapshot
+    [Migration("20180429131552_MiriotConfiguration")]
+    partial class MiriotConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
