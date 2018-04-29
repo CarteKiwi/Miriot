@@ -5,6 +5,7 @@
         MiriotDiscovery,
         MiriotConnect,
         GetUser,
+        GetMiriotId,
         GraphService_GetCode,
         GraphService_Initialize,
         GraphService_GetUser,
