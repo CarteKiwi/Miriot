@@ -177,6 +177,7 @@
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\PlatformService.cs" />
+    <Compile Include="Services\TwitterService.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_about.png" />

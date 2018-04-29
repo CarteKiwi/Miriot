@@ -14,6 +14,7 @@ namespace Miriot.iOS
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<IBluetoothService, BluetoothClientService>();
+            SimpleIoc.Default.Register<ITwitterService, TwitterService>();
         }
     }
 }

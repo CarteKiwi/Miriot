@@ -57,5 +57,7 @@
 	<array>
 		<string>SEGMDL2.ttf</string>
 	</array>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Connection à Miriot pour paramétrage</string>
 </dict>
 </plist>

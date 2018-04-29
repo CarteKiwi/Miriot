@@ -35,19 +35,24 @@ namespace Miriot.iOS.Services
             Debug.WriteLine("Scanning started");
 
             CrossBleAdapter.Current
-                           //.Scan()
-                           .Scan(new ScanConfig { ServiceUuids = { Constants.SERVICE_UUID } })
+                           .Scan()
+                           //.Scan(new ScanConfig { ServiceUuids = { Constants.SERVICE_UUID } })
                            .Subscribe(scanResult =>
                  {
                      var device = $"{scanResult.Device.Name} - {scanResult.Device.Uuid}";
                      Debug.WriteLine($"Discovered {device}");
 
-                     if (!string.IsNullOrEmpty(scanResult.Device.Name))
-                         Discovered?.Invoke(new RomeRemoteSystem(scanResult.Device)
-                         {
-                             DisplayName = scanResult.Device.Name,
-                             Id = scanResult.Device.Uuid.ToString()
-                         });
+                     if (!string.IsNullOrEmpty(scanResult.Device.Name)
+                         && scanResult.AdvertisementData.ManufacturerData != null)
+                     {
+                         var data = Encoding.UTF8.GetString(scanResult.AdvertisementData.ManufacturerData);
+                         if (scanResult.Device.Name.Contains("PC"))
+                             Discovered?.Invoke(new RomeRemoteSystem(scanResult.Device)
+                             {
+                                 DisplayName = scanResult.Device.Name,
+                                 Id = scanResult.Device.Uuid.ToString()
+                             });
+                     }
                  });
         }
 
@@ -73,6 +78,11 @@ namespace Miriot.iOS.Services
                 _connectedDevice = await ((IDevice)system.NativeObject)
                     .ConnectWait()
                     .Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
+
+                _connectedDevice.WhenAnyCharacteristicDiscovered().Subscribe(ch =>
+                {
+                    Debug.WriteLine("Chara. discovered");
+                });
 
                 return _connectedDevice != null;
             }
@@ -150,25 +160,27 @@ namespace Miriot.iOS.Services
             try
             {
                 //var s = await GetService(_connectedPeripheral, Constants.SERVICE_UUID.ToString());
-                var connectedPeripheral = _connectedDevice;
-                var rrrr = await _connectedDevice.WriteCharacteristic(Constants.SERVICE_UUID, Constants.SERVICE__WWRITE_UUID, Encoding.ASCII.GetBytes(value));
-
-                var ss = await connectedPeripheral.DiscoverServices();
-
+                //var res = await _connectedDevice.WriteCharacteristic(Constants.SERVICE_UUID, Constants.SERVICE__WWRITE_UUID, Encoding.ASCII.GetBytes(value))
+                //.Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
+                //var ssssssss = Encoding.ASCII.GetString(res.Data);
+                //return ssssssss;
                 //var c = await GetCharacteristics(_connectedPeripheral, s, 10000);
                 //var characteristic = c.First(e => e.UUID.ToString() == Constants.SERVICE__WWRITE_UUID.ToString());
-                var services = await _connectedDevice.DiscoverServices();
+                //var services = await _connectedDevice.DiscoverServices();
                 var s = await _connectedDevice.GetKnownService(Constants.SERVICE_UUID);
                 var characteristic = await s.GetKnownCharacteristics(Constants.SERVICE__WWRITE_UUID);
 
-                var res = await characteristic.Write(Encoding.ASCII.GetBytes(value));
+                var res2 = await characteristic.Write(Encoding.ASCII.GetBytes(value));
 
                 //var c = await _connectedDevice.GetCharacteristicsForService(Constants.SERVICE_UUID).Take(5).ToArray();//.WhenAnyCharacteristicDiscovered().Subscribe(c =>
                 //var characteristic = c.First(e => e.Uuid.ToString() == Constants.SERVICE__WWRITE_UUID.ToString());
                 //var res = await characteristic.Write(Encoding.ASCII.GetBytes(value));
-                var ssssssss = Encoding.ASCII.GetString(res.Data);
+                //var ssssssss = Encoding.ASCII.GetString(res2.Data);
                 ////{
+                var characteristicRead = await s.GetKnownCharacteristics(Constants.SERVICE_READ_UUID);
 
+                var read = await characteristicRead.Read();
+                var ssssssss = Encoding.ASCII.GetString(read.Data);
                 //});
                 //if (await WriteValue(_connectedPeripheral, characteristic, NSData.FromString(value)))
                 //{
@@ -176,6 +188,7 @@ namespace Miriot.iOS.Services
                 //    var res = await ReadValue(_connectedPeripheral, characteristic);
                 //    return res;
                 //}
+                return ssssssss;
             }
             catch (Exception ex)
             {
@@ -183,7 +196,7 @@ namespace Miriot.iOS.Services
             }
             finally
             {
-                Disconnect(_connectedPeripheral);
+                //Disconnect(_connectedPeripheral);
             }
 
             return "";
@@ -262,6 +275,11 @@ namespace Miriot.iOS.Services
                     await Scan();
             }
             //this.StateChanged?.Invoke(sender, this.manager.State);
+        }
+
+        public void StopAdv()
+        {
+            throw new NotImplementedException();
         }
     }
 }

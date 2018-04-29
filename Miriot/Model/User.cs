@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using Miriot.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -56,6 +57,7 @@ namespace Miriot.Common.Model
             }
         }
 
+        [JsonIgnore]
         public Rectangle FaceRectangle { get; set; }
     }
 }

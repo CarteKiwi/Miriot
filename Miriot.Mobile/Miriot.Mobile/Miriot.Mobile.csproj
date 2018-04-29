@@ -30,4 +30,27 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Templates\CalendarMailTemplate.xml" />
+    <None Remove="Templates\HoroscopeTemplate.xml" />
+    <None Remove="Templates\TwitterTemplate.xml" />
+    <None Remove="Templates\WeatherTemplate.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Templates\HoroscopeTemplate.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\TwitterTemplate.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\WeatherTemplate.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\CalendarMailTemplate.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Templates\" />
+  </ItemGroup>
 </Project>

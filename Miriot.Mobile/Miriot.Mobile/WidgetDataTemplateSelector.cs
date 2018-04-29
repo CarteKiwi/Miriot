@@ -1,5 +1,7 @@
 ﻿using Miriot.Core.ViewModels.Widgets;
+using System;
 using System.IO;
+using System.Reflection;
 using System.Xml.Linq;
 using Xamarin.Forms;
 
@@ -26,13 +28,13 @@ namespace Miriot.Mobile
             else
                 return DefaultTemplate;
 
-            var path = $"{Directory.GetCurrentDirectory()}\\Controls\\Widgets\\Templates\\";
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Templates\");
 
             var templateXml = XDocument.Load(path + xmlTemplatePath);
 
             var page = XamlReader.Load<ContentPage>(templateXml.ToString());
             var template = page.Resources["DefaultTemplate"] as DataTemplate;
-            
+
             return template;
         }
     }
