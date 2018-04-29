@@ -175,6 +175,8 @@ namespace Miriot.Services
                         _vm.IsConfiguring = true;
                     });
                     return _vm.User.Id.ToString();
+                case RemoteCommands.GetMiriotId:
+                    return _platformService.GetSystemIdentifier();
                 case RemoteCommands.GraphService_Initialize:
                     Messenger.Default.Send(new GraphServiceMessage(false));
                     return null;

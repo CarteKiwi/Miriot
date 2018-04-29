@@ -1,4 +1,5 @@
-﻿using Miriot.Common;
+﻿using GalaSoft.MvvmLight.Ioc;
+using Miriot.Common;
 using Miriot.Model;
 using Miriot.Services;
 using Newtonsoft.Json;
@@ -89,10 +90,9 @@ namespace Miriot.Win10.Services
             
             // Add custom data to the advertisement
             var manufacturerData = new BluetoothLEManufacturerData();
-            manufacturerData.CompanyId = 0xFFFE;
 
             var writer = new DataWriter();
-            writer.WriteString("Miriot");
+            writer.WriteString("Miriot@GDM");
 
             // Make sure that the buffer length can fit within an advertisement payload (~20 bytes). 
             // Otherwise you will get an exception.
@@ -175,6 +175,7 @@ namespace Miriot.Win10.Services
         }
 
         private string _data;
+
         private async void WriteCharacteristic_WriteRequested(GattLocalCharacteristic sender, GattWriteRequestedEventArgs args)
         {
 
