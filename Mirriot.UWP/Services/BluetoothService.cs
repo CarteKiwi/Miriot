@@ -2,16 +2,17 @@
 using Miriot.Model;
 using Miriot.Services;
 using Newtonsoft.Json;
+using Plugin.BluetoothLE;
+using Plugin.BluetoothLE.Server;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Devices.Bluetooth.Rfcomm;
-using Windows.Devices.Enumeration;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 
@@ -22,6 +23,7 @@ namespace Miriot.Win10.Services
         public Action<RomeRemoteSystem> Discovered { get; set; }
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
 
+        private BluetoothLEAdvertisementPublisher _publisher;
         private GattServiceProvider _serviceProvider;
         private StreamSocketListener _listener;
         private StreamSocket _socket;
@@ -31,16 +33,15 @@ namespace Miriot.Win10.Services
 
         public async Task InitializeAsync()
         {
+            App.Current.Suspending -= Current_Suspending;
+            App.Current.Suspending += Current_Suspending;
+            //CrossServer();
+            //return;
+
             GattServiceProviderResult result = await GattServiceProvider.CreateAsync(Constants.SERVICE_UUID);
 
             if (result.Error == BluetoothError.Success)
             {
-                var tt = new DataWriter();
-                tt.WriteString("coucou");
-                var titi = tt.DetachBuffer();
-
-                var b = Encoding.UTF8.GetBytes("hello");
-
                 _serviceProvider = result.ServiceProvider;
                 byte[] value = new byte[] { 0x21 };
                 var readParameters = new GattLocalCharacteristicParameters
@@ -59,11 +60,6 @@ namespace Miriot.Win10.Services
                 _readCharacteristic = characteristicResult.Characteristic;
                 _readCharacteristic.ReadRequested += ReadCharacteristic_ReadRequested;
 
-                //var t = new JsonTextReader();
-
-                //            var buffer = Windows.Security.Cryptography.CryptographicBuffer.ConvertStringToBinary(
-                //"What fools these mortals be", Windows.Security.Cryptography.BinaryStringEncoding.Utf8);
-
                 var writeParameters = new GattLocalCharacteristicParameters
                 {
                     CharacteristicProperties = (GattCharacteristicProperties.Write),
@@ -79,7 +75,6 @@ namespace Miriot.Win10.Services
                 _writeCharacteristic = characteristicResult.Characteristic;
                 _writeCharacteristic.ReadRequested += ReadCharacteristic_ReadRequested;
                 _writeCharacteristic.WriteRequested += WriteCharacteristic_WriteRequested;
-
             }
 
             GattServiceProviderAdvertisingParameters advParameters = new GattServiceProviderAdvertisingParameters
@@ -89,7 +84,96 @@ namespace Miriot.Win10.Services
             };
 
             _serviceProvider.StartAdvertising(advParameters);
+
+            _publisher = new BluetoothLEAdvertisementPublisher();
+            
+            // Add custom data to the advertisement
+            var manufacturerData = new BluetoothLEManufacturerData();
+            manufacturerData.CompanyId = 0xFFFE;
+
+            var writer = new DataWriter();
+            writer.WriteString("Miriot");
+
+            // Make sure that the buffer length can fit within an advertisement payload (~20 bytes). 
+            // Otherwise you will get an exception.
+            manufacturerData.Data = writer.DetachBuffer();
+
+            // Add the manufacturer data to the advertisement publisher:
+            _publisher.Advertisement.ManufacturerData.Add(manufacturerData);
+
+            _publisher.Start();
         }
+
+        private void Current_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        {
+            _readCharacteristic = null;
+            _writeCharacteristic = null;
+            _publisher?.Stop();
+            StopAdv();
+            _serviceProvider = null;
+        }
+
+        private void CrossServer()
+        {
+            var server = CrossBleAdapter.Current.CreateGattServer();
+            var service = server.CreateService(Constants.SERVICE_UUID, true);
+
+            var characteristic = service.AddCharacteristic(
+                Constants.SERVICE__WWRITE_UUID,
+                CharacteristicProperties.Read | CharacteristicProperties.Write | CharacteristicProperties.WriteNoResponse,
+                GattPermissions.Read | GattPermissions.Write
+            );
+
+            var notifyCharacteristic = service.AddCharacteristic
+            (
+                Constants.SERVICE_READ_UUID,
+                CharacteristicProperties.Indicate | CharacteristicProperties.Notify,
+                GattPermissions.Read | GattPermissions.Write
+            );
+
+            IDisposable notifyBroadcast = null;
+            notifyCharacteristic.WhenDeviceSubscriptionChanged().Subscribe(e =>
+            {
+                var @event = e.IsSubscribed ? "Subscribed" : "Unsubcribed";
+
+                if (notifyBroadcast == null)
+                {
+                    notifyBroadcast = Observable
+                        .Interval(TimeSpan.FromSeconds(1))
+                        .Where(x => notifyCharacteristic.SubscribedDevices.Count > 0)
+                        .Subscribe(_ =>
+                        {
+                            Debug.WriteLine("Sending Broadcast");
+                            var dt = DateTime.Now.ToString("g");
+                            var bytes = Encoding.UTF8.GetBytes(dt);
+                            notifyCharacteristic.Broadcast(bytes);
+                        });
+                }
+            });
+
+            characteristic.WhenReadReceived().Subscribe(x =>
+            {
+                var write = "HELLO";
+
+                // you must set a reply value
+                x.Value = Encoding.UTF8.GetBytes(write);
+
+                x.Status = GattStatus.Success; // you can optionally set a status, but it defaults to Success
+            });
+            characteristic.WhenWriteReceived().Subscribe(x =>
+            {
+                var write = Encoding.UTF8.GetString(x.Value, 0, x.Value.Length);
+                // do something value
+            });
+
+            server.AddService(service);
+
+            //await server.Start(new AdvertisementData
+            //{
+            //    LocalName = "TestServer"
+            //});
+        }
+
         private string _data;
         private async void WriteCharacteristic_WriteRequested(GattLocalCharacteristic sender, GattWriteRequestedEventArgs args)
         {
@@ -184,7 +268,7 @@ namespace Miriot.Win10.Services
 
         public void StopAdv()
         {
-            _serviceProvider.StopAdvertising();
+            _serviceProvider?.StopAdvertising();
         }
     }
 }
