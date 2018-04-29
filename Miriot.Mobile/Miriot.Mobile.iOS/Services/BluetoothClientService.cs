@@ -1,21 +1,12 @@
-﻿using CoreBluetooth;
-using CoreFoundation;
-using ExternalAccessory;
-using Foundation;
-using Miriot.Common;
+﻿using Miriot.Common;
 using Miriot.Model;
 using Miriot.Services;
-using Newtonsoft.Json;
 using Plugin.BluetoothLE;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace Miriot.iOS.Services
 {
@@ -26,11 +17,9 @@ namespace Miriot.iOS.Services
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
         public Action<RomeRemoteSystem> Discovered { get; set; }
 
-        private CBCentralManager _manager;
-        private CBPeripheral _connectedPeripheral;
         private IDevice _connectedDevice;
 
-        public async Task Scan()
+        private void Scan()
         {
             Debug.WriteLine("Scanning started");
 
@@ -65,13 +54,6 @@ namespace Miriot.iOS.Services
                 CrossBleAdapter.Current.StopScan();
         }
 
-        public void Disconnect(CBPeripheral peripheral)
-        {
-            _manager.CancelPeripheralConnection(peripheral);
-            Debug.WriteLine($"Device {peripheral.Name} disconnected");
-            _connectedPeripheral = null;
-        }
-
         public async Task<bool> ConnectAsync(RomeRemoteSystem system)
         {
             try
@@ -82,11 +64,6 @@ namespace Miriot.iOS.Services
                     .ConnectWait()
                     .Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
 
-                _connectedDevice.WhenAnyCharacteristicDiscovered().Subscribe(ch =>
-                {
-                    Debug.WriteLine("Chara. discovered");
-                });
-
                 return _connectedDevice != null;
             }
             catch (Exception ex)
@@ -96,188 +73,48 @@ namespace Miriot.iOS.Services
             }
         }
 
-        public Task InitializeAsync()
+        public void Initialize()
         {
-            _manager = new CBCentralManager(DispatchQueue.CurrentQueue);
-            _manager.UpdatedState += UpdatedState;
-            return Task.FromResult(true);
-        }
-
-        public CBPeripheral[] GetConnectedDevices(string serviceUuid)
-        {
-            return _manager.RetrieveConnectedPeripherals(new[] { CBUUID.FromString(serviceUuid) });
-        }
-
-        public async Task<CBService> GetService(CBPeripheral peripheral, string serviceUuid)
-        {
-            var service = this.GetServiceIfDiscovered(peripheral, serviceUuid);
-            if (service != null)
+            CrossBleAdapter.Current.WhenStatusChanged().Subscribe(s =>
             {
-                return service;
-            }
-
-            var taskCompletion = new TaskCompletionSource<bool>();
-            var task = taskCompletion.Task;
-            EventHandler<NSErrorEventArgs> handler = (s, e) =>
-            {
-                if (this.GetServiceIfDiscovered(peripheral, serviceUuid) != null)
-                {
-                    taskCompletion.SetResult(true);
-                }
-            };
-
-            try
-            {
-                peripheral.DiscoveredService += handler;
-                //peripheral.Delegate = new SimplePeripheralDelegate();
-                //(peripheral.Delegate as SimplePeripheralDelegate).DiscoveredMyService = () =>
-                //{
-                //    taskCompletion.SetResult(true);
-                //};
-                peripheral.DiscoverServices();
-                await this.WaitForTaskWithTimeout(task, ConnectionTimeout);
-                return this.GetServiceIfDiscovered(peripheral, serviceUuid);
-            }
-            finally
-            {
-                peripheral.DiscoveredService -= handler;
-            }
-        }
-
-        public CBService GetServiceIfDiscovered(CBPeripheral peripheral, string serviceUuid)
-        {
-            serviceUuid = serviceUuid.ToLowerInvariant();
-            return peripheral.Services
-                ?.FirstOrDefault(x => x.UUID?.Uuid?.ToLowerInvariant() == serviceUuid);
-        }
-
-        public async Task<CBCharacteristic[]> GetCharacteristics(CBPeripheral peripheral, CBService service, int scanTime)
-        {
-            peripheral.DiscoverCharacteristics(service);
-            await Task.Delay(scanTime);
-            return service.Characteristics;
+                if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOn)
+                    Scan();
+            });
         }
 
         public async Task<string> GetAsync(string value)
         {
             try
             {
-                //var s = await GetService(_connectedPeripheral, Constants.SERVICE_UUID.ToString());
-                //var res = await _connectedDevice.WriteCharacteristic(Constants.SERVICE_UUID, Constants.SERVICE__WWRITE_UUID, Encoding.ASCII.GetBytes(value))
-                //.Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
-                //var ssssssss = Encoding.ASCII.GetString(res.Data);
-                //return ssssssss;
-                //var c = await GetCharacteristics(_connectedPeripheral, s, 10000);
-                //var characteristic = c.First(e => e.UUID.ToString() == Constants.SERVICE__WWRITE_UUID.ToString());
-                //var services = await _connectedDevice.DiscoverServices();
-                var s = await _connectedDevice.GetKnownService(Constants.SERVICE_UUID);
-                var characteristic = await s.GetKnownCharacteristics(Constants.SERVICE__WWRITE_UUID);
+                var service = await _connectedDevice.GetKnownService(Constants.SERVICE_UUID);
 
-                var res2 = await characteristic.Write(Encoding.ASCII.GetBytes(value));
+                var writeCharacteristic = await service.GetKnownCharacteristics(Constants.SERVICE__WWRITE_UUID);
+                await writeCharacteristic.Write(Encoding.ASCII.GetBytes(value));
 
-                //var c = await _connectedDevice.GetCharacteristicsForService(Constants.SERVICE_UUID).Take(5).ToArray();//.WhenAnyCharacteristicDiscovered().Subscribe(c =>
-                //var characteristic = c.First(e => e.Uuid.ToString() == Constants.SERVICE__WWRITE_UUID.ToString());
-                //var res = await characteristic.Write(Encoding.ASCII.GetBytes(value));
-                //var ssssssss = Encoding.ASCII.GetString(res2.Data);
-                ////{
-                var characteristicRead = await s.GetKnownCharacteristics(Constants.SERVICE_READ_UUID);
+                var readCharacteristic = await service.GetKnownCharacteristics(Constants.SERVICE_READ_UUID);
+                var result = await readCharacteristic.Read();
 
-                var read = await characteristicRead.Read();
-                var ssssssss = Encoding.ASCII.GetString(read.Data);
-                //});
-                //if (await WriteValue(_connectedPeripheral, characteristic, NSData.FromString(value)))
-                //{
-                //    characteristic = c.First(e => e.UUID.ToString() == Constants.SERVICE_READ_UUID.ToString());
-                //    var res = await ReadValue(_connectedPeripheral, characteristic);
-                //    return res;
-                //}
-                return ssssssss;
+                return Encoding.ASCII.GetString(result.Data);
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine("GetAsync failed: " + ex.Message);
+                return string.Empty;
             }
-            finally
-            {
-                //Disconnect(_connectedPeripheral);
-            }
-
-            return "";
         }
 
-        public async Task<string> ReadValue(CBPeripheral peripheral, CBCharacteristic characteristic)
+        public async Task SendAsync(string value)
         {
-            var taskCompletion = new TaskCompletionSource<bool>();
-            var task = taskCompletion.Task;
-            EventHandler<CBCharacteristicEventArgs> handler = (s, e) =>
-            {
-                if (e.Characteristic.UUID?.Uuid == characteristic.UUID?.Uuid)
-                {
-                    taskCompletion.TrySetResult(true);
-                }
-            };
-
             try
             {
-                peripheral.UpdatedCharacterteristicValue += handler;
-                peripheral.ReadValue(characteristic);
-                await this.WaitForTaskWithTimeout(task, ConnectionTimeout);
-                return characteristic.Value?.ToString();
+                var service = await _connectedDevice.GetKnownService(Constants.SERVICE_UUID);
+                var writeCharacteristic = await service.GetKnownCharacteristics(Constants.SERVICE__WWRITE_UUID);
+                await writeCharacteristic.Write(Encoding.ASCII.GetBytes(value));
             }
-            finally
+            catch (Exception ex)
             {
-                peripheral.UpdatedCharacterteristicValue -= handler;
+                Debug.WriteLine("SendAsync failed: " + ex.Message);
             }
-        }
-
-        public async Task<bool> WriteValue(CBPeripheral peripheral, CBCharacteristic characteristic, NSData value)
-        {
-            var taskCompletion = new TaskCompletionSource<bool>();
-            var task = taskCompletion.Task;
-            EventHandler<CBCharacteristicEventArgs> handler = (s, e) =>
-            {
-                if (e.Characteristic.UUID?.Uuid == characteristic.UUID?.Uuid)
-                {
-                    taskCompletion.TrySetResult(true);
-                }
-            };
-
-            try
-            {
-                peripheral.WroteCharacteristicValue += handler;
-                peripheral.WriteValue(value, characteristic, CBCharacteristicWriteType.WithResponse);
-                await this.WaitForTaskWithTimeout(task, ConnectionTimeout);
-                return task.Result;
-            }
-            finally
-            {
-                peripheral.WroteCharacteristicValue -= handler;
-            }
-        }
-
-
-        private async Task WaitForTaskWithTimeout(Task task, int timeout)
-        {
-            await Task.WhenAny(task, Task.Delay(ConnectionTimeout));
-            if (!task.IsCompleted)
-            {
-                throw new TimeoutException();
-            }
-        }
-
-        private async void UpdatedState(object sender, EventArgs args)
-        {
-            Debug.WriteLine($"State = {_manager.State}");
-
-            if (_manager.State == CBCentralManagerState.PoweredOn)
-            {
-                var connectedDevice = this.GetConnectedDevices(Constants.SERVICE_UUID.ToString())
-                        ?.FirstOrDefault();
-
-                if (connectedDevice == null)
-                    await Scan();
-            }
-            //this.StateChanged?.Invoke(sender, this.manager.State);
         }
 
         public void StopAdv()

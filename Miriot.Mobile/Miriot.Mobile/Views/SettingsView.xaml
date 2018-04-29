@@ -21,7 +21,7 @@
             </Style>
 
             <DataTemplate x:Key="DefaultTemplate">
-                <Grid HorizontalOptions="Fill">
+                <Grid Margin="0,0,0,20" HorizontalOptions="Fill">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
@@ -64,6 +64,7 @@
                                 <x:String>4</x:String>
                                 <x:String>5</x:String>
                                 <x:String>6</x:String>
+                                <x:String>7</x:String>
                                 <x:String>8</x:String>
                                 <x:String>9</x:String>
                             </Picker.Items>
@@ -76,6 +77,7 @@
 
             <!--Template Selector-->
             <sel:WidgetTemplateSelector x:Key="WidgetTemplateSelector" 
+                                        HoroscopeTemplate="{StaticResource HoroscopeTemplate}"
                                         WeatherTemplate="{StaticResource WeatherTemplate}"
                                         CalendarTemplate="{StaticResource CalendarMailTemplate}"
                                         DefaultTemplate="{StaticResource DefaultTemplate}"/>

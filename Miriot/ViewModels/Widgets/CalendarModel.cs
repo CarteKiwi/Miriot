@@ -42,7 +42,7 @@ namespace Miriot.Core.ViewModels.Widgets
                     var auth = SimpleIoc.Default.GetInstance<IGraphService>();
 
                     // Tell the mirror to display code
-                    remoteService.Command(RemoteCommands.GraphService_Initialize);
+                    await remoteService.SendAsync(RemoteCommands.GraphService_Initialize);
 
                     // Redirect the user to the login page
                     await auth.AuthenticateForDeviceAsync();

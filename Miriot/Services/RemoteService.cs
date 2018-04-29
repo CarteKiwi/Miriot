@@ -46,27 +46,6 @@ namespace Miriot.Services
             _vm = vm;
         }
 
-        public async Task<bool> SendAsync(RemoteParameter parameter)
-        {
-            if (_connectedRemoteSystem == null)
-            {
-                Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
-                return false;
-            }
-
-            try
-            {
-                //await _socketService.SendReceiveMessageAsync(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(parameter));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return false;
-            }
-
-            return true;
-        }
-
         // Rename to Get
         public async Task<T> CommandAsync<T>(RemoteCommands command)
         {
@@ -91,7 +70,7 @@ namespace Miriot.Services
             return JsonConvert.DeserializeObject<T>(response);
         }
 
-        public void Command(RemoteCommands command)
+        public async Task SendAsync(RemoteCommands command)
         {
             if (_connectedRemoteSystem == null)
             {
@@ -99,22 +78,20 @@ namespace Miriot.Services
                 return;
             }
 
-            //_socketService.SendMessage(_connectedRemoteSystem.EndPoint, JsonConvert.SerializeObject(new RemoteParameter() { Command = command }));
+            await _bluetoothService.SendAsync(JsonConvert.SerializeObject(new RemoteParameter { Command = command }));
         }
 
         internal async Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
         {
-            //_socketService.StopBroadcasting();
             _connectedRemoteSystem = selectedRemoteSystem;
             return await _bluetoothService.ConnectAsync(selectedRemoteSystem);
-            //Command(RemoteCommands.MiriotConnect);
         }
 
-        public async void Discover()
+        public void Discover()
         {
             try
             {
-                await _bluetoothService.InitializeAsync();
+                _bluetoothService.Initialize();
 
                 _bluetoothService.Discovered = (system) =>
                 {
@@ -140,7 +117,7 @@ namespace Miriot.Services
         internal void Listen()
         {
             _bluetoothService.CommandReceived = CommandReceived;
-            Task.Run(async () => await _bluetoothService.InitializeAsync());
+            Task.Run(() => _bluetoothService.Initialize());
         }
 
         private T Deserialize<T>(RemoteParameter parameter)
@@ -189,19 +166,8 @@ namespace Miriot.Services
                 case RemoteCommands.GoToCameraPage:
                     SimpleIoc.Default.GetInstance<INavigationService>().NavigateTo(PageKeys.CameraSettings);
                     return null;
-                case RemoteCommands.MiriotConnect:
-                    //_socketService.ListenTcp();
-                    return null;
-                case RemoteCommands.MiriotDiscovery:
                 default:
-                    // Reply back
-                    var id = _platformService.GetSystemIdentifier();
-                    var sys = new RomeRemoteSystem(null)
-                    {
-                        Id = id,
-                        DisplayName = Environment.MachineName
-                    };
-                    return JsonConvert.SerializeObject(sys);
+                    return null;
             }
         }
 

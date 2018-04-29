@@ -174,15 +174,19 @@ namespace Miriot.Core.ViewModels
             });
         }
 
-        private Task<bool> RefreshUserAsync()
+        private Task RefreshUserAsync()
         {
-            return _remoteService.SendAsync(new RemoteParameter() { Command = RemoteCommands.LoadUser });
+            return _remoteService.SendAsync(RemoteCommands.LoadUser);
         }
 
         private async Task<bool> UpdateUserAsync()
         {
-            await _miriotService.UpdateConfigurationAsync(SelectedConfiguration);
-            return await RefreshUserAsync();
+            var updated = await _miriotService.UpdateConfigurationAsync(SelectedConfiguration);
+
+            if (updated)
+                await RefreshUserAsync();
+
+            return updated;
         }
 
         public void SetParameters(MiriotParameter parameter)
@@ -194,7 +198,7 @@ namespace Miriot.Core.ViewModels
         private async void OnSelectionChanged()
         {
             if (MiriotId == SelectedConfiguration.MiriotDeviceId)
-                _remoteService.Command(RemoteCommands.MiriotConfiguring);
+                await _remoteService.SendAsync(RemoteCommands.MiriotConfiguring);
 
             await LoadWidgetsAsync();
         }
@@ -212,7 +216,7 @@ namespace Miriot.Core.ViewModels
 
             if (!User.Devices.Any())
             {
-                var config = new MiriotConfiguration() { MiriotDeviceId = MiriotId, Name = "Miriot" };
+                var config = new MiriotConfiguration { MiriotDeviceId = MiriotId, Name = "Miriot" };
                 User.Devices.Add(config);
                 HasNoConfiguration = true;
             }
@@ -225,7 +229,7 @@ namespace Miriot.Core.ViewModels
             if (SelectedConfiguration == null)
             {
                 HasNoConfiguration = true;
-                var config = new MiriotConfiguration()
+                var config = new MiriotConfiguration
                 {
                     MiriotDeviceId = MiriotId,
                     Name = "Miriot",
