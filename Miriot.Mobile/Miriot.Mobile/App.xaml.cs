@@ -2,8 +2,9 @@
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Core;
+using Miriot.Mobile.Services;
 using Miriot.Mobile.Views;
-
+using Miriot.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -27,6 +28,7 @@ namespace Miriot.Mobile
             var nav = InitializeNavigationService();
 
             Locator = new ViewModelLocator();
+            SimpleIoc.Default.Register<IGraphService, GraphService>();
 
             MainPage = new NavigationPage(new HomePage());
 

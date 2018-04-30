@@ -15,6 +15,7 @@
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="2.0.2" />
     <PackageReference Include="Xamarin.Forms" Version="2.5.1.444934" />
     <PackageReference Include="Plugin.BluetoothLE" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Toolkit.Services" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Templates\" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\CalendarMailTemplate.xml">
