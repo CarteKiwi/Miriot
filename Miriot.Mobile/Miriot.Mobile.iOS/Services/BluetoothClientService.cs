@@ -12,7 +12,7 @@ namespace Miriot.iOS.Services
 {
     public class BluetoothClientService : IBluetoothService
     {
-        private const int ConnectionTimeout = 60000;
+        private const int ConnectionTimeout = 20000;
 
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
         public Action<RomeRemoteSystem> Discovered { get; set; }
@@ -36,7 +36,8 @@ namespace Miriot.iOS.Services
                      {
                          var data = Encoding.ASCII.GetString(scanResult.AdvertisementData.ManufacturerData);
 
-                         if (data.Contains("Miriot"))
+                         if (scanResult.Device.Name.Contains("Miriot"))
+                         //if (data.Contains("Miriot"))
                          {
                              Discovered?.Invoke(new RomeRemoteSystem(scanResult.Device)
                              {
@@ -59,6 +60,14 @@ namespace Miriot.iOS.Services
             try
             {
                 StopScan();
+
+                if (_connectedDevice != null && _connectedDevice.Status == ConnectionStatus.Disconnected)
+                {
+                    Debug.WriteLine($"Cancelling connection & reconnect");
+                    _connectedDevice.CancelConnection();
+                }
+
+                Debug.WriteLine($"Connecting...");
 
                 _connectedDevice = await ((IDevice)system.NativeObject)
                     .ConnectWait()
@@ -86,13 +95,18 @@ namespace Miriot.iOS.Services
         {
             try
             {
-                var service = await _connectedDevice.GetKnownService(Constants.SERVICE_UUID);
+                Debug.WriteLine("Get service");
+                var service = await _connectedDevice.GetKnownService(Constants.SERVICE_UUID).Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
 
-                var writeCharacteristic = await service.GetKnownCharacteristics(Constants.SERVICE__WWRITE_UUID);
-                await writeCharacteristic.Write(Encoding.ASCII.GetBytes(value));
+                Debug.WriteLine("Get write characteristic");
+                var writeCharacteristic = await service.GetKnownCharacteristics(Constants.SERVICE__WWRITE_UUID).Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
+                Debug.WriteLine("Write characteristic");
+                await writeCharacteristic.Write(Encoding.ASCII.GetBytes(value)).Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
 
-                var readCharacteristic = await service.GetKnownCharacteristics(Constants.SERVICE_READ_UUID);
-                var result = await readCharacteristic.Read();
+                Debug.WriteLine("Get read characteristic");
+                var readCharacteristic = await service.GetKnownCharacteristics(Constants.SERVICE_READ_UUID).Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
+                Debug.WriteLine("Read characteristic");
+                var result = await readCharacteristic.Read().Timeout(TimeSpan.FromMilliseconds(ConnectionTimeout));
 
                 return Encoding.ASCII.GetString(result.Data);
             }
@@ -100,6 +114,10 @@ namespace Miriot.iOS.Services
             {
                 Debug.WriteLine("GetAsync failed: " + ex.Message);
                 return string.Empty;
+            }
+            finally
+            {
+
             }
         }
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                       x:TypeArguments="viewModels:ProfileViewModel"
@@ -56,7 +56,7 @@
                         </controls:CircleImage>
 
                         <Label Text="{Binding User.Name}"
-                               FontSize="Micro"
+                               FontSize="20"
                                TextColor="{DynamicResource BgColor}"
                                VerticalOptions="Center"
                                HorizontalOptions="Center"/>
@@ -82,13 +82,13 @@
                                 BackgroundColor="Transparent"
                                 HorizontalOptions="Center"
                                 WidthRequest="300"
-                                TextColor="White"
+                                TextColor="Black"
                                 SelectedItem="{Binding SelectedConfiguration}">
                         </Picker>
 
                         <Label Text="&#xE74E;" 
                                x:Name="SaveLabel"
-                               Margin="0,0,20,0"
+                               Margin="0,0,0,0"
                                FontSize="20"
                                TextColor="White"
                                HorizontalOptions="End"

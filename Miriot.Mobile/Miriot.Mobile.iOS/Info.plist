@@ -55,9 +55,24 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>SEGMDL2.ttf</string>
+		<string>Segoe MDL2 Assets.ttf</string>
 	</array>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Connection à Miriot pour paramétrage</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>example.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 </dict>
 </plist>

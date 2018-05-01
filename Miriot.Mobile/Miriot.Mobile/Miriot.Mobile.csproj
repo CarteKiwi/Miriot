@@ -15,7 +15,8 @@
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="2.0.2" />
     <PackageReference Include="Xamarin.Forms" Version="2.5.1.444934" />
     <PackageReference Include="Plugin.BluetoothLE" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Toolkit.Services" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="1.1.2-preview0008" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="1.1.4.154-pre" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,5 +57,13 @@
     <EmbeddedResource Include="Templates\CalendarMailTemplate.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Toolkit.Services">
+      <HintPath>..\..\Libs\Microsoft.Toolkit.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Toolkit">
+      <HintPath>..\..\Libs\Microsoft.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -158,6 +158,12 @@
     <Reference Include="Plugin.BluetoothLE">
       <HintPath>..\..\packages\Plugin.BluetoothLE.6.0.1\lib\xamarinios10\Plugin.BluetoothLE.dll</HintPath>
     </Reference>
+    <Reference Include="Rg.Plugins.Popup">
+      <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.4.154-pre\lib\Xamarin.IOS\Rg.Plugins.Popup.dll</HintPath>
+    </Reference>
+    <Reference Include="Rg.Plugins.Popup.IOS">
+      <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.4.154-pre\lib\Xamarin.IOS\Rg.Plugins.Popup.IOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
@@ -188,7 +194,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <BundleResource Include="Resources\SEGMDL2.TTF">
+    <BundleResource Include="Resources\Segoe MDL2 Assets.TTF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </BundleResource>
   </ItemGroup>
@@ -203,6 +209,7 @@
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\TwitterService.cs" />
     <Compile Include="Services\GraphService.cs" />
+    <Compile Include="Controls\CustomWebViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_about.png" />

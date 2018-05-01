@@ -21,6 +21,8 @@ namespace Miriot.Mobile.iOS
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            Rg.Plugins.Popup.Popup.Init();
+
             Locator = new Locator();
             CrossBleAdapter.AdapterScanner.FindAdapters();
             global::Xamarin.Forms.Forms.Init();

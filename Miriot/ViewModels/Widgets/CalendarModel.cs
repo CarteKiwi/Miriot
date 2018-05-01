@@ -41,11 +41,11 @@ namespace Miriot.Core.ViewModels.Widgets
                     var remoteService = SimpleIoc.Default.GetInstance<RemoteService>();
                     var auth = SimpleIoc.Default.GetInstance<IGraphService>();
 
+                    // Display popup login page
+                    await auth.AuthenticateForDeviceAsync();
+
                     // Tell the mirror to display code
                     await remoteService.SendAsync(RemoteCommands.GraphService_Initialize);
-
-                    // Redirect the user to the login page
-                    await auth.AuthenticateForDeviceAsync();
 
                     // Tell the mirror to retrieve user
                     User = await remoteService.CommandAsync<GraphUser>(RemoteCommands.GraphService_GetUser);

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Toolkit.Services.MicrosoftGraph;
 using Miriot.Common.Model.Widgets;
+using Miriot.Mobile.Views;
 using Miriot.Services;
+using Rg.Plugins.Popup.Services;
+using Xamarin.Forms;
 
 namespace Miriot.Mobile.Services
 {
@@ -21,9 +26,14 @@ namespace Miriot.Mobile.Services
             IsInitialized = MicrosoftGraphService.Instance.Initialize(appClientId);
         }
 
-        public Task AuthenticateForDeviceAsync()
+        public async Task AuthenticateForDeviceAsync()
         {
-            return null;
+            //if (!IsInitialized)
+            //Initialize();
+
+            await PopupNavigation.Instance.PushAsync(new PopupLoginView(new Uri("http://aka.ms/devicelogin")), true);
+
+            //await MicrosoftGraphService.Instance.LoginAsync();
         }
 
         public Task<string> GetCodeAsync()
