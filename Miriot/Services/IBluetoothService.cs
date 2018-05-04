@@ -6,7 +6,7 @@ namespace Miriot.Services
 {
     public interface IBluetoothService
     {
-        void Initialize();
+        Task InitializeAsync();
         Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
         Action<RomeRemoteSystem> Discovered { get; set; }
         Task<bool> ConnectAsync(RomeRemoteSystem system);

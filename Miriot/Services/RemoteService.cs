@@ -87,11 +87,11 @@ namespace Miriot.Services
             return await _bluetoothService.ConnectAsync(selectedRemoteSystem);
         }
 
-        public void Discover()
+        public async void Discover()
         {
             try
             {
-                _bluetoothService.Initialize();
+                await _bluetoothService.InitializeAsync();
 
                 _bluetoothService.Discovered = (system) =>
                 {
@@ -117,7 +117,7 @@ namespace Miriot.Services
         internal void Listen()
         {
             _bluetoothService.CommandReceived = CommandReceived;
-            Task.Run(() => _bluetoothService.Initialize());
+            Task.Run(async () => await _bluetoothService.InitializeAsync());
         }
 
         private T Deserialize<T>(RemoteParameter parameter)
