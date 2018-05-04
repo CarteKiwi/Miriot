@@ -82,13 +82,15 @@ namespace Miriot.iOS.Services
             }
         }
 
-        public void Initialize()
+        public Task InitializeAsync()
         {
             CrossBleAdapter.Current.WhenStatusChanged().Subscribe(s =>
             {
                 if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOn)
                     Scan();
             });
+
+            return Task.FromResult(true);
         }
 
         public async Task<string> GetAsync(string value)
