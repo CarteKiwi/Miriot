@@ -86,8 +86,6 @@ namespace Miriot.Win10.Services
 
             _serviceProvider.StartAdvertising(advParameters);
 
-            _publisher = new BluetoothLEAdvertisementPublisher();
-            
             // Add custom data to the advertisement
             var manufacturerData = new BluetoothLEManufacturerData();
             manufacturerData.CompanyId = 0xFFFE;
@@ -99,8 +97,13 @@ namespace Miriot.Win10.Services
             // Otherwise you will get an exception.
             manufacturerData.Data = writer.DetachBuffer();
 
-            // Add the manufacturer data to the advertisement publisher:
-            _publisher.Advertisement.ManufacturerData.Add(manufacturerData);
+            var adv = new BluetoothLEAdvertisement();
+            adv.ManufacturerData.Add(manufacturerData);
+
+            _publisher = new BluetoothLEAdvertisementPublisher(adv);
+
+            //// Add the manufacturer data to the advertisement publisher:
+            //_publisher.Advertisement.ManufacturerData.Add(manufacturerData);
 
             _publisher.Start();
         }
@@ -193,11 +196,7 @@ namespace Miriot.Win10.Services
 
                 string serializedData = await CommandReceived(parameter);
                 _data = serializedData;
-                //var dw = new DataWriter();
-                //dw.WriteString(serializedData);
-                
-                //await _writeCharacteristic.NotifyValueAsync(dw.DetachBuffer());
-
+            
                 if (request.Option == GattWriteOption.WriteWithResponse)
                 {
                     request.Respond();
@@ -235,29 +234,6 @@ namespace Miriot.Win10.Services
             }
         }
 
-
-
-        private async void SendMessage(string message)
-        {
-            // There's no need to send a zero length message
-            if (message.Length != 0)
-            {
-                // Make sure that the connection is still up and there is a message to send
-                if (_socket != null)
-                {
-                    _writer.WriteUInt32((uint)message.Length);
-                    _writer.WriteString(message);
-
-                    Debug.WriteLine("Sent: " + message);
-
-                    await _writer.StoreAsync();
-                }
-                else
-                {
-                    Debug.WriteLine("No clients connected, please wait for a client to connect before attempting to send a message");
-                }
-            }
-        }
         public Task<bool> ConnectAsync(RomeRemoteSystem system)
         {
             throw new NotImplementedException();
@@ -271,6 +247,11 @@ namespace Miriot.Win10.Services
         public void StopAdv()
         {
             _serviceProvider?.StopAdvertising();
+        }
+
+        public Task SendAsync(string parameter)
+        {
+            throw new NotImplementedException();
         }
     }
 }
