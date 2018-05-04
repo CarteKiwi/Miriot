@@ -12,7 +12,7 @@ namespace Miriot.iOS.Services
 {
     public class BluetoothClientService : IBluetoothService
     {
-        private const int ConnectionTimeout = 20000;
+        private const int ConnectionTimeout = 30000;
 
         public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
         public Action<RomeRemoteSystem> Discovered { get; set; }

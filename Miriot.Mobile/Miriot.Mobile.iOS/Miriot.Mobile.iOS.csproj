@@ -166,9 +166,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
-      <Visible>false</Visible>
-    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
@@ -181,6 +178,9 @@
     <ImageAsset Include="Assets.xcassets\LaunchImage.launchimage\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Resources\Assets.xcassets\Images.imageset\Icon-App-76x76%401x.png" />
+    <ImageAsset Include="Resources\Assets.xcassets\Images.imageset\Icon-App-57x57%402x.png" />
+    <ImageAsset Include="Resources\Assets.xcassets\Images.imageset\IconApp6060%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />

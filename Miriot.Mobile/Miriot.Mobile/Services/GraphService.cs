@@ -13,6 +13,8 @@ namespace Miriot.Mobile.Services
 {
     public class GraphService : IGraphService
     {
+        private TaskCompletionSource<bool> _tcs;
+
         public GraphService()
         {
         }
@@ -30,10 +32,20 @@ namespace Miriot.Mobile.Services
         {
             //if (!IsInitialized)
             //Initialize();
+            _tcs = new TaskCompletionSource<bool>();
 
-            await PopupNavigation.Instance.PushAsync(new PopupLoginView(new Uri("http://aka.ms/devicelogin")), true);
+            var popup = new PopupLoginView(new Uri("http://aka.ms/devicelogin"));
+            popup.Disappearing += Popup_Disappearing;
 
+            await PopupNavigation.Instance.PushAsync(popup, true);
+
+            await _tcs.Task;
             //await MicrosoftGraphService.Instance.LoginAsync();
+        }
+
+        void Popup_Disappearing(object sender, EventArgs e)
+        {
+            _tcs.SetResult(true);
         }
 
         public Task<string> GetCodeAsync()
