@@ -110,6 +110,7 @@ namespace Miriot.Win10
                 ShowGridLine(2);
                 ShowGridLine(3);
                 ShowGridLine(4);
+                ShowGridLine(5);
             }
         }
 
@@ -140,7 +141,7 @@ namespace Miriot.Win10
                 rect.Y2 = this.ActualHeight;
                 rect.HorizontalAlignment = HorizontalAlignment.Right;
                 rect.VerticalAlignment = VerticalAlignment.Stretch;
-                Grid.SetRowSpan(rect, 3);
+                Grid.SetRowSpan(rect, 4);
             }
 
             if (number == 2)
@@ -149,7 +150,7 @@ namespace Miriot.Win10
                 rect.Y2 = this.ActualHeight;
                 rect.HorizontalAlignment = HorizontalAlignment.Right;
                 rect.VerticalAlignment = VerticalAlignment.Stretch;
-                Grid.SetRowSpan(rect, 3);
+                Grid.SetRowSpan(rect, 4);
                 Grid.SetColumn(rect, 1);
             }
 
@@ -172,6 +173,16 @@ namespace Miriot.Win10
                 Grid.SetRow(rect, 1);
             }
 
+            if (number == 5)
+            {
+                rect.X1 = 0;
+                rect.X2 = this.ActualWidth;
+                rect.HorizontalAlignment = HorizontalAlignment.Stretch;
+                rect.VerticalAlignment = VerticalAlignment.Bottom;
+                Grid.SetColumnSpan(rect, 3);
+                Grid.SetRow(rect, 2);
+            }
+
             WidgetZone.Children.Add(rect);
         }
 
@@ -179,10 +190,7 @@ namespace Miriot.Win10
         {
             if (e.PropertyName == nameof(Vm.IsConfiguring))
             {
-                if (Vm.IsConfiguring)
-                {
-                    ShowGridLines(Vm.IsConfiguring);
-                }
+                ShowGridLines(Vm.IsConfiguring);
             }
 
             if (e.PropertyName == nameof(Vm.SpeakStream))
@@ -201,10 +209,7 @@ namespace Miriot.Win10
             {
                 WidgetZone.Children.Clear();
 
-                if (Vm.IsConfiguring)
-                {
-                    ShowGridLines(Vm.IsConfiguring);
-                }
+                ShowGridLines(Vm.IsConfiguring);
             }
             else if (e.NewItems.Count > 0)
             {

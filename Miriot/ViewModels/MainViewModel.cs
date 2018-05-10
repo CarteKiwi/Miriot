@@ -215,7 +215,9 @@ namespace Miriot.Core.ViewModels
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
             Messenger.Default.Register<GraphServiceMessage>(this, OnGraphServiceMessageReceived);
 
+#if !MOCK
             _remoteService.Listen();
+#endif
         }
 
         private async void OnGraphServiceMessageReceived(GraphServiceMessage message)
@@ -468,6 +470,7 @@ namespace Miriot.Core.ViewModels
                         SubTitle = Strings.UnableToUpdateAccount;
                     }
 #if MOCK
+                    //_remoteService.Listen();
                     //_toothbrushingLauncher.Change(0, Timeout.Infinite);
 #else
                     //_toothbrushingLauncher.Change(0, 3);

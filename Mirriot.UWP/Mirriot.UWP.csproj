@@ -229,8 +229,10 @@
     <Compile Include="Services\GraphService.cs" />
     <Compile Include="Services\DispatcherService.cs" />
     <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\Mock\BluetoothServiceMock.cs" />
     <Compile Include="Services\Mock\FrameAnalyser.cs" />
     <Compile Include="Services\Mock\FakeSpeechService.cs" />
+    <Compile Include="Services\Mock\PlatformServiceMock.cs" />
     <Compile Include="Services\PlatformService.cs" />
     <Compile Include="Services\SecurityService.cs" />
     <Compile Include="Services\SpeechService.cs" />
@@ -442,6 +444,9 @@
     </Reference>
     <Reference Include="Microsoft.OneDrive.Sdk.Authentication.WinStore">
       <HintPath>..\Libs\Microsoft.OneDrive.Sdk.Authentication.WinStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Toolkit.Parsers">
+      <HintPath>..\Libs\Microsoft.Toolkit.Parsers.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Toolkit.Services">
       <HintPath>..\Libs\Microsoft.Toolkit.Services.dll</HintPath>

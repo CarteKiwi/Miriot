@@ -164,7 +164,11 @@ namespace Miriot.Services
 
                     return JsonConvert.SerializeObject(graphUser);
                 case RemoteCommands.GoToCameraPage:
-                    SimpleIoc.Default.GetInstance<INavigationService>().NavigateTo(PageKeys.CameraSettings);
+                    _dispatcherService.Invoke(() =>
+                    {
+                        var ns = SimpleIoc.Default.GetInstance<INavigationService>();
+                        ns.NavigateTo(PageKeys.CameraSettings);
+                    });
                     return null;
                 default:
                     return null;
