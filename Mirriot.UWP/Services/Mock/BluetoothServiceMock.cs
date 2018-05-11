@@ -32,11 +32,9 @@ namespace Miriot.Win10.Services
                 await Task.Delay(5000);
                 SimulateData(RemoteCommands.GraphService_Initialize);
                 await Task.Delay(2000);
-                SimulateData(RemoteCommands.GraphService_GetCode);
-                await Task.Delay(5000);
-                SimulateData(RemoteCommands.GoToCameraPage);
-                await Task.Delay(5000);
-                SimulateData(RemoteCommands.CameraAdjustBrightness);
+                //SimulateData(RemoteCommands.GoToCameraPage);
+                //await Task.Delay(5000);
+                //SimulateData(RemoteCommands.CameraAdjustBrightness);
             });
 
             return Task.FromResult(true);

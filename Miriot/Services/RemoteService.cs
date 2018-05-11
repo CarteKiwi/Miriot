@@ -152,17 +152,36 @@ namespace Miriot.Services
                 case RemoteCommands.GetMiriotId:
                     return _platformService.GetSystemIdentifier();
                 case RemoteCommands.GraphService_Initialize:
-                    Messenger.Default.Send(new GraphServiceMessage(false));
-                    return null;
-                case RemoteCommands.GraphService_GetUser:
-                    Messenger.Default.Send(new GraphServiceMessage(true));
-
                     var _graphService = SimpleIoc.Default.GetInstance<IGraphService>();
+                    string code = await _graphService.GetCodeAsync();
 
-                    await _graphService.LoginAsync();
-                    var graphUser = await _graphService.GetUserAsync();
+                    _dispatcherService.Invoke(() =>
+                    {
+                        _vm.SubTitle = "Code : " + code;
+                    });
 
-                    return JsonConvert.SerializeObject(graphUser);
+                    // Waiting until user has logged
+                    if (await _graphService.LoginAsync())
+                    {
+                        var graphUser = await _graphService.GetUserAsync();
+
+                        _dispatcherService.Invoke(async () =>
+                        {
+                            _vm.SubTitle = "Connecté en tant que " + graphUser.Name;
+                            await _vm.LoadUser(_vm.User);
+                        });
+
+                        return JsonConvert.SerializeObject(graphUser);
+                    }
+                    else
+                    {
+                        _dispatcherService.Invoke(() =>
+                        {
+                            _vm.SubTitle = "L'authentification O365 a échouée.";
+                        });
+                    }
+
+                    return null;
                 case RemoteCommands.GoToCameraPage:
                     _dispatcherService.Invoke(() =>
                     {

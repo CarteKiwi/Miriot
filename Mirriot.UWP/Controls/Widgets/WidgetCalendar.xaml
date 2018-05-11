@@ -31,7 +31,7 @@
                <Run Text="Rendez-vous du jour"/>
         </TextBlock>
 
-        <TextBlock Text="Authentification impossible auprès d'Office 365.&#10;Identifiez-vous à l'aide de votre téléphone"
+        <TextBlock Text="Session expirée.&#10;Reconnectez-vous depuis votre téléphone."
                    x:Name="NotConnectedMessage"
                    Margin="10"
                    TextAlignment="Center"

@@ -146,7 +146,7 @@ namespace Miriot.Core.ViewModels
         public string SubTitle
         {
             get => _subTitle;
-            private set => Set(ref _subTitle, value);
+            set => Set(ref _subTitle, value);
         }
 
         public bool HasNoConfiguration
@@ -206,6 +206,7 @@ namespace Miriot.Core.ViewModels
             _toothbrushingTimer = new Stopwatch();
 
             _cancellationToken = new CancellationTokenSource();
+
             NetworkChange.NetworkAvailabilityChanged += OnNetworkStatusChanged;
             IsInternetAvailable = _platformService.IsInternetAvailable;
 
@@ -213,39 +214,10 @@ namespace Miriot.Core.ViewModels
             _speechService.SetCommand(ProceedSpeechCommand);
 
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
-            Messenger.Default.Register<GraphServiceMessage>(this, OnGraphServiceMessageReceived);
 
 #if !MOCK
             _remoteService.Listen();
 #endif
-        }
-
-        private async void OnGraphServiceMessageReceived(GraphServiceMessage message)
-        {
-            if (message.IsAuthenticated)
-            {
-                _dispatcherService.Invoke(() =>
-                {
-                    SubTitle = "Authentication terminée";
-                });
-            }
-            else
-            {
-                string code = string.Empty;
-                try
-                {
-                    code = await _graphService.GetCodeAsync();
-                }
-                catch (Exception ex)
-                {
-                    code = ex.Message;
-                }
-
-                _dispatcherService.Invoke(() =>
-                {
-                    SubTitle = "Code : " + code;
-                });
-            }
         }
 
         private void OnDeviceConnected(DeviceConnectedMessage obj)
@@ -643,8 +615,12 @@ namespace Miriot.Core.ViewModels
 
         private void OnNavigateTo(string pageKey)
         {
+#if MOCK
+            _remoteService.Listen();
+#else
             var user = User;
             _navigationService.NavigateTo(pageKey, user);
+#endif
         }
 
         public async Task<bool> UpdatePersonAsync(User user)
