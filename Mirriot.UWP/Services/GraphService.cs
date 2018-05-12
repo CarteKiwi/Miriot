@@ -1,17 +1,12 @@
 ﻿using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
-using Miriot.Common.Model;
 using Miriot.Common.Model.Widgets;
 using Miriot.Services;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Security.Credentials;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Miriot.Win10.Services
 {

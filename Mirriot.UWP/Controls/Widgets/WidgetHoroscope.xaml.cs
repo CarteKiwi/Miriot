@@ -36,7 +36,7 @@ namespace Miriot.Win10.Controls
                 using (HttpClient client = new HttpClient())
                 {
                     client.BaseAddress = new Uri("http://kindle.mon-horoscope-du-jour.com/mobile/json/");
-                    var res = await client.GetAsync($"hq_time_v2.php?sign_id={_model.Sign}&tz=Europe%2FParis&lang=fr");
+                    var res = await client.GetAsync($"hq_time_v2.php?sign_id={(int)_model.Sign}&tz=Europe%2FParis&lang=fr");
                     var c = await res.Content.ReadAsStringAsync();
 
                     var horo = JsonConvert.DeserializeObject<HoroscopeResponse>(c);

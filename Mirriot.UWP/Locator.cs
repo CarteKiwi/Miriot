@@ -26,7 +26,7 @@ namespace Miriot.Win10
             SimpleIoc.Default.Register<IPlatformService, PlatformServiceMock>();
             SimpleIoc.Default.Register<ISpeechService, FakeSpeechService>();
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
-            SimpleIoc.Default.Register<IBluetoothService, BluetoothServiceMock>();
+            SimpleIoc.Default.Register<IBluetoothService, BluetoothService>();
 #else
             SimpleIoc.Default.Register<ISpeechService, SpeechService>();
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Utils.FrameAnalyser<ServiceResponse>>();
