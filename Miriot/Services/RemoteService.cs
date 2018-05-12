@@ -91,8 +91,6 @@ namespace Miriot.Services
         {
             try
             {
-                await _bluetoothService.InitializeAsync();
-
                 _bluetoothService.Discovered = (system) =>
                 {
                     var remoteSystem = _remoteSystems.FirstOrDefault(r => r.Id == system.Id);
@@ -107,6 +105,8 @@ namespace Miriot.Services
 
                     }
                 };
+
+                await _bluetoothService.InitializeAsync();
             }
             catch (Exception e)
             {

@@ -49,6 +49,9 @@ namespace Miriot.Core.ViewModels.Widgets
 
                     // Tell the mirror to retrieve user
                     User = await remoteService.CommandAsync<GraphUser>(RemoteCommands.GraphService_GetUser);
+
+                    if (User == null)
+                        IsActive = false;
                 });
             }
         }
