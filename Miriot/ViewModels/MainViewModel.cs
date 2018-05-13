@@ -215,9 +215,7 @@ namespace Miriot.Core.ViewModels
 
             Messenger.Default.Register<DeviceConnectedMessage>(this, OnDeviceConnected);
 
-#if !MOCK
             _remoteService.Listen();
-#endif
         }
 
         private void OnDeviceConnected(DeviceConnectedMessage obj)
@@ -618,8 +616,8 @@ namespace Miriot.Core.ViewModels
 #if MOCK
             _remoteService.Listen();
 #else
-            var user = User;
-            _navigationService.NavigateTo(pageKey, user);
+            _remoteService.Listen();
+            //_navigationService.NavigateTo(PageKeys.CameraSettings);
 #endif
         }
 

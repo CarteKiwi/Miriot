@@ -93,7 +93,7 @@
         <Rectangle x:Name="HostForVisual" Fill="Transparent"/>
 
         <!--Camera control-->
-        <ctrl:CameraControl x:Name="Camera" ShowPreview="True" OptimizeForLowLight="false"/>
+        <ctrl:CameraControl x:Name="Camera" ShowPreview="False" OptimizeForLowLight="False"/>
 
         <!--Widget zone-->
         <Grid x:Name="WidgetZone" 

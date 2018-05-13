@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
+using Miriot.Core;
 using Miriot.Core.ViewModels;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Services;
@@ -10,6 +11,7 @@ using Miriot.Win10.Utils;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
@@ -90,11 +92,17 @@ namespace Miriot.Win10
 
             if (gpio == null) return;
 
-            var pin = gpio.OpenPin(23);
-            pin.SetDriveMode(GpioPinDriveMode.Output);
-            pin.Write(GpioPinValue.Low);
-
-            _areLedsOn = true;
+            try
+            {
+                var pin = gpio.OpenPin(23);
+                pin.SetDriveMode(GpioPinDriveMode.Output);
+                pin.Write(GpioPinValue.Low);
+                _areLedsOn = true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void OnAction(LuisResponse luis)

@@ -179,8 +179,6 @@ namespace Miriot.Win10.Controls
 
         private void AdjustSettings()
         {
-            if (!OptimizeForLowLight) return;
-
             //var zoom = _mediaCapture.VideoDeviceController.Zoom;
 
             //if(zoom.Capabilities.Supported)
@@ -206,16 +204,42 @@ namespace Miriot.Win10.Controls
             //}
 
             //var exposureControl = _mediaCapture.VideoDeviceController.ExposureControl;
-            var bright = _mediaCapture.VideoDeviceController.Brightness;
+            //var bright = _mediaCapture.VideoDeviceController.Brightness;
 
-            if (bright.Capabilities.Supported)
+            //if (bright.Capabilities.Supported)
+            //{
+            //    if (bright.Capabilities.AutoModeSupported)
+            //    {
+            //        bright.TrySetAuto(false);
+            //    }
+
+            //    bright.TrySetValue(bright.Capabilities.Max);
+            //}
+
+            var contrast = ApplicationData.Current.LocalSettings.Values["CameraContrast"];
+            var brightness = ApplicationData.Current.LocalSettings.Values["CameraBrightness"];
+            var exposure = ApplicationData.Current.LocalSettings.Values["CameraExposure"];
+
+            if (contrast != null)
+                AdjustContrast((double)contrast);
+            if (brightness != null)
+                AdjustBrightness((double)brightness);
+            if (exposure != null)
+                AdjustExposition((double)exposure);
+        }
+
+        public void AdjustContrast(double value)
+        {
+            var contrast = _mediaCapture.VideoDeviceController.Contrast;
+
+            if (contrast.Capabilities.Supported)
             {
-                if (bright.Capabilities.AutoModeSupported)
+                if (contrast.Capabilities.AutoModeSupported)
                 {
-                    bright.TrySetAuto(false);
+                    contrast.TrySetAuto(false);
                 }
 
-                bright.TrySetValue(bright.Capabilities.Max);
+                contrast.TrySetValue(value);
             }
         }
 
@@ -229,6 +253,12 @@ namespace Miriot.Win10.Controls
                 {
                     bright.TrySetAuto(false);
                 }
+
+                if (value > bright.Capabilities.Max)
+                    value = bright.Capabilities.Max;
+
+                if (value < bright.Capabilities.Min)
+                    value = bright.Capabilities.Min;
 
                 bright.TrySetValue(value);
             }
@@ -526,6 +556,16 @@ namespace Miriot.Win10.Controls
                 await ms.ReadAsync(array.AsBuffer(), (uint)ms.Size, InputStreamOptions.None);
             }
             return array;
+        }
+
+        public void PersistSettings()
+        {
+            _mediaCapture.VideoDeviceController.Contrast.TryGetValue(out double contrast);
+            _mediaCapture.VideoDeviceController.Brightness.TryGetValue(out double brightness);
+            _mediaCapture.VideoDeviceController.Exposure.TryGetValue(out double exposure);
+            ApplicationData.Current.LocalSettings.Values["CameraContrast"] = contrast;
+            ApplicationData.Current.LocalSettings.Values["CameraBrightness"] = brightness;
+            ApplicationData.Current.LocalSettings.Values["CameraExposure"] = exposure;
         }
 
         #endregion Methods
