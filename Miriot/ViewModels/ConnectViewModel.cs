@@ -103,39 +103,6 @@ namespace Miriot.Core.ViewModels
         {
             _remoteService.Added = OnAdded;
             _remoteService.Discover();
-
-            //_navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
-            //{
-            //    Id = "1",
-            //    User = new User
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Name = "Guillaume Test",
-            //        UserData = new UserData
-            //        {
-            //            Devices = new System.Collections.Generic.List<MiriotConfiguration>()
-            //        {
-            //           new MiriotConfiguration("1", "Miriot")
-            //           {
-            //                Widgets = new System.Collections.Generic.List<Widget>()
-            //                {
-            //                    new Widget(){
-            //                        Id = Guid.NewGuid(),
-            //                        Title = "Widget 1",
-            //                        X = 2,
-            //                        Y = 0,
-            //                        Type = WidgetType.Weather,
-            //                        Infos = new System.Collections.Generic.List<string>{
-            //                            JsonConvert.SerializeObject(new WeatherWidgetInfo { Location = "Asnières sur Seine" })
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //        }
-
-            //        }
-            //    }
-            //});
         }
 
         private void OnAdded(RomeRemoteSystem obj)
@@ -189,7 +156,7 @@ namespace Miriot.Core.ViewModels
                             if (user != null && user.Id != Guid.Empty)
                             {
                                 Message = string.Empty;
-                                _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
+                                _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter
                                 {
                                     User = user,
                                     Id = miriotId
