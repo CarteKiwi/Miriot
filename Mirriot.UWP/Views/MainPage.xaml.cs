@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.ProjectOxford.Common;
 using Miriot.Common;
+using Miriot.Core;
 using Miriot.Core.ViewModels;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Services;
@@ -10,6 +11,7 @@ using Miriot.Win10.Utils;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
@@ -90,11 +92,17 @@ namespace Miriot.Win10
 
             if (gpio == null) return;
 
-            var pin = gpio.OpenPin(23);
-            pin.SetDriveMode(GpioPinDriveMode.Output);
-            pin.Write(GpioPinValue.Low);
-
-            _areLedsOn = true;
+            try
+            {
+                var pin = gpio.OpenPin(23);
+                pin.SetDriveMode(GpioPinDriveMode.Output);
+                pin.Write(GpioPinValue.Low);
+                _areLedsOn = true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void OnAction(LuisResponse luis)
@@ -110,6 +118,7 @@ namespace Miriot.Win10
                 ShowGridLine(2);
                 ShowGridLine(3);
                 ShowGridLine(4);
+                ShowGridLine(5);
             }
         }
 
@@ -140,7 +149,7 @@ namespace Miriot.Win10
                 rect.Y2 = this.ActualHeight;
                 rect.HorizontalAlignment = HorizontalAlignment.Right;
                 rect.VerticalAlignment = VerticalAlignment.Stretch;
-                Grid.SetRowSpan(rect, 3);
+                Grid.SetRowSpan(rect, 4);
             }
 
             if (number == 2)
@@ -149,7 +158,7 @@ namespace Miriot.Win10
                 rect.Y2 = this.ActualHeight;
                 rect.HorizontalAlignment = HorizontalAlignment.Right;
                 rect.VerticalAlignment = VerticalAlignment.Stretch;
-                Grid.SetRowSpan(rect, 3);
+                Grid.SetRowSpan(rect, 4);
                 Grid.SetColumn(rect, 1);
             }
 
@@ -172,6 +181,16 @@ namespace Miriot.Win10
                 Grid.SetRow(rect, 1);
             }
 
+            if (number == 5)
+            {
+                rect.X1 = 0;
+                rect.X2 = this.ActualWidth;
+                rect.HorizontalAlignment = HorizontalAlignment.Stretch;
+                rect.VerticalAlignment = VerticalAlignment.Bottom;
+                Grid.SetColumnSpan(rect, 3);
+                Grid.SetRow(rect, 2);
+            }
+
             WidgetZone.Children.Add(rect);
         }
 
@@ -179,10 +198,7 @@ namespace Miriot.Win10
         {
             if (e.PropertyName == nameof(Vm.IsConfiguring))
             {
-                if (Vm.IsConfiguring)
-                {
-                    ShowGridLines(Vm.IsConfiguring);
-                }
+                ShowGridLines(Vm.IsConfiguring);
             }
 
             if (e.PropertyName == nameof(Vm.SpeakStream))
@@ -201,10 +217,7 @@ namespace Miriot.Win10
             {
                 WidgetZone.Children.Clear();
 
-                if (Vm.IsConfiguring)
-                {
-                    ShowGridLines(Vm.IsConfiguring);
-                }
+                ShowGridLines(Vm.IsConfiguring);
             }
             else if (e.NewItems.Count > 0)
             {

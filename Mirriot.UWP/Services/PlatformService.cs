@@ -1,13 +1,21 @@
 ﻿using Microsoft.Toolkit.Uwp.Connectivity;
 using Miriot.Services;
 using System;
+using Windows.Networking.Connectivity;
 using Windows.System.Profile;
 
 namespace Miriot.Win10.Services
 {
     public class PlatformService : IPlatformService
     {
-        public bool IsInternetAvailable => NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
+        public bool IsInternetAvailable
+        {
+            get
+            {
+                NetworkHelper.Instance.ConnectionInformation.UpdateConnectionInformation(NetworkInformation.GetInternetConnectionProfile());
+                return NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
+            }
+        }
 
         public string GetSystemIdentifier()
         {

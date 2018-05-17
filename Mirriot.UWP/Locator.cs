@@ -21,16 +21,18 @@ namespace Miriot.Win10
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
             SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<ITwitterService, TwitterWrapperService>();
+            SimpleIoc.Default.Register<IDialogService, DialogService>();
 #if MOCK
+            SimpleIoc.Default.Register<IPlatformService, PlatformServiceMock>();
             SimpleIoc.Default.Register<ISpeechService, FakeSpeechService>();
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Services.Mock.FrameAnalyser<ServiceResponse>>();
+            SimpleIoc.Default.Register<IBluetoothService, BluetoothService>();
 #else
             SimpleIoc.Default.Register<ISpeechService, SpeechService>();
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Utils.FrameAnalyser<ServiceResponse>>();
-#endif
-            SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<IPlatformService, PlatformService>();
             SimpleIoc.Default.Register<IBluetoothService, BluetoothService>();
+#endif
             SimpleIoc.Default.Register<IWifiService, WifiService>();
         }
 

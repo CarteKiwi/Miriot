@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;MOCK</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator" Version="2.0.1" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.3" />
     <PackageReference Include="Microsoft.ProjectOxford.Common.DotNetStandard" Version="1.0.0" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1" />
     <PackageReference Include="System.Net.Sockets" Version="4.3.0" />

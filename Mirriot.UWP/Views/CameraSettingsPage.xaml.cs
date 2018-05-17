@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Model;
 using Miriot.Services;
+using Miriot.Win10.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,8 +34,15 @@ namespace Miriot.Win10.Views
         {
             var remoteService = SimpleIoc.Default.GetInstance<RemoteService>();
 
-            remoteService.CommandReceived = OnCommandReceivedAsync;
+            //remoteService.CommandReceived = OnCommandReceivedAsync;
             base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            (Camera as CameraControl).Cleanup();
+            Camera = null;
+            base.OnNavigatedFrom(e);
         }
 
         private Task<string> OnCommandReceivedAsync(RemoteParameter parameter)

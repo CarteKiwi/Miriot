@@ -15,5 +15,7 @@
         GoToCameraPage,
         GoToMainPage,
         CameraAdjustBrightness,
+        CameraPreview,
+        CameraPersist,
     }
 }
