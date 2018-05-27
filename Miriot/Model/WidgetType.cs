@@ -12,6 +12,7 @@
         Horoscope,
         Twitter,
         Deezer,
+        News,
         Radio,
         Reminder
     }

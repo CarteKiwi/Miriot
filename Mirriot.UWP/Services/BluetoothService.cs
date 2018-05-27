@@ -189,14 +189,14 @@ namespace Miriot.Win10.Services
             {
                 var request = await args.GetRequestAsync();
                 var reader = DataReader.FromBuffer(request.Value);
-                
+
                 string message = reader.ReadString(request.Value.Length);
-                
+
                 var parameter = JsonConvert.DeserializeObject<RemoteParameter>(message);
 
                 string serializedData = await CommandReceived(parameter);
                 _data = serializedData;
-            
+
                 if (request.Option == GattWriteOption.WriteWithResponse)
                 {
                     request.Respond();
@@ -219,7 +219,9 @@ namespace Miriot.Win10.Services
             try
             {
                 var dw = new DataWriter();
-                dw.WriteString(_data);
+
+                if (_data != null)
+                    dw.WriteString(_data);
 
                 var request = await args.GetRequestAsync();
                 request.RespondWithValue(dw.DetachBuffer());
