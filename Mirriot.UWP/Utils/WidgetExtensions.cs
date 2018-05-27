@@ -1,10 +1,9 @@
-﻿using System;
-using Miriot.Common;
+﻿using Miriot.Common;
 using Miriot.Common.Model;
-using Miriot.Win10.Controls;
 using Miriot.Core.ViewModels.Widgets;
+using Miriot.Win10.Controls;
+using System;
 using System.Collections.Generic;
-using Miriot.Core;
 
 namespace Miriot.Win10.Utils
 {
@@ -24,6 +23,7 @@ namespace Miriot.Win10.Utils
             { WidgetType.Radio, typeof(WidgetRadio) },
             { WidgetType.Reminder, typeof(WidgetReminder) },
             { WidgetType.Image, typeof(WidgetBase) },
+            { WidgetType.News, typeof(WidgetNews) },
         };
 
         public static WidgetBase ToControl(this WidgetModel widget)

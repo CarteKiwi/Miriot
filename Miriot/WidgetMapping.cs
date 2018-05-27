@@ -21,12 +21,11 @@ namespace Miriot.Core
             { WidgetType.Radio, typeof(RadioModel) },
             { WidgetType.Reminder, typeof(ReminderModel) },
             { WidgetType.Image, typeof(ImageModel) },
+            { WidgetType.News, typeof(NewsModel) },
         };
 
         public static WidgetModel ToModel(this Widget widget)
         {
-            //Type.GetType("");
-
             return (WidgetModel)Activator.CreateInstance(_mapping[widget.Type], widget);
         }
 
