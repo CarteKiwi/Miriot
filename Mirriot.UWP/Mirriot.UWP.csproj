@@ -176,6 +176,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Widgets\WidgetNews.xaml.cs">
+      <DependentUpon>WidgetNews.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\BluetoothService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Controls\CameraControl.xaml.cs">
@@ -340,6 +343,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Widgets\WidgetNews.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Widgets\WidgetTwitter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -498,6 +505,9 @@
     </PackageReference>
     <PackageReference Include="MvvmLightLibsStd10">
       <Version>5.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="NETStandard.Library">
+      <Version>2.0.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>11.0.2</Version>

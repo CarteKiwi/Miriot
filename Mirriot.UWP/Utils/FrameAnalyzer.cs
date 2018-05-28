@@ -8,6 +8,7 @@ using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.FaceAnalysis;
 using Windows.System.Threading;
+using Windows.UI.Xaml;
 
 namespace Miriot.Win10.Utils
 {
@@ -37,8 +38,15 @@ namespace Miriot.Win10.Utils
             _faceDetector = await FaceDetector.CreateAsync();
 
             var timerInterval = TimeSpan.FromMilliseconds(300);
-
+            //var timer = new DispatcherTimer();
+            //timer.Interval = timerInterval;
+            //timer.Tick += ProcessCurrentVideoFrame2;
             _frameProcessingTimer = ThreadPoolTimer.CreatePeriodicTimer(ProcessCurrentVideoFrame, timerInterval);
+        }
+
+        private void ProcessCurrentVideoFrame2(object sender, object e)
+        {
+            ProcessCurrentVideoFrame(null);
         }
 
         public async void ProcessCurrentVideoFrame(ThreadPoolTimer timer)
@@ -96,6 +104,7 @@ namespace Miriot.Win10.Utils
 
         public void Cleanup()
         {
+            _frameProcessingTimer.Cancel();
             _frameProcessingTimer = null;
         }
 

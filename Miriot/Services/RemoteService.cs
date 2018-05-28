@@ -144,12 +144,13 @@ namespace Miriot.Services
                         });
                     return string.Empty;
                 case RemoteCommands.GetUser:
-                    _dispatcherService.Invoke(() =>
-                    {
-                        _vm.HasNoConfiguration = false;
-                        _vm.IsConfiguring = true;
-                    });
-                    return _vm.User?.Id.ToString();
+                    if (_vm.User != null)
+                        _dispatcherService.Invoke(() =>
+                        {
+                            _vm.HasNoConfiguration = false;
+                            _vm.IsConfiguring = true;
+                        });
+                        return _vm.User.Id.ToString();
                 case RemoteCommands.GetMiriotId:
                     return _platformService.GetSystemIdentifier();
                 case RemoteCommands.GraphService_Initialize:
@@ -189,26 +190,6 @@ namespace Miriot.Services
                         var ns = SimpleIoc.Default.GetInstance<INavigationService>();
                         ns.NavigateTo(PageKeys.CameraSettings);
                     });
-                    return null;
-                case RemoteCommands.CameraPreview:
-                    _dispatcherService.Invoke(() =>
-                    {
-                        var showPreview = JsonConvert.DeserializeObject<bool>(parameter.SerializedData);
-                        var camera = SimpleIoc.Default.GetInstance<ICameraService>();
-                        camera.ShowPreview = showPreview;
-                    });
-                    return null;
-                case RemoteCommands.CameraAdjustBrightness:
-                    _dispatcherService.Invoke(() =>
-                    {
-                        var value = JsonConvert.DeserializeObject<double>(parameter.SerializedData);
-                        var cameraS = SimpleIoc.Default.GetInstance<ICameraService>();
-                        cameraS.AdjustBrightness(value);
-                    });
-                    return null;
-                case RemoteCommands.CameraPersist:
-                    var camera2 = SimpleIoc.Default.GetInstance<ICameraService>();
-                    camera2.PersistSettings();
                     return null;
                 default:
                     return null;

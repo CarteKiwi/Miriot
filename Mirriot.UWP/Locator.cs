@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Services;
+using Miriot.Win10.Controls;
 using Miriot.Win10.Services;
 using Miriot.Win10.Views;
 using Windows.Media;
@@ -30,10 +31,11 @@ namespace Miriot.Win10
 #else
             SimpleIoc.Default.Register<ISpeechService, SpeechService>();
             SimpleIoc.Default.Register<IFrameAnalyzer<ServiceResponse>, Utils.FrameAnalyser<ServiceResponse>>();
-            SimpleIoc.Default.Register<IPlatformService, PlatformService>();
+            SimpleIoc.Default.Register<IPlatformService, PlatformServiceMock>();
             SimpleIoc.Default.Register<IBluetoothService, BluetoothService>();
 #endif
             SimpleIoc.Default.Register<IWifiService, WifiService>();
+            SimpleIoc.Default.Register<ICameraService>(() => new CameraControl());
         }
 
         private static INavigationService CreateNavigationService()

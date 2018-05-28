@@ -51,6 +51,7 @@ namespace Miriot.Core.ViewModels
         private object _speakStream;
         private bool _hasNoConfiguration;
         private bool _isConfiguring;
+        private bool _isPreviewing;
         #endregion
 
         #region Commands
@@ -162,6 +163,16 @@ namespace Miriot.Core.ViewModels
             {
                 _isConfiguring = value;
                 RaisePropertyChanged(() => IsConfiguring);
+            }
+        }
+
+        public bool IsPreviewing
+        {
+            get => _isPreviewing;
+            set
+            {
+                _isPreviewing = value;
+                RaisePropertyChanged(() => IsPreviewing);
             }
         }
 
