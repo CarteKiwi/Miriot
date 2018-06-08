@@ -23,6 +23,7 @@ namespace Miriot.Win10.Controls
             //Score2Tb.Text = info.Score2.ToString();
             //Team1Tb.Text = info.Team1;
             //Team2Tb.Text = info.Team2;
+            Get();
         }
 
         private async void Get()
@@ -42,7 +43,7 @@ namespace Miriot.Win10.Controls
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"HoroscopeWidget error: {ex.Message}");
+                Debug.WriteLine($"NewsWidget error: {ex.Message}");
             }
         }
     }

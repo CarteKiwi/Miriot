@@ -242,6 +242,7 @@
     <Compile Include="Controls\Widgets\WidgetBase.cs" />
     <Compile Include="Services\TwitterWrapperService.cs" />
     <Compile Include="Services\WifiService.cs" />
+    <Compile Include="Utils\AudioCapturePermissions.cs" />
     <Compile Include="Utils\ColorBloomTransitionHelper.cs" />
     <Compile Include="Utils\FrameAnalyzer.cs" />
     <Compile Include="Utils\Graph\AuthenticationHelper.cs" />

@@ -12,7 +12,7 @@ namespace Miriot.Win10.Services
         private SpeechRecognizer _speechRecognizer;
         private RelayCommand<string> _command;
 
-        public bool IsLimited
+        public bool IsListening
         {
             get => false;
             set { }
@@ -27,7 +27,7 @@ namespace Miriot.Win10.Services
         {
         }
 
-        public async Task StartListeningAsync()
+        public async Task StartListeningAsync(bool isListening)
         {
             //_command.Execute("Miriot");
             //_command.Execute("Je m'appelle Guillaume");

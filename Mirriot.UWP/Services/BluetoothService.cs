@@ -248,7 +248,13 @@ namespace Miriot.Win10.Services
 
         public void StopAdv()
         {
-            _serviceProvider?.StopAdvertising();
+            try
+            {
+                _serviceProvider?.StopAdvertising();
+            }catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         public Task SendAsync(string parameter)

@@ -22,6 +22,12 @@ namespace Miriot.Win10.Controls
 
         public bool IsExclusive { get; set; }
 
+        public WidgetDeezer() : base(null)
+        {
+            InitializeComponent();
+            IsExclusive = true;
+        }
+
         public WidgetDeezer(DeezerModel widget) : base(widget)
         {
             InitializeComponent();
