@@ -327,7 +327,7 @@ namespace Miriot.Core.ViewModels
             {
                 if (text.Contains("Miriot"))
                 {
-                    IsListening = true;
+                    await Listen();
                     SetMessage("J'écoute.", "vous pouvez parler.");
 
                     return;
@@ -583,6 +583,7 @@ namespace Miriot.Core.ViewModels
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 IsListening = false;
             }
         }

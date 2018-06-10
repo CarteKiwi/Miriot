@@ -227,8 +227,6 @@ namespace Miriot.Win10
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
         {
-            TurnOnLeds();
-
             await RunOnUiThread(() =>
             {
                 if (Vm.CurrentState == States.Active)
@@ -243,8 +241,6 @@ namespace Miriot.Win10
 
         private async void OnNoFaceDetected(object sender, EventArgs e)
         {
-            TurnOffLeds();
-
             await RunOnUiThread(() =>
             {
                 _noFaceDetectedCount++;

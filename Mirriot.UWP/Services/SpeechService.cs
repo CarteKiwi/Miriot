@@ -89,12 +89,12 @@ namespace Miriot.Win10.Services
         {
             try
             {
-                Language defaultLanguage = SpeechRecognizer.SystemSpeechLanguage;
-                IEnumerable<Language> supportedLanguages = SpeechRecognizer.SupportedTopicLanguages;
-                foreach (Language lang in supportedLanguages)
-                {
-                    Debug.WriteLine(lang.DisplayName + " " + lang.LanguageTag);
-                }
+                //Language defaultLanguage = SpeechRecognizer.SystemSpeechLanguage;
+                //IEnumerable<Language> supportedLanguages = SpeechRecognizer.SupportedTopicLanguages;
+                //foreach (Language lang in supportedLanguages)
+                //{
+                //    Debug.WriteLine(lang.DisplayName + " " + lang.LanguageTag);
+                //}
 
                 _speechRecognizerActivator = new SpeechRecognizer(new Language("fr-FR"));
             }

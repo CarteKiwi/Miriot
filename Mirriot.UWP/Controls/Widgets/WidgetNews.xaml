@@ -5,6 +5,7 @@
     xmlns:local="using:Miriot.Win10.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     RequestedTheme="Dark"
     d:DesignHeight="300"
@@ -12,30 +13,21 @@
 
     <StackPanel>
         <Image x:Name="Picture"
-               Height="50"
-               Width="50"/>
+               Source="https://img.lemde.fr/2017/06/12/250/0/3000/1500/644/322/60/0/37e9455_e1b2491478684e3baa9cda6c6425ed2c-e1b2491478684e3baa9cda6c6425ed2c-0.jpg"
+               Height="180"/>
         
-        <TextBlock x:Name="TitleTb"
+        <TextBlock x:Name="Title"
                    HorizontalAlignment="Center"
                    Typography.Capitals="AllSmallCaps"
-                   FontSize="30"
+                   FontSize="25" Text="Roland-Garros 2018 : Rafael Nadal remporte la « undecima »"
+                   TextWrapping="WrapWholeWords"
                    FontWeight="Light"/>
-
-        <TextBlock FontSize="50"
+        
+        <TextBlock x:Name="Description" 
+                   FontSize="20"
                    HorizontalAlignment="Center"
-                   FontWeight="Light">
-                <Run x:Name="Score1Tb"/>
-                <Run Text="-"/>
-                <Run x:Name="Score2Tb"/>
-        </TextBlock>
-
-        <TextBlock FontSize="40"
-                   HorizontalAlignment="Center"
-                   Typography.Capitals="AllSmallCaps"
-                   FontWeight="Light">
-                <Run x:Name="Team1Tb"/>
-                <Run Text=" "/>
-                <Run x:Name="Team2Tb"/>
-        </TextBlock>
+                   FontWeight="Light"
+                   Text="Dans un choc qui n'aura pas tenu ses promesses, l'Espagnol a fait la leçon à l'Autrichien Dominic Thiem, le seul à l'avoir battu de la saison, en s'imposant 6-4, 6-3, 6-2."/>
+       
     </StackPanel>
 </local:WidgetBase>

@@ -185,17 +185,18 @@ namespace Miriot.Win10.Controls
         private void AdjustSettings()
         {
             _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
-            //var focus = _mediaCapture.VideoDeviceController.;
 
-            //if (focus.Capabilities.Supported)
-            //{
-            //    if (focus.Capabilities.AutoModeSupported)
-            //    {
-            //        focus.TrySetAuto(false);
-            //    }
+            var focus = _mediaCapture.VideoDeviceController.Focus;
 
-            //    focus.TrySetValue(focus.Capabilities.Min);
-            //}
+            if (focus.Capabilities.Supported)
+            {
+                if (focus.Capabilities.AutoModeSupported)
+                {
+                    focus.TrySetAuto(false);
+                }
+
+                focus.TrySetValue(focus.Capabilities.Min);
+            }
 
             var contrast = ApplicationData.Current.LocalSettings.Values["CameraContrast"];
             var brightness = ApplicationData.Current.LocalSettings.Values["CameraBrightness"];

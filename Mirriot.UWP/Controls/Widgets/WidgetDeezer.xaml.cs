@@ -54,6 +54,8 @@ namespace Miriot.Win10.Controls
             //else
             //    q = "%27all%20in%20you%20synapson%27";
 
+            Debug.WriteLine("Deezer API search for: " + search);
+
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://api.deezer.com/");
