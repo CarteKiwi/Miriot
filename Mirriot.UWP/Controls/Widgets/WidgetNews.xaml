@@ -11,23 +11,30 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <Image x:Name="Picture"
-               Source="https://img.lemde.fr/2017/06/12/250/0/3000/1500/644/322/60/0/37e9455_e1b2491478684e3baa9cda6c6425ed2c-e1b2491478684e3baa9cda6c6425ed2c-0.jpg"
-               Height="180"/>
+               Source="https://img.lemde.fr/2017/06/12/250/0/3000/1500/644/322/60/0/37e9455_e1b2491478684e3baa9cda6c6425ed2c-e1b2491478684e3baa9cda6c6425ed2c-0.jpg"/>
         
         <TextBlock x:Name="Title"
+                   Grid.Row="1"
                    HorizontalAlignment="Center"
                    Typography.Capitals="AllSmallCaps"
-                   FontSize="25" Text="Roland-Garros 2018 : Rafael Nadal remporte la « undecima »"
+                   FontSize="20" Text="Roland-Garros 2018 : Rafael Nadal remporte la « undecima »"
                    TextWrapping="WrapWholeWords"
                    FontWeight="Light"/>
         
         <TextBlock x:Name="Description" 
-                   FontSize="20"
+                   Grid.Row="2"
+                   FontSize="18"
+                   TextWrapping="WrapWholeWords"
                    HorizontalAlignment="Center"
                    FontWeight="Light"
                    Text="Dans un choc qui n'aura pas tenu ses promesses, l'Espagnol a fait la leçon à l'Autrichien Dominic Thiem, le seul à l'avoir battu de la saison, en s'imposant 6-4, 6-3, 6-2."/>
        
-    </StackPanel>
+    </Grid>
 </local:WidgetBase>

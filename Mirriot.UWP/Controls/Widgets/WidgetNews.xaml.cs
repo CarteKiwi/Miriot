@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Miriot.Win10.Controls
@@ -22,7 +23,7 @@ namespace Miriot.Win10.Controls
         {
             InitializeComponent();
 
-            var timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 1) };
+            var timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 5) };
             timer.Tick += Timer_Tick;
             timer.Start();
 
@@ -40,6 +41,8 @@ namespace Miriot.Win10.Controls
 
                 var article = Articles[_currentIndex];
 
+                Title.Text = article.title;
+                Description.Text = article.description;
                 Picture.Source = new BitmapImage(new Uri(article.urlToImage, UriKind.Absolute));
             }
         }
@@ -69,6 +72,12 @@ namespace Miriot.Win10.Controls
             {
                 Debug.WriteLine($"NewsWidget error: {ex.Message}");
             }
+        }
+
+        public override void SetPosition(int? x, int? y)
+        {
+            base.SetPosition(x, y);
+            Grid.SetRowSpan(this, 2);
         }
     }
 }
