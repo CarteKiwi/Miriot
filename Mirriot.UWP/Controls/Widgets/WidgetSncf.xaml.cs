@@ -22,7 +22,7 @@ namespace Miriot.Win10.Controls
         {
             InitializeComponent();
 
-            DispatcherTimer timer = new DispatcherTimer { Interval = new TimeSpan(1000) };
+            DispatcherTimer timer = new DispatcherTimer { Interval = new TimeSpan(10000) };
             timer.Tick += Timer_Tick;
             timer.Start();
         }

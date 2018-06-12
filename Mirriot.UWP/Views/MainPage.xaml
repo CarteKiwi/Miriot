@@ -301,6 +301,14 @@
                 </Ellipse>
             </Grid>
         </Grid>
+
+        <Button Command="{x:Bind Vm.ActionNavigateTo}" 
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                CommandParameter="CameraSettings"
+                Content="Settings"
+                Style="{StaticResource EmptyButtonStyle}"/>
+
     </Grid>
 </Page>
 

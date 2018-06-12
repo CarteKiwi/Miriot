@@ -227,8 +227,6 @@ namespace Miriot.Win10
 
         private async void OnStartingIdentification(object sender, EventArgs eventArgs)
         {
-            TurnOnLeds();
-
             await RunOnUiThread(() =>
             {
                 if (Vm.CurrentState == States.Active)
@@ -243,8 +241,6 @@ namespace Miriot.Win10
 
         private async void OnNoFaceDetected(object sender, EventArgs e)
         {
-            TurnOffLeds();
-
             await RunOnUiThread(() =>
             {
                 _noFaceDetectedCount++;
@@ -330,16 +326,14 @@ namespace Miriot.Win10
 
             var t = luis.TopScoringIntent.GetIntentType();
 
-            var w = GetWidgetInstance(t);
-
-            if (w is IWidgetAction)
-                ((IWidgetAction)w).DoAction(luis);
-
-            if (w == null)
+            if(t == null)
             {
                 // Generic actions
                 switch (luis.TopScoringIntent.Intent)
                 {
+                    case "TurnOff":
+                        TurnOff();
+                        break;
                     case "ToggleLight":
                         if (_areLedsOn)
                             TurnOffLeds();
@@ -354,7 +348,14 @@ namespace Miriot.Win10
                             Vm.Repeat();
                         break;
                 }
+
+                return;
             }
+
+            var w = GetWidgetInstance(t);
+
+            if (w is IWidgetAction)
+                ((IWidgetAction)w).DoAction(luis);
         }
 
         private void TurnOff()
@@ -448,14 +449,14 @@ namespace Miriot.Win10
             Vm.Initialize();
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             _frameAnalyzer.Cleanup();
             Camera.Cleanup();
             Vm.Cleanup();
             Messenger.Default.Unregister(this);
 
-            base.OnNavigatedFrom(e);
+            base.OnNavigatingFrom(e);
         }
 
         /// <summary>

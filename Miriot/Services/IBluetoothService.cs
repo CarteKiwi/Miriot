@@ -12,6 +12,7 @@ namespace Miriot.Services
         Task<bool> ConnectAsync(RomeRemoteSystem system);
         Task<string> GetAsync(string parameter);
         Task SendAsync(string parameter);
+        void Stop();
         void StopAdv();
     }
 }

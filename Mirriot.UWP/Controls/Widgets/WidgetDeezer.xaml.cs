@@ -10,6 +10,7 @@ using Miriot.Services;
 using Miriot.Common;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Common.Model.Widgets.Deezer;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace Miriot.Win10.Controls
 {
@@ -21,6 +22,12 @@ namespace Miriot.Win10.Controls
         public bool IsFullscreen { get; set; }
 
         public bool IsExclusive { get; set; }
+
+        public WidgetDeezer() : base(null)
+        {
+            InitializeComponent();
+            IsExclusive = true;
+        }
 
         public WidgetDeezer(DeezerModel widget) : base(widget)
         {
@@ -48,6 +55,8 @@ namespace Miriot.Win10.Controls
             //else
             //    q = "%27all%20in%20you%20synapson%27";
 
+            Debug.WriteLine("Deezer API search for: " + search);
+
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://api.deezer.com/");
@@ -74,8 +83,16 @@ namespace Miriot.Win10.Controls
 
         public async Task Play(DeezerTrack track)
         {
+            //var ble = SimpleIoc.Default.GetInstance<IBluetoothService>();
+
             if (_isPlaying)
+            {
                 await StopAsync();
+
+                //await ble.InitializeAsync();
+            }
+
+            //ble.Stop();
 
             _isPlaying = true;
             var path = track?.album?.cover_medium;

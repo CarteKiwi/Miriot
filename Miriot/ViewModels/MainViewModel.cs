@@ -79,8 +79,6 @@ namespace Miriot.Core.ViewModels
             get => _isListening;
             private set
             {
-                _speechService.IsLimited = !value;
-
                 Set(() => IsListening, ref _isListening, value);
             }
         }
@@ -266,6 +264,7 @@ namespace Miriot.Core.ViewModels
             //_toothbrushingLauncher.Change(0, Timeout.Infinite);
             IsListeningFirstName = false;
             _isListeningYesNo = false;
+            IsListening = false;
             User = null;
             Title = null;
             SubTitle = null;
@@ -303,39 +302,32 @@ namespace Miriot.Core.ViewModels
 
         private async void OnProceedSpeech(string text)
         {
-            await _speechService.StartListeningAsync();
-
-            //if (!_isListeningYesNo && !IsListeningFirstName && !text.Contains("miriot"))
-            //{
-            //    return;
-            //}
-
             text = CleanForDemo(text);
 
             if (_isListeningYesNo)
             {
-                _isListeningYesNo = false;
-
-                if (text.Contains("oui"))
+                if (text.ToLower().Contains("oui"))
                 {
                     IsListeningFirstName = false;
-
+                    IsListening = false;
                     await CreateProfile(User);
                 }
-                else if (text.Contains("non"))
+                else if (text.ToLower().Contains("non"))
                 {
+                    _isListeningYesNo = false;
                     RepeatPromptForUnknownFace();
                 }
                 else
                 {
                     SetMessage(string.Empty, "Répondez par oui ou par non");
+                    await Listen();
                 }
             }
             else
             {
-                if (text.Contains("Miriot") || text.Contains("Myriade") || text.Contains("Mariotte") || text.Contains("Mireille hot"))
+                if (text.Contains("Miriot"))
                 {
-                    IsListening = true;
+                    await Listen();
                     SetMessage("J'écoute.", "vous pouvez parler.");
 
                     return;
@@ -350,6 +342,8 @@ namespace Miriot.Core.ViewModels
 
                 IsListening = false;
 
+                await _speechService.StartListeningAsync(false);
+
                 // Appel au service LUIS
                 var luisResponse = await _luisService.AskLuisAsync(text);
 
@@ -359,7 +353,7 @@ namespace Miriot.Core.ViewModels
                 if (IsListeningFirstName)
                 {
                     if (intent != null && intent.Intent == "CreateProfile")
-                        SetNewProfileMessage(luisResponse.Entities.OrderByDescending(e => e.Score).FirstOrDefault());
+                        await SetNewProfileMessage(luisResponse.Entities.OrderByDescending(e => e.Score).FirstOrDefault());
                     else
                         RepeatPromptForUnknownFace();
                 }
@@ -382,7 +376,7 @@ namespace Miriot.Core.ViewModels
             RepeatPromptForUnknownFace();
         }
 
-        private void SetNewProfileMessage(LuisEntity entity)
+        private async Task SetNewProfileMessage(LuisEntity entity)
         {
             var name = entity.Entity;
 
@@ -392,6 +386,7 @@ namespace Miriot.Core.ViewModels
             Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
 
             _isListeningYesNo = true;
+            await Listen();
         }
 
         private async void ToothbrushingLauncher(object sender)
@@ -497,7 +492,7 @@ namespace Miriot.Core.ViewModels
                 await LoadWidgets(config.Widgets);
             }
 
-            await _speechService.StartListeningAsync();
+            await _speechService.StartListeningAsync(false);
 
             //user.Emotion = await GetEmotionAsync(user.Picture, user.FaceRectangle.Top, user.FaceRectangle.Left);
             user.Picture = User != null ? User.Picture : user.Picture;
@@ -573,11 +568,24 @@ namespace Miriot.Core.ViewModels
         private async void PromptForUnknownFace()
         {
             SetMessage("Bonjour. Je m'appelle MirioT.", "Quel est votre prénom ? (dites: je m'appelle...)");
-            Speak("Bonjour, je m'appelle Miriotte. Et vous ? Quel est votre prénom ?");
+            Speak("Bonjour, je m'appelle Miriotte. Et vous ?");
 
             IsListeningFirstName = true;
+            await Listen();
+        }
 
-            await _speechService.StartListeningAsync();
+        private async Task Listen()
+        {
+            try
+            {
+                IsListening = true;
+                await _speechService.StartListeningAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                IsListening = false;
+            }
         }
 
         private async void RepeatPromptForUnknownFace()
@@ -586,8 +594,7 @@ namespace Miriot.Core.ViewModels
             Speak("Je n'ai pas compris. Quel est votre prénom ?");
 
             IsListeningFirstName = true;
-
-            await _speechService.StartListeningAsync();
+            await Listen();
         }
 
         private void SetWelcomeMessage(string name)
@@ -627,8 +634,7 @@ namespace Miriot.Core.ViewModels
 #if MOCK
             _remoteService.Listen();
 #else
-            _remoteService.Listen();
-            //_navigationService.NavigateTo(PageKeys.CameraSettings);
+            _navigationService.NavigateTo(PageKeys.CameraSettings);
 #endif
         }
 

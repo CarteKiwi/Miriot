@@ -10,28 +10,80 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <StackPanel>
-        <TextBlock x:Name="TitleTb"
-                   HorizontalAlignment="Center"
-                   Typography.Capitals="AllSmallCaps"
-                   FontSize="30"
-                   FontWeight="Light"/>
+    <local:WidgetBase.Resources>
+        <DataTemplate x:Key="MatchTemplate">
+            <StackPanel>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Margin="0,5"
+                    FontSize="13" Text="{Binding Title}"
+                    TextWrapping="WrapWholeWords"
+                    FontWeight="Light"/>
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <TextBlock FontSize="50"
-                   HorizontalAlignment="Center"
-                   FontWeight="Light">
-                <Run x:Name="Score1Tb"/>
-                <Run Text="-"/>
-                <Run x:Name="Score2Tb"/>
-        </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Image HorizontalAlignment="Center"
+                               Height="15"
+                               Stretch="UniformToFill">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding team1.FlagUri}" />
+                            </Image.Source>
+                        </Image>
 
-        <TextBlock FontSize="40"
-                   HorizontalAlignment="Center"
-                   Typography.Capitals="AllSmallCaps"
-                   FontWeight="Light">
-                <Run x:Name="Team1Tb"/>
-                <Run Text=" "/>
-                <Run x:Name="Team2Tb"/>
-        </TextBlock>
-    </StackPanel>
+                        <TextBlock HorizontalAlignment="Center"
+                           Typography.Capitals="AllSmallCaps"
+                           Margin="10,0"
+                           FontSize="15" Text="{Binding team1.name}"
+                           TextWrapping="WrapWholeWords"
+                           FontWeight="Light"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" 
+                                Orientation="Horizontal" Margin="0,5">
+                        <Image HorizontalAlignment="Center"
+                               Height="15"
+                               Stretch="UniformToFill">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding team2.FlagUri}" />
+                            </Image.Source>
+                        </Image>
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Typography.Capitals="AllSmallCaps"
+                            Margin="10,0"
+                            FontSize="17" Text="{Binding team2.name}"
+                            TextWrapping="WrapWholeWords"
+                            FontWeight="Light"/>
+                    </StackPanel>
+
+                    <TextBlock
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Grid.RowSpan="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Typography.Capitals="AllSmallCaps"
+                        Margin="10,0"
+                        FontSize="17" Text="{Binding time}"
+                        TextWrapping="WrapWholeWords"
+                        FontWeight="Light"/>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+    </local:WidgetBase.Resources>
+    <Grid>
+        <ItemsControl x:Name="Rotator" 
+                      ItemTemplate="{StaticResource MatchTemplate}" />
+    </Grid>
 </local:WidgetBase>

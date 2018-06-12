@@ -40,7 +40,21 @@ namespace Miriot.Win10.Views
 
             remoteService.CommandReceived = OnCommandReceivedAsync;
 
+            Camera.Initialized = Handler;
+
             base.OnNavigatedTo(e);
+        }
+
+        private void Handler()
+        {
+            ExpositionController.Maximum = Camera.MaximumExposure;
+            ExpositionController.Minimum = Camera.MinimumExposure;
+
+            ZoomController.Maximum = Camera.MaximumZoom;
+            ZoomController.Minimum = Camera.MinimumZoom;
+
+            WhiteController.Maximum = Camera.Controller.WhiteBalance.Capabilities.Max;
+            WhiteController.Minimum = Camera.Controller.WhiteBalance.Capabilities.Min;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -91,9 +105,29 @@ namespace Miriot.Win10.Views
             Camera.AdjustExposition(e.NewValue);
         }
 
+        private void ContrastController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            Camera.AdjustContrast(e.NewValue);
+        }
+
+        private void WhiteController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            Camera.AdjustWhite(e.NewValue);
+        }
+
+        private void ZoomController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            Camera.AdjustZoom(e.NewValue);
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             SimpleIoc.Default.GetInstance<INavigationService>().NavigateTo(PageKeys.Main);
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            Camera.PersistSettings();
         }
     }
 }

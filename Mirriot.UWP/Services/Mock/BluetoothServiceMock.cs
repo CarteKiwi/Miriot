@@ -72,6 +72,10 @@ namespace Miriot.Win10.Services
             throw new NotImplementedException();
         }
 
+        public void Stop()
+        {
+        }
+
         public void StopAdv()
         {
         }

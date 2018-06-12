@@ -71,6 +71,13 @@ namespace Miriot.Win10.Controls
         }
         #endregion
 
+        public Action Initialized { get; set; }
+        public double MaximumExposure => _mediaCapture.VideoDeviceController.Exposure.Capabilities.Max;
+        public double MinimumExposure => _mediaCapture.VideoDeviceController.Exposure.Capabilities.Min;
+        public double MaximumZoom => _mediaCapture.VideoDeviceController.Zoom.Capabilities.Max;
+        public double MinimumZoom => _mediaCapture.VideoDeviceController.Zoom.Capabilities.Min;
+        public VideoDeviceController Controller => _mediaCapture.VideoDeviceController;
+
         public CameraControl()
         {
             InitializeComponent();
@@ -128,6 +135,7 @@ namespace Miriot.Win10.Controls
                     await _mediaCapture.InitializeAsync(new MediaCaptureInitializationSettings { VideoDeviceId = _cameraId });
 
                     _isInitialized = true;
+                    Initialized?.Invoke();
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -137,6 +145,8 @@ namespace Miriot.Win10.Controls
                 {
                     Debug.WriteLine("Exception when initializing MediaCapture with {0}: {1}", _cameraId, ex);
                 }
+
+                _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
 
                 // If initialization succeeded, start the preview
                 if (_isInitialized)
@@ -163,8 +173,6 @@ namespace Miriot.Win10.Controls
             _lowLightSupported =
                 _mediaCapture.VideoDeviceController.AdvancedPhotoControl.SupportedModes.Contains(Windows.Media.Devices.AdvancedPhotoMode.LowLight);
 
-            _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
-
             if (_lowLightSupported)
             {
                 // Choose LowLight mode
@@ -179,42 +187,19 @@ namespace Miriot.Win10.Controls
 
         private void AdjustSettings()
         {
-            //var zoom = _mediaCapture.VideoDeviceController.Zoom;
+            _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
 
-            //if(zoom.Capabilities.Supported)
-            //{
-            //    if (zoom.Capabilities.AutoModeSupported)
-            //    {
-            //        zoom.TrySetAuto(false);
-            //    }
+            var focus = _mediaCapture.VideoDeviceController.Focus;
 
-            //    zoom.TrySetValue(zoom.Capabilities.Min);
-            //}
+            if (focus.Capabilities.Supported)
+            {
+                if (focus.Capabilities.AutoModeSupported)
+                {
+                    focus.TrySetAuto(false);
+                }
 
-            //var focus = _mediaCapture.VideoDeviceController.Focus;
-
-            //if (focus.Capabilities.Supported)
-            //{
-            //    if (focus.Capabilities.AutoModeSupported)
-            //    {
-            //        focus.TrySetAuto(false);
-            //    }
-
-            //    focus.TrySetValue(focus.Capabilities.Min);
-            //}
-
-            //var exposureControl = _mediaCapture.VideoDeviceController.ExposureControl;
-            //var bright = _mediaCapture.VideoDeviceController.Brightness;
-
-            //if (bright.Capabilities.Supported)
-            //{
-            //    if (bright.Capabilities.AutoModeSupported)
-            //    {
-            //        bright.TrySetAuto(false);
-            //    }
-
-            //    bright.TrySetValue(bright.Capabilities.Max);
-            //}
+                focus.TrySetValue(focus.Capabilities.Min);
+            }
 
             var contrast = ApplicationData.Current.LocalSettings.Values["CameraContrast"];
             var brightness = ApplicationData.Current.LocalSettings.Values["CameraBrightness"];
@@ -275,6 +260,48 @@ namespace Miriot.Win10.Controls
                 }
 
                 expo.TrySetValue(value);
+            }
+        }
+
+        public void AdjustWhite(double value)
+        {
+            var white = _mediaCapture.VideoDeviceController.WhiteBalance;
+
+            if (white.Capabilities.Supported)
+            {
+                if (white.Capabilities.AutoModeSupported)
+                {
+                    white.TrySetAuto(false);
+                }
+
+                if (value > white.Capabilities.Max)
+                    value = white.Capabilities.Max;
+
+                if (value < white.Capabilities.Min)
+                    value = white.Capabilities.Min;
+
+                white.TrySetValue(value);
+            }
+        }
+
+        public void AdjustZoom(double value)
+        {
+            var zoom = _mediaCapture.VideoDeviceController.Zoom;
+
+            if (zoom.Capabilities.Supported)
+            {
+                if (zoom.Capabilities.AutoModeSupported)
+                {
+                    zoom.TrySetAuto(false);
+                }
+
+                if (value > zoom.Capabilities.Max)
+                    value = zoom.Capabilities.Max;
+
+                if (value < zoom.Capabilities.Min)
+                    value = zoom.Capabilities.Min;
+
+                zoom.TrySetValue(value);
             }
         }
 

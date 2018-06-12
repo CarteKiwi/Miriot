@@ -1,49 +1,59 @@
-﻿using Miriot.Common.Model;
-using Newtonsoft.Json;
-using System.Linq;
+﻿using GalaSoft.MvvmLight.Ioc;
+using Miriot.Common.Model.Widgets.LeMonde;
 using Miriot.Core.ViewModels.Widgets;
-using System.Net.Http;
+using Miriot.Services;
+using Newtonsoft.Json;
 using System;
-using Miriot.Model.Widgets.LeMonde;
-using Windows.UI.Xaml.Media.Imaging;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetNews
     {
+        public List<Article> Articles { get; set; }
+
         public WidgetNews(NewsModel widget) : base(widget)
         {
             InitializeComponent();
-
-            //var info = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
-
-            //TitleTb.Text = info.Competition;
-            //Score1Tb.Text = info.Score1.ToString();
-            //Score2Tb.Text = info.Score2.ToString();
-            //Team1Tb.Text = info.Team1;
-            //Team2Tb.Text = info.Team2;
+            Get();
         }
 
         private async void Get()
         {
             try
             {
+                var configService = SimpleIoc.Default.GetInstance<IConfigurationService>();
+                var config = await configService.GetKeysByProviderAsync("news");
+                var key = config["apiKey"];
+
                 using (HttpClient client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("https://www.lemonde.fr/rss/une.xml");
+                    client.BaseAddress = new Uri($"https://newsapi.org/v2/top-headlines?sources=le-monde&apiKey={key}");
                     var res = await client.GetAsync("");
                     var c = await res.Content.ReadAsStringAsync();
 
                     var news = JsonConvert.DeserializeObject<LeMondeResponse>(c);
 
-                    Picture.Source = new BitmapImage(new Uri("", UriKind.Absolute));
+                    Articles = new List<Article>(news.articles);
+
+                    Rotator.ItemsSource = Articles;
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"HoroscopeWidget error: {ex.Message}");
+                Debug.WriteLine($"NewsWidget error: {ex.Message}");
             }
+        }
+
+        public override void SetPosition(int? x, int? y)
+        {
+            base.SetPosition(x, y);
+            Grid.SetRowSpan(this, 2);
         }
     }
 }

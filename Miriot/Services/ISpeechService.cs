@@ -7,9 +7,9 @@ namespace Miriot.Services
     {
         Task InitializeAsync();
         void Stop();
-        Task StartListeningAsync();
+        Task StartListeningAsync(bool isListening);
         void SetCommand(RelayCommand<string> proceedSpeechCommand);
-        bool IsLimited { get; set; }
+        bool IsListening { get; set; }
         Task<object> SynthesizeTextToStreamAsync(string text);
     }
 }

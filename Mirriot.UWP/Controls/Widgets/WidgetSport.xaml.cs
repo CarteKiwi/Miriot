@@ -2,22 +2,62 @@
 using Newtonsoft.Json;
 using System.Linq;
 using Miriot.Core.ViewModels.Widgets;
+using System.Net.Http;
+using System;
+using Miriot.Model.Widgets.Worldcup;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Windows.UI.Xaml.Controls;
 
 namespace Miriot.Win10.Controls
 {
     public sealed partial class WidgetSport
     {
+        public List<Match> Matches { get; set; }
+
         public WidgetSport(SportModel widget) : base(widget)
         {
             InitializeComponent();
+            Get();
+        }
 
-            //var info = JsonConvert.DeserializeObject<SportWidgetInfo>(widget.Infos.First());
+        private async void Get()
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"https://raw.githubusercontent.com/openfootball/world-cup.json/master/2018/worldcup.json");
+                    var res = await client.GetAsync("");
+                    var c = await res.Content.ReadAsStringAsync();
 
-            //TitleTb.Text = info.Competition;
-            //Score1Tb.Text = info.Score1.ToString();
-            //Score2Tb.Text = info.Score2.ToString();
-            //Team1Tb.Text = info.Team1;
-            //Team2Tb.Text = info.Team2;
+                    var news = JsonConvert.DeserializeObject<WorldCupResponse>(c);
+
+                    Matches = new List<Match>();
+
+                    foreach (var round in news.rounds)
+                    {
+                        foreach (var match in round.matches)
+                        {
+                            match.FriendlyDate = DateTime.Parse(match.date);
+                            match.Title = match.FriendlyDate.ToLongDateString() + " - " + match.group;
+                            Matches.Add(match);
+                        }
+                    }
+
+                    Rotator.ItemsSource = Matches.Where(m => m.FriendlyDate > DateTime.Now).Take(3);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SportWidget error: {ex.Message}");
+            }
+        }
+
+        public override void SetPosition(int? x, int? y)
+        {
+            base.SetPosition(x, y);
+            Grid.SetRowSpan(this, 2);
         }
     }
 }

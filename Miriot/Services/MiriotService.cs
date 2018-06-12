@@ -38,7 +38,7 @@ namespace Miriot.Services
             HttpResponseMessage response = null;
             response = await _client.PostAsync(uri, content);
 
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<User> GetUser(Guid id)

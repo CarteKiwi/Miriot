@@ -1,9 +1,12 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using Miriot.Services;
+using Miriot.Win10.Utils;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Globalization;
 using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
 
@@ -13,48 +16,50 @@ namespace Miriot.Win10.Services
     {
         private SpeechSynthesizer _speechSynthesizer;
         private SpeechRecognizer _speechRecognizer;
+        private SpeechRecognizer _speechRecognizerActivator;
         private RelayCommand<string> _command;
 
-        public bool IsLimited
-        {
-            get => _speechRecognizer.Constraints.First().IsEnabled;
-            set => _speechRecognizer.Constraints.First().IsEnabled = !value;
-        }
+        public bool IsListening { get; set; }
 
         public void SetCommand(RelayCommand<string> proceedSpeechCommand)
         {
             _command = proceedSpeechCommand;
         }
 
+        private void Cleanup()
+        {
+            if (_speechRecognizer != null)
+            {
+                // cleanup prior to re-initializing this scenario.
+                _speechRecognizer.StateChanged -= StateChanged;
+                _speechRecognizer.ContinuousRecognitionSession.Completed -= ContinuousRecognitionSession_Completed;
+                _speechRecognizer.ContinuousRecognitionSession.ResultGenerated -= ContinuousRecognitionSession_ResultGenerated;
+
+                _speechRecognizer.Dispose();
+                _speechRecognizer = null;
+            }
+
+            if (_speechRecognizerActivator != null)
+            {
+                // cleanup prior to re-initializing this scenario.
+                _speechRecognizerActivator.StateChanged -= StateChanged;
+                _speechRecognizerActivator.ContinuousRecognitionSession.Completed -= ContinuousRecognitionSession_Completed;
+                _speechRecognizerActivator.ContinuousRecognitionSession.ResultGenerated -= ContinuousRecognitionSession_ResultGenerated;
+
+                _speechRecognizerActivator.Dispose();
+                _speechRecognizerActivator = null;
+            }
+        }
+
         public async Task InitializeAsync()
         {
-            try
+            bool granted = await AudioCapturePermissions.RequestMicrophonePermission();
+
+            if (!granted)
             {
-                _speechRecognizer = new SpeechRecognizer(new Windows.Globalization.Language("fr-FR"));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("SpeechRecognizer failed to initialize : check the microphone");
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine("Access to the microphone denied");
                 return;
             }
-
-            // Add a list constraint to the recognizer.
-
-            // Compile the dictation topic constraint, which optimizes for dictated speech.
-            var listConstraint = new SpeechRecognitionListConstraint(new[] { "Miriot" });
-            _speechRecognizer.Constraints.Add(listConstraint);
-            _speechRecognizer.Constraints.Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, ""));
-
-            await _speechRecognizer.CompileConstraintsAsync();
-
-            // Stop listening events
-            _speechRecognizer.ContinuousRecognitionSession.ResultGenerated -= ContinuousRecognitionSession_ResultGenerated;
-            _speechRecognizer.ContinuousRecognitionSession.Completed -= ContinuousRecognitionSession_Completed;
-
-            // Start listening events
-            _speechRecognizer.ContinuousRecognitionSession.ResultGenerated += ContinuousRecognitionSession_ResultGenerated;
-            _speechRecognizer.ContinuousRecognitionSession.Completed += ContinuousRecognitionSession_Completed;
 
             try
             {
@@ -70,8 +75,99 @@ namespace Miriot.Win10.Services
             }
         }
 
+        public async Task StartRecognizerAsync(bool isListening)
+        {
+            Cleanup();
+
+            if (isListening)
+                await InitializeListenerAsync();
+            else
+                await InitializeActivatorAsync();
+        }
+
+        private async Task InitializeActivatorAsync()
+        {
+            try
+            {
+                //Language defaultLanguage = SpeechRecognizer.SystemSpeechLanguage;
+                //IEnumerable<Language> supportedLanguages = SpeechRecognizer.SupportedTopicLanguages;
+                //foreach (Language lang in supportedLanguages)
+                //{
+                //    Debug.WriteLine(lang.DisplayName + " " + lang.LanguageTag);
+                //}
+
+                _speechRecognizerActivator = new SpeechRecognizer(new Language("fr-FR"));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("SpeechRecognizerActivator failed to initialize : check the microphone");
+                Debug.WriteLine(ex.Message);
+                return;
+            }
+
+            var listConstraint = new SpeechRecognitionListConstraint(new[] { "Miriot" });
+            _speechRecognizerActivator.Constraints.Add(listConstraint);
+
+            var compileResult = await _speechRecognizerActivator.CompileConstraintsAsync();
+
+            if (compileResult.Status != SpeechRecognitionResultStatus.Success)
+            {
+                Debug.WriteLine("Grammar Compilation Failed: " + compileResult.Status.ToString());
+            }
+
+            _speechRecognizerActivator.StateChanged += StateChanged;
+            _speechRecognizerActivator.ContinuousRecognitionSession.ResultGenerated += ContinuousRecognitionSession_ResultGenerated;
+            _speechRecognizerActivator.ContinuousRecognitionSession.Completed += ContinuousRecognitionSession_Completed;
+
+            await _speechRecognizerActivator.ContinuousRecognitionSession.StartAsync();
+        }
+
+        private async Task InitializeListenerAsync()
+        {
+            try
+            {
+                _speechRecognizer = new SpeechRecognizer(new Language("fr-FR"));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("SpeechRecognizer failed to initialize : check the microphone");
+                Debug.WriteLine(ex.Message);
+                return;
+            }
+
+            _speechRecognizer.Constraints.Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, "dictation"));
+
+            var compileResult = await _speechRecognizer.CompileConstraintsAsync();
+
+            if (compileResult.Status != SpeechRecognitionResultStatus.Success)
+            {
+                Debug.WriteLine("Grammar Compilation Failed: " + compileResult.Status.ToString());
+            }
+
+            _speechRecognizer.StateChanged += StateChanged;
+            _speechRecognizer.ContinuousRecognitionSession.ResultGenerated += ContinuousRecognitionSession_ResultGenerated;
+            _speechRecognizer.ContinuousRecognitionSession.Completed += ContinuousRecognitionSession_Completed;
+
+            await _speechRecognizer.ContinuousRecognitionSession.StartAsync();
+        }
+
+        private void StateChanged(SpeechRecognizer sender, SpeechRecognizerStateChangedEventArgs args)
+        {
+            Debug.WriteLine(args.State);
+        }
+
         private void ContinuousRecognitionSession_ResultGenerated(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionResultGeneratedEventArgs args)
         {
+            if (args.Result.Text.Contains("Miriot"))
+            {
+                IsListening = true;
+            }
+            else
+            {
+                IsListening = false;
+            }
+
+            Debug.WriteLine("Texte reconnu: " + args.Result.Text);
             _command.Execute(args.Result.Text);
         }
 
@@ -81,24 +177,47 @@ namespace Miriot.Win10.Services
             {
                 //if (args.Status == SpeechRecognitionResultStatus.TimeoutExceeded)
                 //{
-                    //Enable continuous listening
-                    StartListeningAsync();
+                //Enable continuous listening
+                StartListeningAsync(IsListening);
                 //}
             }
         }
 
-        public async Task StartListeningAsync()
+        public async Task StartListeningAsync(bool isListening)
         {
-            if (_speechRecognizer?.State == SpeechRecognizerState.Idle)
+            try
+            {
+                if (isListening)
+                {
+                    StopActivator();
+                }
+                else
+                {
+                    Stop();
+                }
+
+                await StartRecognizerAsync(isListening);
+            }
+            catch (Exception ex)
+            {
+                await StartRecognizerAsync(isListening);
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        public async void StopActivator()
+        {
+            if (_speechRecognizerActivator?.State != SpeechRecognizerState.Idle)
             {
                 try
                 {
-                    await _speechRecognizer.ContinuousRecognitionSession.StartAsync();
+                    var asyncAction = _speechRecognizerActivator?.ContinuousRecognitionSession?.StopAsync();
+                    if (asyncAction != null)
+                        await asyncAction;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    await InitializeAsync();
-                    Debug.WriteLine(ex.Message);
+                    // Do nothing
                 }
             }
         }
