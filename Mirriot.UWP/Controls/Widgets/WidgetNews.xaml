@@ -10,31 +10,44 @@
     RequestedTheme="Dark"
     d:DesignHeight="300"
     d:DesignWidth="400">
+    <local:WidgetBase.Resources>
+        <DataTemplate x:Key="TileTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Image HorizontalAlignment="Center"
+               Stretch="UniformToFill">
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding urlToImage}" />
+                    </Image.Source>
+                </Image>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Image x:Name="Picture"
-               Source="https://img.lemde.fr/2017/06/12/250/0/3000/1500/644/322/60/0/37e9455_e1b2491478684e3baa9cda6c6425ed2c-e1b2491478684e3baa9cda6c6425ed2c-0.jpg"/>
-        
-        <TextBlock x:Name="Title"
+                <TextBlock x:Name="Title"
                    Grid.Row="1"
                    HorizontalAlignment="Center"
                    Typography.Capitals="AllSmallCaps"
-                   FontSize="20" Text="Roland-Garros 2018 : Rafael Nadal remporte la « undecima »"
+                   FontSize="15" Text="{Binding title}"
                    TextWrapping="WrapWholeWords"
                    FontWeight="Light"/>
-        
-        <TextBlock x:Name="Description" 
+
+                <TextBlock x:Name="Description" 
                    Grid.Row="2"
-                   FontSize="18"
+                   FontSize="13"
                    TextWrapping="WrapWholeWords"
                    HorizontalAlignment="Center"
                    FontWeight="Light"
-                   Text="Dans un choc qui n'aura pas tenu ses promesses, l'Espagnol a fait la leçon à l'Autrichien Dominic Thiem, le seul à l'avoir battu de la saison, en s'imposant 6-4, 6-3, 6-2."/>
-       
+                   Text="{Binding description}"/>
+            </Grid>
+        </DataTemplate>
+    </local:WidgetBase.Resources>
+    <Grid>
+        <toolkit:RotatorTile x:Name="Rotator" 
+                             RotationDelay="0:0:9"
+                             ExtraRandomDuration="0:0:1"
+                             Direction="Left"
+                             ItemTemplate="{StaticResource TileTemplate}" />
     </Grid>
 </local:WidgetBase>

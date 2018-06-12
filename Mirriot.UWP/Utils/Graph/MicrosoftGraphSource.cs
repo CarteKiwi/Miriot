@@ -1,12 +1,12 @@
-﻿using System;
-using Microsoft.Toolkit.Uwp;
+﻿using Microsoft.Graph;
+using Microsoft.Toolkit.Collections;
 using Microsoft.Toolkit.Uwp.Services.MicrosoftGraph;
+using Miriot.Win10.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Graph;
-using Miriot.Win10.Controls;
 
 namespace Miriot.Win10.Utils.Graph
 {

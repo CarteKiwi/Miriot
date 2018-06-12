@@ -10,6 +10,7 @@ using Miriot.Services;
 using Miriot.Common;
 using Miriot.Core.ViewModels.Widgets;
 using Miriot.Common.Model.Widgets.Deezer;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace Miriot.Win10.Controls
 {
@@ -82,8 +83,16 @@ namespace Miriot.Win10.Controls
 
         public async Task Play(DeezerTrack track)
         {
+            //var ble = SimpleIoc.Default.GetInstance<IBluetoothService>();
+
             if (_isPlaying)
+            {
                 await StopAsync();
+
+                //await ble.InitializeAsync();
+            }
+
+            //ble.Stop();
 
             _isPlaying = true;
             var path = track?.album?.cover_medium;

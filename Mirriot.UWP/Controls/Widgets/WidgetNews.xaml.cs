@@ -16,35 +16,11 @@ namespace Miriot.Win10.Controls
     public sealed partial class WidgetNews
     {
         public List<Article> Articles { get; set; }
-        private int _currentIndex;
-        private int _maxIndex;
 
         public WidgetNews(NewsModel widget) : base(widget)
         {
             InitializeComponent();
-
-            var timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 5) };
-            timer.Tick += Timer_Tick;
-            timer.Start();
-
             Get();
-        }
-
-        private void Timer_Tick(object sender, object e)
-        {
-            if (Articles != null)
-            {
-                _currentIndex++;
-
-                if (_currentIndex >= _maxIndex)
-                    _currentIndex = 0;
-
-                var article = Articles[_currentIndex];
-
-                Title.Text = article.title;
-                Description.Text = article.description;
-                Picture.Source = new BitmapImage(new Uri(article.urlToImage, UriKind.Absolute));
-            }
         }
 
         private async void Get()
@@ -63,9 +39,9 @@ namespace Miriot.Win10.Controls
 
                     var news = JsonConvert.DeserializeObject<LeMondeResponse>(c);
 
-                    _maxIndex = news.totalResults;
-
                     Articles = new List<Article>(news.articles);
+
+                    Rotator.ItemsSource = Articles;
                 }
             }
             catch (Exception ex)

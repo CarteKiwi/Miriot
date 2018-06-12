@@ -49,6 +49,12 @@ namespace Miriot.Win10.Views
         {
             ExpositionController.Maximum = Camera.MaximumExposure;
             ExpositionController.Minimum = Camera.MinimumExposure;
+
+            ZoomController.Maximum = Camera.MaximumZoom;
+            ZoomController.Minimum = Camera.MinimumZoom;
+
+            WhiteController.Maximum = Camera.Controller.WhiteBalance.Capabilities.Max;
+            WhiteController.Minimum = Camera.Controller.WhiteBalance.Capabilities.Min;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -109,6 +115,10 @@ namespace Miriot.Win10.Views
             Camera.AdjustWhite(e.NewValue);
         }
 
+        private void ZoomController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            Camera.AdjustZoom(e.NewValue);
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

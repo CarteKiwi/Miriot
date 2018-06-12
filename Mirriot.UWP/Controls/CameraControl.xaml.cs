@@ -74,6 +74,9 @@ namespace Miriot.Win10.Controls
         public Action Initialized { get; set; }
         public double MaximumExposure => _mediaCapture.VideoDeviceController.Exposure.Capabilities.Max;
         public double MinimumExposure => _mediaCapture.VideoDeviceController.Exposure.Capabilities.Min;
+        public double MaximumZoom => _mediaCapture.VideoDeviceController.Zoom.Capabilities.Max;
+        public double MinimumZoom => _mediaCapture.VideoDeviceController.Zoom.Capabilities.Min;
+        public VideoDeviceController Controller => _mediaCapture.VideoDeviceController;
 
         public CameraControl()
         {
@@ -143,6 +146,8 @@ namespace Miriot.Win10.Controls
                     Debug.WriteLine("Exception when initializing MediaCapture with {0}: {1}", _cameraId, ex);
                 }
 
+                _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
+
                 // If initialization succeeded, start the preview
                 if (_isInitialized)
                 {
@@ -167,8 +172,6 @@ namespace Miriot.Win10.Controls
         {
             _lowLightSupported =
                 _mediaCapture.VideoDeviceController.AdvancedPhotoControl.SupportedModes.Contains(Windows.Media.Devices.AdvancedPhotoMode.LowLight);
-
-            _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
 
             if (_lowLightSupported)
             {
@@ -278,6 +281,27 @@ namespace Miriot.Win10.Controls
                     value = white.Capabilities.Min;
 
                 white.TrySetValue(value);
+            }
+        }
+
+        public void AdjustZoom(double value)
+        {
+            var zoom = _mediaCapture.VideoDeviceController.Zoom;
+
+            if (zoom.Capabilities.Supported)
+            {
+                if (zoom.Capabilities.AutoModeSupported)
+                {
+                    zoom.TrySetAuto(false);
+                }
+
+                if (value > zoom.Capabilities.Max)
+                    value = zoom.Capabilities.Max;
+
+                if (value < zoom.Capabilities.Min)
+                    value = zoom.Capabilities.Min;
+
+                zoom.TrySetValue(value);
             }
         }
 

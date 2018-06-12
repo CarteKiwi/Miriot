@@ -110,6 +110,23 @@ namespace Miriot.Win10.Services
 
         private void Current_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
+            Stop();
+        }
+
+        public void Stop()
+        {
+            if (_readCharacteristic != null)
+            {
+                _readCharacteristic.ReadRequested -= ReadCharacteristic_ReadRequested;
+                _readCharacteristic.WriteRequested -= WriteCharacteristic_WriteRequested;
+            }
+
+            if (_writeCharacteristic != null)
+            {
+                _writeCharacteristic.ReadRequested -= ReadCharacteristic_ReadRequested;
+                _writeCharacteristic.WriteRequested -= WriteCharacteristic_WriteRequested;
+            }
+
             _readCharacteristic = null;
             _writeCharacteristic = null;
             _publisher?.Stop();
@@ -251,7 +268,8 @@ namespace Miriot.Win10.Services
             try
             {
                 _serviceProvider?.StopAdvertising();
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
