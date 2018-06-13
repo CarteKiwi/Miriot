@@ -201,14 +201,14 @@
     <Reference Include="Acr.Core">
       <HintPath>..\..\packages\Acr.Core.2.0.2\lib\xamarinios10\Acr.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.BluetoothLE">
-      <HintPath>..\..\packages\Plugin.BluetoothLE.6.0.1\lib\xamarinios10\Plugin.BluetoothLE.dll</HintPath>
-    </Reference>
     <Reference Include="Rg.Plugins.Popup">
       <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.4.154-pre\lib\Xamarin.IOS\Rg.Plugins.Popup.dll</HintPath>
     </Reference>
     <Reference Include="Rg.Plugins.Popup.IOS">
       <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.4.154-pre\lib\Xamarin.IOS\Rg.Plugins.Popup.IOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.BluetoothLE">
+      <HintPath>..\..\packages\Plugin.BluetoothLE.6.0.3\lib\xamarinios10\Plugin.BluetoothLE.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

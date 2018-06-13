@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      x:TypeArguments="viewModels:CameraViewModel"
+                      xmlns:viewModels="clr-namespace:Miriot.Core.ViewModels;assembly=Miriot"
+                      xmlns:core="using:Miriot.Core.ViewModels.Widgets"
+                      xmlns:ctrl="clr-namespace:Miriot.Mobile.Controls"
+                      xmlns:sel="clr-namespace:Miriot.Mobile"
+                      xmlns:base="clr-namespace:Miriot.Mobile.Views;assembly=Miriot.Mobile"
+                      x:Class="Miriot.Mobile.Views.CameraPage"
+                      BackgroundColor="{DynamicResource BgColor}">
+    <ContentPage.Content>
+        <Grid VerticalOptions="FillAndExpand"
+                  RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+            <Slider Value="{Binding Brightness, Mode=TwoWay}"
+                    Margin="0,50,0,10" 
+                    ValueChanged="Handle_ValueChanged"
+                    Minimum="0" Maximum="255"/>
+            
+            <Button Command="{Binding SaveCommand}" 
+                    Grid.Row="2"
+                    IsEnabled="{Binding HasAtLeastOneRemoteSystem, Mode=OneWay}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource Accent}"
+                    HeightRequest="45"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    Text="Enregistrer"/>
+
+            <Button Command="{Binding CancelCommand}" 
+                    Grid.Row="3"
+                    IsEnabled="{Binding HasAtLeastOneRemoteSystem, Mode=OneWay}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="Gray"
+                    HeightRequest="45"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    Text="Cancel"/>
+        </Grid>
+    </ContentPage.Content>
+</base:BaseContentPage>

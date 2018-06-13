@@ -14,9 +14,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="2.0.2" />
     <PackageReference Include="Xamarin.Forms" Version="2.5.1.444934" />
-    <PackageReference Include="Plugin.BluetoothLE" Version="6.0.1" />
     <PackageReference Include="Microsoft.Identity.Client" Version="1.1.2-preview0008" />
     <PackageReference Include="Rg.Plugins.Popup" Version="1.1.4.154-pre" />
+    <PackageReference Include="Plugin.BluetoothLE" Version="6.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,5 +65,11 @@
     <Reference Include="Microsoft.Toolkit">
       <HintPath>..\..\Libs\Microsoft.Toolkit.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\CameraPage.xamlcs">
+      <DependentUpon>Views\HomePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </None>
   </ItemGroup>
 </Project>
