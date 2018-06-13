@@ -26,7 +26,7 @@ namespace Miriot.Win10.Services.Mock
             OnPreAnalysis?.Invoke(this, null);
 
             var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
-            var uri = p.Path + "/untitled.png";
+            var uri = p.Path + "/carlo.jpg";
 
             var array = File.ReadAllBytes(uri);
             
@@ -41,7 +41,7 @@ namespace Miriot.Win10.Services.Mock
         public async Task<byte[]> GetFrame()
         {
             var p = await Package.Current.InstalledLocation.GetFolderAsync(@"Assets");
-            var uri = p.Path + "/untitled.png";
+            var uri = p.Path + "/carlo.jpg";
 
             var array = File.ReadAllBytes(uri);
 

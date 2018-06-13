@@ -9,6 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d"
+    Opacity=".4"
     d:DesignHeight="300"
     d:DesignWidth="400">
     
@@ -43,7 +44,7 @@
                     <CompositeTransform CenterY="0.5" CenterX="0.5" Rotation="90"/>
                 </LinearGradientBrush.RelativeTransform>
                 <GradientStop/>
-                <GradientStop Color="White" Offset="1"/>
+                <GradientStop Color="Gray" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.RenderTransform>
@@ -61,7 +62,7 @@
                     <CompositeTransform CenterY="0.5" CenterX="0.5" Rotation="-90"/>
                 </LinearGradientBrush.RelativeTransform>
                 <GradientStop/>
-                <GradientStop Color="White" Offset="1"/>
+                <GradientStop Color="Gray" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.RenderTransform>
@@ -82,7 +83,7 @@
                     <CompositeTransform CenterY="0.5" CenterX="0.5" Rotation="180"/>
                 </LinearGradientBrush.RelativeTransform>
                 <GradientStop/>
-                <GradientStop Color="White" Offset="1"/>
+                <GradientStop Color="Gray" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
     </Grid>
@@ -100,7 +101,7 @@
                     <CompositeTransform CenterY="0.5" CenterX="0.5"/>
                 </LinearGradientBrush.RelativeTransform>
                 <GradientStop/>
-                <GradientStop Color="White" Offset="1"/>
+                <GradientStop Color="Gray" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
     </Grid>

@@ -567,6 +567,8 @@ namespace Miriot.Core.ViewModels
 
         private async void PromptForUnknownFace()
         {
+            if (IsListeningFirstName) return;
+
             SetMessage("Bonjour. Je m'appelle MirioT.", "Quel est votre prénom ? (dites: je m'appelle...)");
             Speak("Bonjour, je m'appelle Miriotte. Et vous ?");
 

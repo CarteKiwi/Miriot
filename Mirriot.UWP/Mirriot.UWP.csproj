@@ -100,6 +100,7 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="Connected Services\Office365\ConnectedService.json" />
+    <Content Include="Assets\carlo.jpg" />
     <Content Include="Assets\CircleOpacityMask.png" />
     <Content Include="Assets\cross.png" />
     <Content Include="Assets\Horoscope\Aries.png" />
@@ -253,6 +254,7 @@
     <Compile Include="Utils\ImageLoader\ManagedSurface.cs" />
     <Compile Include="Utils\RotationHelper.cs" />
     <Compile Include="Utils\SettingsHelper.cs" />
+    <Compile Include="Utils\StreamResolution.cs" />
     <Compile Include="Utils\UltrasonicDistanceSensor.cs" />
     <Compile Include="Controls\Widgets\WidgetFitbit.xaml.cs">
       <DependentUpon>WidgetFitbit.xaml</DependentUpon>

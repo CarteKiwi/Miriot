@@ -5,6 +5,7 @@ using Miriot.Common;
 using Miriot.Model;
 using Miriot.Services;
 using Miriot.Win10.Controls;
+using Miriot.Win10.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Capture;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -55,6 +57,8 @@ namespace Miriot.Win10.Views
 
             WhiteController.Maximum = Camera.Controller.WhiteBalance.Capabilities.Max;
             WhiteController.Minimum = Camera.Controller.WhiteBalance.Capabilities.Min;
+
+            PopulateSettingsComboBox();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -128,6 +132,44 @@ namespace Miriot.Win10.Views
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             Camera.PersistSettings();
+        }
+
+        /// <summary>
+        ///  Event handler for Preview settings combo box. Updates stream resolution based on the selection.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void ComboBoxSettings_Changed(object sender, RoutedEventArgs e)
+        {
+            if (Camera._isPreviewing)
+            {
+                var selectedItem = (sender as ComboBox).SelectedItem as ComboBoxItem;
+                var res = (selectedItem.Tag as StreamResolution);
+                var encodingProperties = res.EncodingProperties;
+                await Camera.Controller.SetMediaStreamPropertiesAsync(MediaStreamType.VideoPreview, encodingProperties);
+                Camera.FriendlyResolution = res.GetFriendlyName();
+            }
+        }
+
+        /// <summary>
+        /// Populates the combo box with all possible combinations of settings returned by the camera driver
+        /// </summary>
+        private void PopulateSettingsComboBox()
+        {
+            // Query all properties of the device
+            IEnumerable<StreamResolution> allProperties = Camera.Controller.GetAvailableMediaStreamProperties(MediaStreamType.VideoPreview).Select(x => new StreamResolution(x));
+
+            // Order them by resolution then frame rate
+            allProperties = allProperties.OrderByDescending(x => x.Height * x.Width).ThenByDescending(x => x.FrameRate);
+
+            // Populate the combo box with the entries
+            foreach (var property in allProperties)
+            {
+                ComboBoxItem comboBoxItem = new ComboBoxItem();
+                comboBoxItem.Content = property.GetFriendlyName();
+                comboBoxItem.Tag = property;
+                CameraSettings.Items.Add(comboBoxItem);
+            }
         }
     }
 }

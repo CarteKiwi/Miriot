@@ -1,6 +1,7 @@
 ﻿using Miriot.Services;
 using Miriot.Win10.Utils;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -30,7 +31,7 @@ namespace Miriot.Win10.Controls
         #region Variables
         private MediaCapture _mediaCapture;
         private bool _isInitialized;
-        private bool _isPreviewing;
+        public bool _isPreviewing;
 
         // Information about the camera device
         private bool _mirroringPreview;
@@ -77,6 +78,7 @@ namespace Miriot.Win10.Controls
         public double MaximumZoom => _mediaCapture.VideoDeviceController.Zoom.Capabilities.Max;
         public double MinimumZoom => _mediaCapture.VideoDeviceController.Zoom.Capabilities.Min;
         public VideoDeviceController Controller => _mediaCapture.VideoDeviceController;
+        public string FriendlyResolution { get; set; }
 
         public CameraControl()
         {
@@ -146,7 +148,7 @@ namespace Miriot.Win10.Controls
                     Debug.WriteLine("Exception when initializing MediaCapture with {0}: {1}", _cameraId, ex);
                 }
 
-                _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
+                await SetResolutionAsync();
 
                 // If initialization succeeded, start the preview
                 if (_isInitialized)
@@ -165,6 +167,34 @@ namespace Miriot.Win10.Controls
 
                     AdjustSettings();
                 }
+            }
+        }
+
+        private async Task SetResolutionAsync()
+        {
+            try
+            {
+                _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
+
+                // Query all properties of the device 
+                IEnumerable<StreamResolution> allPreviewProperties = _mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoPreview).Select(x => new StreamResolution(x));
+                // Order them by resolution then frame rate
+                allPreviewProperties = allPreviewProperties.OrderByDescending(x => x.Height * x.Width).ThenByDescending(x => x.FrameRate);
+
+                FriendlyResolution = ApplicationData.Current.LocalSettings.Values["CameraResolution"] as string;
+
+                if (!string.IsNullOrEmpty(FriendlyResolution))
+                {
+                    await _mediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.VideoPreview, allPreviewProperties.First(e => e.GetFriendlyName() == FriendlyResolution).EncodingProperties);
+                }
+                else
+                {
+                    await _mediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.VideoPreview, allPreviewProperties.First().EncodingProperties);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to set resolution");
             }
         }
 
@@ -189,6 +219,12 @@ namespace Miriot.Win10.Controls
         {
             _mediaCapture.VideoDeviceController.DesiredOptimization = MediaCaptureOptimization.Quality;
 
+            var mediaFrameSource = _mediaCapture.FrameSources.First().Value;
+            var videoDeviceController = mediaFrameSource.Controller.VideoDeviceController;
+
+            videoDeviceController.DesiredOptimization = Windows.Media.Devices.MediaCaptureOptimization.Quality;
+            videoDeviceController.PrimaryUse = Windows.Media.Devices.CaptureUse.Video;
+
             var focus = _mediaCapture.VideoDeviceController.Focus;
 
             if (focus.Capabilities.Supported)
@@ -204,6 +240,8 @@ namespace Miriot.Win10.Controls
             var contrast = ApplicationData.Current.LocalSettings.Values["CameraContrast"];
             var brightness = ApplicationData.Current.LocalSettings.Values["CameraBrightness"];
             var exposure = ApplicationData.Current.LocalSettings.Values["CameraExposure"];
+            var white = ApplicationData.Current.LocalSettings.Values["CameraWhite"];
+            var zoom = ApplicationData.Current.LocalSettings.Values["CameraZoom"];
 
             if (contrast != null)
                 AdjustContrast((double)contrast);
@@ -211,6 +249,10 @@ namespace Miriot.Win10.Controls
                 AdjustBrightness((double)brightness);
             if (exposure != null)
                 AdjustExposition((double)exposure);
+            if (white != null)
+                AdjustWhite((double)white);
+            if (zoom != null)
+                AdjustZoom((double)zoom);
         }
 
         public void AdjustContrast(double value)
@@ -590,9 +632,14 @@ namespace Miriot.Win10.Controls
             _mediaCapture.VideoDeviceController.Contrast.TryGetValue(out double contrast);
             _mediaCapture.VideoDeviceController.Brightness.TryGetValue(out double brightness);
             _mediaCapture.VideoDeviceController.Exposure.TryGetValue(out double exposure);
+            _mediaCapture.VideoDeviceController.WhiteBalance.TryGetValue(out double white);
+            _mediaCapture.VideoDeviceController.Zoom.TryGetValue(out double zoom);
             ApplicationData.Current.LocalSettings.Values["CameraContrast"] = contrast;
             ApplicationData.Current.LocalSettings.Values["CameraBrightness"] = brightness;
             ApplicationData.Current.LocalSettings.Values["CameraExposure"] = exposure;
+            ApplicationData.Current.LocalSettings.Values["CameraZoom"] = zoom;
+            ApplicationData.Current.LocalSettings.Values["CameraWhite"] = white;
+            ApplicationData.Current.LocalSettings.Values["CameraResolution"] = FriendlyResolution;
         }
 
         #endregion Methods

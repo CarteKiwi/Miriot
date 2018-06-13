@@ -14,13 +14,15 @@
         <ctrl:CameraControl x:Name="Camera" 
                             ShowPreview="True" 
                             OptimizeForLowLight="False"/>
-
+        
         <StackPanel VerticalAlignment="Bottom">
             <Slider x:Name="WhiteController" Header="White" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="WhiteController_ValueChanged" />
             <Slider x:Name="BrightnessController" Header="Brightness" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="BrightnessController_ValueChanged" />
             <Slider x:Name="ExpositionController" Header="Exposition" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="ExpositionController_ValueChanged" />
             <Slider x:Name="ContrastController" Header="Contrast" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="ContrastController_ValueChanged" />
             <Slider x:Name="ZoomController" Header="Zoom" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="ZoomController_ValueChanged" />
+            <ComboBox Name="CameraSettings" PlaceholderText="Preview Settings" SelectionChanged="ComboBoxSettings_Changed" 
+                      HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto"/>
             <Button Content="Go back" Click="Button_Click" />
             <Button Content="Save" Click="Save_Click" />
         </StackPanel>
