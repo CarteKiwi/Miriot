@@ -14,204 +14,177 @@ using System.Threading.Tasks;
 
 namespace Miriot.Core.ViewModels
 {
-    public class ConnectViewModel : CustomViewModel
-    {
-        private readonly IDispatcherService _dispatcherService;
-        private readonly INavigationService _navigationService;
-        private readonly RemoteService _remoteService;
-        private readonly MiriotService _miriotService;
-        private RomeRemoteSystem _selectedSystem;
-        private Timer _timer;
-        private string _message;
-        private string _messageTimeout;
-        private bool _hasTimedOut;
-        private RelayCommand _connectCommand;
-        private RelayCommand<RomeRemoteSystem> _selectCommand;
+	public class ConnectViewModel : CustomViewModel
+	{
+		private readonly IDispatcherService _dispatcherService;
+		private readonly INavigationService _navigationService;
+		private readonly RemoteService _remoteService;
+		private readonly MiriotService _miriotService;
+		private RomeRemoteSystem _selectedSystem;
+		private Timer _timer;
+		private string _message;
+		private string _messageTimeout;
+		private bool _hasTimedOut;
+		private RelayCommand _connectCommand;
+		private RelayCommand<RomeRemoteSystem> _selectCommand;
 
-        public bool HasTimedOut
-        {
-            get { return _hasTimedOut; }
-            set { Set(ref _hasTimedOut, value); }
-        }
+		public bool HasTimedOut
+		{
+			get { return _hasTimedOut; }
+			set { Set(ref _hasTimedOut, value); }
+		}
 
-        public bool HasAtLeastOneRemoteSystem => RemoteSystems.Any();
+		public bool HasAtLeastOneRemoteSystem => RemoteSystems.Any();
 
-        public string Message
-        {
-            get { return _message; }
-            set { Set(ref _message, value); }
-        }
+		public string Message
+		{
+			get { return _message; }
+			set { Set(ref _message, value); }
+		}
 
-        public string MessageTimeout
-        {
-            get { return _messageTimeout; }
-            set { Set(ref _messageTimeout, value); }
-        }
+		public string MessageTimeout
+		{
+			get { return _messageTimeout; }
+			set { Set(ref _messageTimeout, value); }
+		}
 
-        public RomeRemoteSystem SelectedRemoteSystem
-        {
-            get { return _selectedSystem; }
-            set { Set(ref _selectedSystem, value); }
-        }
+		public RomeRemoteSystem SelectedRemoteSystem
+		{
+			get { return _selectedSystem; }
+			set { Set(ref _selectedSystem, value); }
+		}
 
-        public RelayCommand<RomeRemoteSystem> SelectCommand
-        {
-            get
-            {
-                if (_selectCommand == null) _selectCommand = new RelayCommand<RomeRemoteSystem>(OnSelect);
-                return _selectCommand;
-            }
-        }
+		public RelayCommand<RomeRemoteSystem> SelectCommand
+		{
+			get
+			{
+				if (_selectCommand == null) _selectCommand = new RelayCommand<RomeRemoteSystem>(OnSelect);
+				return _selectCommand;
+			}
+		}
 
-        public RelayCommand ConnectCommand
-        {
-            get
-            {
-                if (_connectCommand == null) _connectCommand = new RelayCommand(OnConnect);
-                return _connectCommand;
-            }
-        }
+		public RelayCommand ConnectCommand
+		{
+			get
+			{
+				if (_connectCommand == null) _connectCommand = new RelayCommand(OnConnect);
+				return _connectCommand;
+			}
+		}
 
-        public ObservableCollection<RomeRemoteSystem> RemoteSystems { get; set; }
+		public ObservableCollection<RomeRemoteSystem> RemoteSystems { get; set; }
 
-        public ConnectViewModel(
-            IDispatcherService dispatcherService,
-            INavigationService navigationService,
-            RemoteService remoteService,
-            MiriotService miriotService) : base(navigationService)
-        {
-            _dispatcherService = dispatcherService;
-            _navigationService = navigationService;
-            _remoteService = remoteService;
-            _miriotService = miriotService;
-            _timer = new Timer(OnTimeout, null, 10000, Timeout.Infinite);
+		public ConnectViewModel(
+			IDispatcherService dispatcherService,
+			INavigationService navigationService,
+			RemoteService remoteService,
+			MiriotService miriotService) : base(navigationService)
+		{
+			_dispatcherService = dispatcherService;
+			_navigationService = navigationService;
+			_remoteService = remoteService;
+			_miriotService = miriotService;
+			_timer = new Timer(OnTimeout, null, 10000, Timeout.Infinite);
 
-            RemoteSystems = new ObservableCollection<RomeRemoteSystem>();
-        }
+			RemoteSystems = new ObservableCollection<RomeRemoteSystem>();
+		}
 
-        private void OnTimeout(object state)
-        {
-            if (RemoteSystems.Any())
-                return;
+		private void OnTimeout(object state)
+		{
+			if (RemoteSystems.Any())
+				return;
 
-            HasTimedOut = true;
-            Message = Strings.ConnectionTimeout;
-            MessageTimeout = Strings.CheckConnection;
-        }
+			HasTimedOut = true;
+			Message = Strings.ConnectionTimeout;
+			MessageTimeout = Strings.CheckConnection;
+		}
 
-        protected override async Task InitializeAsync()
-        {
-            _remoteService.Added = OnAdded;
-            _remoteService.Discover();
+		protected override async Task InitializeAsync()
+		{
+			_remoteService.Added = OnAdded;
+			_remoteService.Discover();
+		}
 
-            //_navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
-            //{
-            //    Id = "1",
-            //    User = new User
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Name = "Guillaume Test",
-            //        UserData = new UserData
-            //        {
-            //            Devices = new System.Collections.Generic.List<MiriotConfiguration>()
-            //        {
-            //           new MiriotConfiguration("1", "Miriot")
-            //           {
-            //                Widgets = new System.Collections.Generic.List<Widget>()
-            //                {
-            //                    new Widget(){
-            //                        Id = Guid.NewGuid(),
-            //                        Title = "Widget 1",
-            //                        X = 2,
-            //                        Y = 0,
-            //                        Type = WidgetType.Weather,
-            //                        Infos = new System.Collections.Generic.List<string>{
-            //                            JsonConvert.SerializeObject(new WeatherWidgetInfo { Location = "Asnières sur Seine" })
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //        }
+		private void OnAdded(RomeRemoteSystem obj)
+		{
+			_dispatcherService.Invoke(() =>
+			{
+				RemoteSystems.Add(obj);
+				RaisePropertyChanged(nameof(HasAtLeastOneRemoteSystem));
+			});
+		}
 
-            //        }
-            //    }
-            //});
-        }
+		private void OnRemoved(RomeRemoteSystem obj)
+		{
+			_dispatcherService.Invoke(() =>
+			{
+				RemoteSystems.Remove(obj);
+				RaisePropertyChanged(nameof(HasAtLeastOneRemoteSystem));
+			});
+		}
 
-        private void OnAdded(RomeRemoteSystem obj)
-        {
-            _dispatcherService.Invoke(() =>
-            {
-                RemoteSystems.Add(obj);
-                RaisePropertyChanged(nameof(HasAtLeastOneRemoteSystem));
-            });
-        }
+		private void OnSelect(RomeRemoteSystem sys)
+		{
+			SelectedRemoteSystem = sys;
+		}
+		private void RunOnUiThread(System.Action action)
+		{
+			_dispatcherService.Invoke(action);
+		}
 
-        private void OnRemoved(RomeRemoteSystem obj)
-        {
-            _dispatcherService.Invoke(() =>
-            {
-                RemoteSystems.Remove(obj);
-                RaisePropertyChanged(nameof(HasAtLeastOneRemoteSystem));
-            });
-        }
+		private async void OnConnect()
+		{
+			Message = Strings.Connecting;
 
-        private void OnSelect(RomeRemoteSystem sys)
-        {
-            SelectedRemoteSystem = sys;
-        }
-        private void RunOnUiThread(System.Action action)
-        {
-            _dispatcherService.Invoke(action);
-        }
+			var success = await _remoteService.ConnectAsync(SelectedRemoteSystem);
 
-        private async void OnConnect()
-        {
-            Message = Strings.Connecting;
+			if (success)
+			{
+				Message = "Identification...";
 
-            var success = await _remoteService.ConnectAsync(SelectedRemoteSystem);
+				//await Task.Run(async () =>
+				//{
+				var userId = await _remoteService.GetAsync<string>(RemoteCommands.GetUser);
 
-            if (success)
-            {
-                Message = Strings.RetrievingUser;
+				Message = "Identification du miroir...";
 
-                await Task.Run(async () =>
-                {
-                    var userId = await _remoteService.CommandAsync<string>(RemoteCommands.GetUser);
-                    var miriotId = await _remoteService.CommandAsync<string>(RemoteCommands.GetMiriotId);
+				var miriotId = await _remoteService.GetAsync<string>(RemoteCommands.GetMiriotId);
 
-                    if (Guid.TryParse(userId, out Guid userGuid) && userGuid != Guid.Empty)
-                    {
-                        var user = await _miriotService.GetUser(userGuid);
+				if (Guid.TryParse(userId, out Guid userGuid) && userGuid != Guid.Empty)
+				{
 
-                        RunOnUiThread(() =>
-                        {
-                            if (user != null && user.Id != Guid.Empty)
-                            {
-                                Message = string.Empty;
-                                _navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter()
-                                {
-                                    User = user,
-                                    Id = miriotId
-                                });
-                            }
-                            else
-                                Message = "Unregistered user";
-                        });
-                    }
-                    else
-                    {
-                        RunOnUiThread(() =>
-                        {
-                            Message = Strings.RetrievingUserFailed;
-                        });
-                    }
-                });
-            }
-            else
-            {
-                Message = Strings.ConnectionFailed;
-            }
-        }
-    }
+					Message = Strings.RetrievingUser;
+
+					var user = await _miriotService.GetUser(userGuid);
+
+					RunOnUiThread(() =>
+					{
+						if (user != null && user.Id != Guid.Empty)
+						{
+							Message = string.Empty;
+							_navigationService.NavigateTo(PageKeys.Profile, new MiriotParameter
+							{
+								User = user,
+								Id = miriotId
+							});
+						}
+						else
+							Message = "Unregistered user";
+					});
+				}
+				else
+				{
+					RunOnUiThread(() =>
+					{
+						_navigationService.NavigateTo(PageKeys.CameraSettings);
+					});
+				}
+				//});
+			}
+			else
+			{
+				Message = Strings.ConnectionFailed;
+			}
+		}
+	}
 }

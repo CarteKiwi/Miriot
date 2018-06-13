@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
+using Miriot.Common.Model.Widgets;
 using Miriot.Core.ViewModels;
 using Miriot.Model;
 using Newtonsoft.Json;
@@ -13,192 +14,217 @@ using System.Threading.Tasks;
 
 namespace Miriot.Services
 {
-    public class RemoteService
-    {
-        private readonly IBluetoothService _bluetoothService;
-        private readonly IDispatcherService _dispatcherService;
-        private readonly IPlatformService _platformService;
-        private List<RomeRemoteSystem> _remoteSystems;
-        private RomeRemoteSystem _connectedRemoteSystem;
-        private MainViewModel _vm;
+	public class RemoteService
+	{
+		private readonly IBluetoothService _bluetoothService;
+		private readonly IDispatcherService _dispatcherService;
+		private readonly IPlatformService _platformService;
+		private List<RomeRemoteSystem> _remoteSystems;
+		private RomeRemoteSystem _connectedRemoteSystem;
+		private MainViewModel _vm;
 
-        public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
+		public IReadOnlyList<RomeRemoteSystem> RemoteSystems => _remoteSystems.ToList();
 
-        public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
+		public Func<RemoteParameter, Task<string>> CommandReceived { get; set; }
 
-        public Action<RomeRemoteSystem> Added { get; set; }
+		public Action<RomeRemoteSystem> Added { get; set; }
 
-        public RemoteService(
-            IBluetoothService socketService,
-            IDispatcherService dispatcherService,
-            IPlatformService platformService)
-        {
-            _bluetoothService = socketService;
-            _dispatcherService = dispatcherService;
-            _platformService = platformService;
-            _remoteSystems = new List<RomeRemoteSystem>();
+		public RemoteService(
+			IBluetoothService socketService,
+			IDispatcherService dispatcherService,
+			IPlatformService platformService)
+		{
+			_bluetoothService = socketService;
+			_dispatcherService = dispatcherService;
+			_platformService = platformService;
+			_remoteSystems = new List<RomeRemoteSystem>();
 
-            CommandReceived = OnCommandReceivedAsync;
-        }
+			CommandReceived = OnCommandReceivedAsync;
+		}
 
-        public void Attach(MainViewModel vm)
-        {
-            _vm = vm;
-        }
+		public void Attach(MainViewModel vm)
+		{
+			_vm = vm;
+		}
 
-        // Rename to Get
-        public async Task<T> CommandAsync<T>(RemoteCommands command)
-        {
-            if (_connectedRemoteSystem == null)
-            {
-                Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
-                return default(T);
-            }
+		public Task<T> GetAsync<T>(RemoteCommands command, T parameter)
+		{
+			return CommandAsync<T>(new RemoteParameter { Command = command, SerializedData = JsonConvert.SerializeObject(parameter) });
+		}
 
-            var parameter = JsonConvert.SerializeObject(new RemoteParameter() { Command = command });
+		public Task<T> GetAsync<T>(RemoteCommands command)
+		{
+			return CommandAsync<T>(new RemoteParameter { Command = command });
+		}
 
-            string response = await _bluetoothService.GetAsync(parameter);
+		// Rename to Get
+		public async Task<T> CommandAsync<T>(RemoteParameter parameter)
+		{
+			if (_connectedRemoteSystem == null)
+			{
+				Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
+				return default(T);
+			}
 
-            if (response == null)
-                return default(T);
+			string response = await _bluetoothService.GetAsync(JsonConvert.SerializeObject(parameter));
 
-            if (typeof(T) == response.GetType())
-            {
-                return (T)(object)response;
-            }
+			if (response == null)
+				return default(T);
 
-            return JsonConvert.DeserializeObject<T>(response);
-        }
+			if (typeof(T) == response.GetType())
+			{
+				return (T)(object)response;
+			}
 
-        public async Task SendAsync(RemoteCommands command)
-        {
-            if (_connectedRemoteSystem == null)
-            {
-                Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
-                return;
-            }
+			return JsonConvert.DeserializeObject<T>(response);
+		}
 
-            await _bluetoothService.SendAsync(JsonConvert.SerializeObject(new RemoteParameter { Command = command }));
-        }
+		public Task SendAsync<T>(RemoteCommands command, T parameter)
+		{
+			return SendAsync(new RemoteParameter { Command = command, SerializedData = JsonConvert.SerializeObject(parameter) });
+		}
 
-        internal async Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
-        {
-            _connectedRemoteSystem = selectedRemoteSystem;
-            return await _bluetoothService.ConnectAsync(selectedRemoteSystem);
-        }
+		public Task SendAsync(RemoteCommands command)
+		{
+			return SendAsync(new RemoteParameter { Command = command });
+		}
 
-        public async void Discover()
-        {
-            try
-            {
-                await _bluetoothService.InitializeAsync();
+		public Task SendAsync(RemoteParameter parameter)
+		{
+			if (_connectedRemoteSystem == null)
+			{
+				Debug.WriteLine("You are using CommandAsync() but you are not connected to a remote system");
+				return Task.FromResult(false);
+			}
 
-                _bluetoothService.Discovered = (system) =>
-                {
-                    var remoteSystem = _remoteSystems.FirstOrDefault(r => r.Id == system.Id);
+			return _bluetoothService.SendAsync(JsonConvert.SerializeObject(parameter));
+		}
 
-                    if (remoteSystem == null)
-                    {
-                        _remoteSystems.Add(system);
-                        Added?.Invoke(system);
-                    }
-                    else
-                    {
+		internal Task<bool> ConnectAsync(RomeRemoteSystem selectedRemoteSystem)
+		{
+			_connectedRemoteSystem = selectedRemoteSystem;
+			return _bluetoothService.ConnectAsync(selectedRemoteSystem);
+		}
 
-                    }
-                };
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.ToString());
-            }
-        }
+		public async void Discover()
+		{
+			try
+			{
+				_bluetoothService.Discovered = (system) =>
+				{
+					var remoteSystem = _remoteSystems.FirstOrDefault(r => r.Id == system.Id);
 
-        internal void Listen()
-        {
-            _bluetoothService.CommandReceived = CommandReceived;
-            Task.Run(async () => await _bluetoothService.InitializeAsync());
-        }
+					if (remoteSystem == null)
+					{
+						_remoteSystems.Add(system);
+						Added?.Invoke(system);
+					}
+					else
+					{
 
-        private T Deserialize<T>(RemoteParameter parameter)
-        {
-            return JsonConvert.DeserializeObject<T>(parameter.SerializedData);
-        }
+					}
+				};
 
-        private async Task<string> OnCommandReceivedAsync(RemoteParameter parameter)
-        {
-            switch (parameter.Command)
-            {
-                case RemoteCommands.MiriotConfiguring:
-                    _dispatcherService.Invoke(() =>
-                    {
-                        _vm.HasNoConfiguration = false;
-                        _vm.IsConfiguring = true;
-                    });
-                    return string.Empty;
-                case RemoteCommands.LoadUser:
-                    if (_vm.User != null)
-                        _dispatcherService.Invoke(async () =>
-                        {
-                            await _vm.LoadUser(_vm.User);
-                        });
-                    return string.Empty;
-                case RemoteCommands.GetUser:
-                    if (_vm.User != null)
-                        _dispatcherService.Invoke(() =>
-                        {
-                            _vm.HasNoConfiguration = false;
-                            _vm.IsConfiguring = true;
-                        });
-                        return _vm.User.Id.ToString();
-                case RemoteCommands.GetMiriotId:
-                    return _platformService.GetSystemIdentifier();
-                case RemoteCommands.GraphService_Initialize:
-                    var _graphService = SimpleIoc.Default.GetInstance<IGraphService>();
-                    string code = await _graphService.GetCodeAsync();
+				await _bluetoothService.InitializeAsync();
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine(e.ToString());
+			}
+		}
 
-                    _dispatcherService.Invoke(() =>
-                    {
-                        _vm.SubTitle = "Code : " + code;
-                    });
+		internal void Listen()
+		{
+			_bluetoothService.CommandReceived = CommandReceived;
+			Task.Run(async () => await _bluetoothService.InitializeAsync());
+		}
 
-                    // Waiting until user has logged
-                    if (await _graphService.LoginAsync())
-                    {
-                        var graphUser = await _graphService.GetUserAsync();
+		private T Deserialize<T>(RemoteParameter parameter)
+		{
+			return JsonConvert.DeserializeObject<T>(parameter.SerializedData);
+		}
 
-                        _dispatcherService.Invoke(async () =>
-                        {
-                            _vm.SubTitle = "Connecté en tant que " + graphUser.Name;
-                            await _vm.LoadUser(_vm.User);
-                        });
+		private async Task<string> OnCommandReceivedAsync(RemoteParameter parameter)
+		{
+			switch (parameter.Command)
+			{
+				case RemoteCommands.MiriotConfiguring:
+					_dispatcherService.Invoke(() =>
+					{
+						_vm.HasNoConfiguration = false;
+						_vm.IsConfiguring = true;
+					});
+					return string.Empty;
+				case RemoteCommands.LoadUser:
+					if (_vm.User != null)
+						_dispatcherService.Invoke(async () =>
+						{
+							await _vm.LoadUser(_vm.User);
+						});
+					return string.Empty;
+				case RemoteCommands.GetUser:
+					if (_vm.User != null)
+						_dispatcherService.Invoke(() =>
+						{
+							_vm.HasNoConfiguration = false;
+							_vm.IsConfiguring = true;
+						});
+					return _vm.User.Id.ToString();
+				case RemoteCommands.GetMiriotId:
+					return _platformService.GetSystemIdentifier();
+				case RemoteCommands.GraphService_Initialize:
+					var _graphService = SimpleIoc.Default.GetInstance<IGraphService>();
+					string code = await _graphService.GetCodeAsync();
 
-                        return JsonConvert.SerializeObject(graphUser);
-                    }
-                    else
-                    {
-                        _dispatcherService.Invoke(() =>
-                        {
-                            _vm.SubTitle = "L'authentification a échouée.";
-                        });
-                    }
+					_dispatcherService.Invoke(() =>
+					{
+						_vm.SubTitle = "Code : " + code;
+					});
 
-                    return null;
-                case RemoteCommands.GoToCameraPage:
-                    _dispatcherService.Invoke(() =>
-                    {
-                        var ns = SimpleIoc.Default.GetInstance<INavigationService>();
-                        ns.NavigateTo(PageKeys.CameraSettings);
-                    });
-                    return null;
-                default:
-                    return null;
-            }
-        }
+					// Waiting until user has logged
+					if (await _graphService.LoginAsync())
+					{
+						var graphUser = await _graphService.GetUserAsync();
 
-        internal void Stop()
-        {
-            _bluetoothService.StopAdv();
-        }
-    }
+						_dispatcherService.Invoke(async () =>
+						{
+							_vm.SubTitle = "Connecté en tant que " + graphUser.Name;
+							await _vm.LoadUser(_vm.User);
+						});
+
+						return JsonConvert.SerializeObject(graphUser);
+					}
+					else
+					{
+						_dispatcherService.Invoke(() =>
+						{
+							_vm.SubTitle = "L'authentification a échouée.";
+						});
+					}
+
+					return null;
+				case RemoteCommands.GoToCameraPage:
+					_dispatcherService.Invoke(() =>
+					{
+						var ns = SimpleIoc.Default.GetInstance<INavigationService>();
+						ns.NavigateTo(PageKeys.CameraSettings);
+					});
+					return null;
+				case RemoteCommands.DeezerService_GetUser:
+					var deezerCode = JsonConvert.DeserializeObject<DeezerUser>(parameter.SerializedData);
+					var service = SimpleIoc.Default.GetInstance<IOAuthService>();
+					string token = await service.FinalizeAuthenticationAsync(deezerCode.Code);
+					var user = await service.GetUserAsync(token);
+
+					return JsonConvert.SerializeObject(deezerCode);
+				default:
+					return null;
+			}
+		}
+
+		internal void Stop()
+		{
+			_bluetoothService.StopAdv();
+		}
+	}
 }

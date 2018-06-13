@@ -38,7 +38,6 @@
     <MtouchFloat32>False</MtouchFloat32>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
-    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhone\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -54,7 +53,6 @@
     <BuildIpa>true</BuildIpa>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
-    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -84,6 +82,54 @@
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <MtouchTlsProvider>Default</MtouchTlsProvider>
     <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mock|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Mock</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;DEBUG;ENABLE_TEST_CLOUD;MOCK;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchLink>None</MtouchLink>
+    <MtouchArch>i386, x86_64</MtouchArch>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
+    <PlatformTarget>x86</PlatformTarget>
+    <MtouchSdkVersion>10.1</MtouchSdkVersion>
+    <MtouchProfiling>False</MtouchProfiling>
+    <MtouchUseLlvm>False</MtouchUseLlvm>
+    <MtouchUseThumb>False</MtouchUseThumb>
+    <MtouchEnableBitcode>False</MtouchEnableBitcode>
+    <OptimizePNGs>True</OptimizePNGs>
+    <MtouchFloat32>False</MtouchFloat32>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mock|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Mock</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;DEBUG;ENABLE_TEST_CLOUD;MOCK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchFloat32>true</MtouchFloat32>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
+    <PlatformTarget>x86</PlatformTarget>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+    <MtouchVerbosity>2</MtouchVerbosity>
+    <OnDemandResourcesInitialInstallTags></OnDemandResourcesInitialInstallTags>
+    <OnDemandResourcesPrefetchOrder></OnDemandResourcesPrefetchOrder>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=0ffbc31322e9d308, processorArchitecture=MSIL">
@@ -155,14 +201,14 @@
     <Reference Include="Acr.Core">
       <HintPath>..\..\packages\Acr.Core.2.0.2\lib\xamarinios10\Acr.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.BluetoothLE">
-      <HintPath>..\..\packages\Plugin.BluetoothLE.6.0.1\lib\xamarinios10\Plugin.BluetoothLE.dll</HintPath>
-    </Reference>
     <Reference Include="Rg.Plugins.Popup">
       <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.4.154-pre\lib\Xamarin.IOS\Rg.Plugins.Popup.dll</HintPath>
     </Reference>
     <Reference Include="Rg.Plugins.Popup.IOS">
       <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.4.154-pre\lib\Xamarin.IOS\Rg.Plugins.Popup.IOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.BluetoothLE">
+      <HintPath>..\..\packages\Plugin.BluetoothLE.6.0.3\lib\xamarinios10\Plugin.BluetoothLE.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +227,10 @@
     <ImageAsset Include="Resources\Assets.xcassets\Images.imageset\Icon-App-76x76%401x.png" />
     <ImageAsset Include="Resources\Assets.xcassets\Images.imageset\Icon-App-57x57%402x.png" />
     <ImageAsset Include="Resources\Assets.xcassets\Images.imageset\IconApp6060%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-60x60%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-60x60%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
@@ -210,6 +260,7 @@
     <Compile Include="Services\TwitterService.cs" />
     <Compile Include="Services\GraphService.cs" />
     <Compile Include="Controls\CustomWebViewRenderer.cs" />
+    <Compile Include="Services\Mock\BluetoothClientServiceMock.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_about.png" />
@@ -238,6 +289,9 @@
     <Content Include="Resources\miriot_remote.png" />
     <Content Include="Resources\mirror.png" />
     <Content Include="Resources\mirror_only.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\Mock\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

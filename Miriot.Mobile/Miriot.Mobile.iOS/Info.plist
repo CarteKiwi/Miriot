@@ -63,7 +63,7 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>example.com</key>
+			<key>test.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -72,5 +72,7 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
 </dict>
 </plist>

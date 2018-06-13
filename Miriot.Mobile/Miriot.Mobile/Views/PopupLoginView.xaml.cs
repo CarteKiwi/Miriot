@@ -6,34 +6,37 @@ using Xamarin.Forms;
 
 namespace Miriot.Mobile.Views
 {
-    public partial class PopupLoginView : PopupPage
-    {
-        public PopupLoginView()
-        {
-            InitializeComponent();
-        }
+	public partial class PopupLoginView : PopupPage
+	{
+		public Action<WebNavigatedEventArgs> Navigated { get; set; }
 
-        public PopupLoginView(Uri uri)
-        {
-            InitializeComponent();
-            Browser.Source = uri;
-            void handler(object sender, WebNavigatedEventArgs e)
-            {
-                Browser.Navigated -= handler;
-                Loader.IsRunning = false; Loader.IsVisible = false;
-            }
+		public PopupLoginView()
+		{
+			InitializeComponent();
+		}
 
-            Browser.Navigated += handler;
-        }
+		public PopupLoginView(Uri uri)
+		{
+			InitializeComponent();
+			Browser.Navigated += handler;
+			Browser.Source = uri;
+		}
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-        }
+		void handler(object sender, WebNavigatedEventArgs e)
+		{
+			Navigated?.Invoke(e);
+			Loader.IsRunning = false; Loader.IsVisible = false;
+		}
 
-        private async void OnClose(object sender, EventArgs e)
-        {
-            await PopupNavigation.Instance.PopAsync();
-        }
-    }
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
+		}
+
+		private async void OnClose(object sender, EventArgs e)
+		{
+			//Browser.Navigated -= handler;
+			await PopupNavigation.Instance.PopAsync();
+		}
+	}
 }

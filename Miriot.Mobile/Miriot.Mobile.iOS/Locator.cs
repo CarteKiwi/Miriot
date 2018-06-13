@@ -13,7 +13,11 @@ namespace Miriot.iOS
             SimpleIoc.Default.Register<IConfigurationService, ConfigurationService>();
             SimpleIoc.Default.Register<IDispatcherService, DispatcherService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
+#if MOCK
+            SimpleIoc.Default.Register<IBluetoothService, BluetoothClientServiceMock>();
+#else
             SimpleIoc.Default.Register<IBluetoothService, BluetoothClientService>();
+#endif
             SimpleIoc.Default.Register<ITwitterService, TwitterService>();
         }
     }
