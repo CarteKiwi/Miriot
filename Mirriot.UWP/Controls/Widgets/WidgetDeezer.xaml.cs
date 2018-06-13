@@ -43,7 +43,9 @@ namespace Miriot.Win10.Controls
 
         public async void DoAction(LuisResponse luis)
         {
-            await FindTrackAsync(luis.Entities.OrderByDescending(e => e.Score).FirstOrDefault().Entity);
+            var bestEntity = luis.Entities.FirstOrDefault();
+            
+            await FindTrackAsync(bestEntity?.Entity);
         }
 
         public async Task FindTrackAsync(string search)

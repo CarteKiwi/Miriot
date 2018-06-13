@@ -324,6 +324,9 @@ namespace Miriot.Win10
         {
             TurnOff();
 
+            if (luis == null || luis.TopScoringIntent == null)
+                return;
+
             var t = luis.TopScoringIntent.GetIntentType();
 
             if(t == null)
