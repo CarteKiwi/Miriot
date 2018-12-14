@@ -16,6 +16,7 @@
                             OptimizeForLowLight="False"/>
         
         <StackPanel VerticalAlignment="Bottom">
+            <Slider x:Name="FocusController" Header="White" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="FocusController_ValueChanged" />
             <Slider x:Name="WhiteController" Header="White" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="WhiteController_ValueChanged" />
             <Slider x:Name="BrightnessController" Header="Brightness" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="BrightnessController_ValueChanged" />
             <Slider x:Name="ExpositionController" Header="Exposition" Margin="10" HorizontalAlignment="Center" Width="600" Minimum="0" Maximum="255" ValueChanged="ExpositionController_ValueChanged" />

@@ -251,6 +251,7 @@ namespace Miriot.Win10.Services
 
             try
             {
+                _speechSynthesizer.Options.SpeakingRate = 1.2;
                 return await _speechSynthesizer.SynthesizeTextToStreamAsync(text);
             }
             catch (Exception ex)

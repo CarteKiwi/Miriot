@@ -1,11 +1,12 @@
 ﻿using Miriot.Core.ViewModels.Widgets;
 using Miriot.Services;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Miriot.Win10.Controls
 {
-    public class WidgetBase : UserControl
+    public class WidgetBase : UserControl, IDisposable
     {
         public WidgetBase()
         {
@@ -42,6 +43,11 @@ namespace Miriot.Win10.Controls
 
             if (y != null)
                 Grid.SetRow(this, y.Value);
+        }
+
+        public virtual void Dispose()
+        {
+            
         }
     }
 }

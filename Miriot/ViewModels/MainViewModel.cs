@@ -257,6 +257,7 @@ namespace Miriot.Core.ViewModels
         {
             _cancellationToken.Cancel();
             _cancellationToken = new CancellationTokenSource();
+
             Widgets?.Clear();
             IsLoading = false;
             HasNoConfiguration = false;
@@ -292,7 +293,7 @@ namespace Miriot.Core.ViewModels
             if (isSuccess)
             {
                 SetMessage($"Très bien. Ravi de faire votre connaissance {user.Name}.", "Utilisez votre téléphone pour ajouter des widgets");
-                Speak($"Très bien. Ravi de faire votre connaissance {user.Name}.");
+                await Speak($"Très bien. Ravi de faire votre connaissance {user.Name}.");
             }
             else
             {
@@ -383,7 +384,7 @@ namespace Miriot.Core.ViewModels
             User = new User { Name = name, Picture = _lastFrameShot };
 
             SetMessage($"Bonjour {name.ToUpperInvariant()}", "Aie-je bien entendu votre prénom ?");
-            Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
+            await Speak($"Bonjour {name.ToUpperInvariant()}. Aie-je bien entendu votre prénom ?");
 
             _isListeningYesNo = true;
             await Listen();
@@ -569,8 +570,8 @@ namespace Miriot.Core.ViewModels
         {
             if (IsListeningFirstName) return;
 
-            SetMessage("Bonjour. Je m'appelle MirioT.", "Quel est votre prénom ? (dites: je m'appelle...)");
-            Speak("Bonjour, je m'appelle Miriotte. Et vous ?");
+            SetMessage("Bonjour. Je m'appelle MirioT.", "Et vous ? (dites: je m'appelle...)");
+            await Speak("Bonjour, je m'appelle Miriotte. Et vous ?");
 
             IsListeningFirstName = true;
             await Listen();
@@ -593,7 +594,7 @@ namespace Miriot.Core.ViewModels
         private async void RepeatPromptForUnknownFace()
         {
             SetMessage("Je n'ai pas compris", "Quel est votre prénom ? (dites: je m'appelle...)");
-            Speak("Je n'ai pas compris. Quel est votre prénom ?");
+            await Speak("Je n'ai pas compris. Quel est votre prénom ?");
 
             IsListeningFirstName = true;
             await Listen();
@@ -616,9 +617,10 @@ namespace Miriot.Core.ViewModels
             SubTitle = subTitle;
         }
 
-        private async void Speak(string text)
+        private async Task Speak(string text)
         {
             SpeakStream = await _speechService.SynthesizeTextToStreamAsync(text);
+            await Task.Delay(55 * text.Length);
         }
 
         private void OnStateChanged(States state)

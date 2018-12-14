@@ -215,7 +215,7 @@ namespace Miriot.Win10
         {
             if (e.Action == NotifyCollectionChangedAction.Reset)
             {
-                WidgetZone.Children.Clear();
+                DisposeWidgets();
 
                 ShowGridLines(Vm.IsConfiguring);
             }
@@ -245,7 +245,7 @@ namespace Miriot.Win10
             {
                 _noFaceDetectedCount++;
 
-                if (_noFaceDetectedCount < 15) return;
+                if (_noFaceDetectedCount < 10) return;
 
                 Vm.StateChangedCommand.Execute(States.Inactive);
                 CleanUi();
@@ -420,11 +420,23 @@ namespace Miriot.Win10
             //await Vm.UpdatePersonAsync();
         }
 
+        private void DisposeWidgets()
+        {
+            foreach (WidgetBase w in WidgetZone.Children)
+            {
+                w.Dispose();
+            }
+
+            WidgetZone.Children.Clear();
+        }
+
         private void CleanUi()
         {
             Vm.ResetCommand.Execute(null);
+
             // Force delete transition
-            WidgetZone.Children.Clear();
+            DisposeWidgets();
+          
             InfoUnknownPanel.Opacity = 0;
             Img.Source = null;
             MediaElementCtrl.Stop();

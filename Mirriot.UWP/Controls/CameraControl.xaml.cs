@@ -187,10 +187,10 @@ namespace Miriot.Win10.Controls
                 {
                     await _mediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.VideoPreview, allPreviewProperties.First(e => e.GetFriendlyName() == FriendlyResolution).EncodingProperties);
                 }
-                else
-                {
-                    await _mediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.VideoPreview, allPreviewProperties.First().EncodingProperties);
-                }
+                //else
+                //{
+                //    await _mediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.VideoPreview, allPreviewProperties.First().EncodingProperties);
+                //}
             }
             catch (Exception ex)
             {
@@ -242,6 +242,7 @@ namespace Miriot.Win10.Controls
             var exposure = ApplicationData.Current.LocalSettings.Values["CameraExposure"];
             var white = ApplicationData.Current.LocalSettings.Values["CameraWhite"];
             var zoom = ApplicationData.Current.LocalSettings.Values["CameraZoom"];
+            var focus2 = ApplicationData.Current.LocalSettings.Values["CameraFocus"];
 
             if (contrast != null)
                 AdjustContrast((double)contrast);
@@ -253,6 +254,8 @@ namespace Miriot.Win10.Controls
                 AdjustWhite((double)white);
             if (zoom != null)
                 AdjustZoom((double)zoom);
+            if (focus2 != null)
+                AdjustFocus((double)focus2);
         }
 
         public void AdjustContrast(double value)
@@ -344,6 +347,27 @@ namespace Miriot.Win10.Controls
                     value = zoom.Capabilities.Min;
 
                 zoom.TrySetValue(value);
+            }
+        }
+
+        public void AdjustFocus(double value)
+        {
+            var focus = _mediaCapture.VideoDeviceController.Focus;
+
+            if (focus.Capabilities.Supported)
+            {
+                if (focus.Capabilities.AutoModeSupported)
+                {
+                    focus.TrySetAuto(false);
+                }
+
+                if (value > focus.Capabilities.Max)
+                    value = focus.Capabilities.Max;
+
+                if (value < focus.Capabilities.Min)
+                    value = focus.Capabilities.Min;
+
+                focus.TrySetValue(value);
             }
         }
 
@@ -634,12 +658,14 @@ namespace Miriot.Win10.Controls
             _mediaCapture.VideoDeviceController.Exposure.TryGetValue(out double exposure);
             _mediaCapture.VideoDeviceController.WhiteBalance.TryGetValue(out double white);
             _mediaCapture.VideoDeviceController.Zoom.TryGetValue(out double zoom);
+            _mediaCapture.VideoDeviceController.Focus.TryGetValue(out double focus);
             ApplicationData.Current.LocalSettings.Values["CameraContrast"] = contrast;
             ApplicationData.Current.LocalSettings.Values["CameraBrightness"] = brightness;
             ApplicationData.Current.LocalSettings.Values["CameraExposure"] = exposure;
             ApplicationData.Current.LocalSettings.Values["CameraZoom"] = zoom;
             ApplicationData.Current.LocalSettings.Values["CameraWhite"] = white;
             ApplicationData.Current.LocalSettings.Values["CameraResolution"] = FriendlyResolution;
+            ApplicationData.Current.LocalSettings.Values["CameraFocus"] = focus;
         }
 
         #endregion Methods

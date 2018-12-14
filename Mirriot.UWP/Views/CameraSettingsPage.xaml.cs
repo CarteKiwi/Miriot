@@ -1,5 +1,4 @@
-﻿using CommonServiceLocator;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Miriot.Common;
 using Miriot.Model;
@@ -9,19 +8,12 @@ using Miriot.Win10.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media.Capture;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Miriot.Win10.Views
@@ -58,7 +50,24 @@ namespace Miriot.Win10.Views
             WhiteController.Maximum = Camera.Controller.WhiteBalance.Capabilities.Max;
             WhiteController.Minimum = Camera.Controller.WhiteBalance.Capabilities.Min;
 
+            BrightnessController.Maximum = Camera.Controller.Brightness.Capabilities.Max;
+            BrightnessController.Minimum = Camera.Controller.Brightness.Capabilities.Min;
+
+            ContrastController.Maximum = Camera.Controller.Contrast.Capabilities.Max;
+            ContrastController.Minimum = Camera.Controller.Contrast.Capabilities.Min;
+
+            FocusController.Maximum = Camera.Controller.Focus.Capabilities.Max;
+            FocusController.Minimum = Camera.Controller.Focus.Capabilities.Min;
+
             PopulateSettingsComboBox();
+
+            //SetSliders();
+        }
+
+        private void SetSliders()
+        {
+            Camera.Controller.WhiteBalance.TryGetValue(out var white);
+            WhiteController.Value = white;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -117,6 +126,11 @@ namespace Miriot.Win10.Views
         private void WhiteController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             Camera.AdjustWhite(e.NewValue);
+        }
+
+        private void FocusController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            Camera.AdjustFocus(e.NewValue);
         }
 
         private void ZoomController_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)

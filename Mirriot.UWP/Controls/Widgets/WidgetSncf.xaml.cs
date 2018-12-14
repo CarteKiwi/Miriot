@@ -17,14 +17,15 @@ namespace Miriot.Win10.Controls
         private DateTime? _departureDate;
         private DateTime? _nextDepartureDate;
         private bool _isBusy;
+        private DispatcherTimer _timer;
 
         public WidgetSncf(SncfModel widget) : base(widget)
         {
             InitializeComponent();
 
-            DispatcherTimer timer = new DispatcherTimer { Interval = new TimeSpan(10000) };
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            _timer = new DispatcherTimer { Interval = new TimeSpan(10000) };
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
 
         private async Task Load()
@@ -103,6 +104,13 @@ namespace Miriot.Win10.Controls
                     Departure.Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        public override void Dispose()
+        {
+            _timer.Stop();
+            _timer.Tick -= Timer_Tick;
+            base.Dispose();
         }
     }
 }

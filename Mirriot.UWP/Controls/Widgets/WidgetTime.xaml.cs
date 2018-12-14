@@ -8,14 +8,15 @@ namespace Miriot.Win10.Controls
     public sealed partial class WidgetTime
     {
         private bool _secondDisplayed;
+        private DispatcherTimer _timer;
 
         public WidgetTime(TimeModel widget) : base(widget)
         {
             InitializeComponent();
 
-            var timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 1) };
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 1) };
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
 
         private void Timer_Tick(object sender, object e)
@@ -33,6 +34,13 @@ namespace Miriot.Win10.Controls
                 Seconds.Visibility = Visibility.Collapsed;
                 _secondDisplayed = true;
             }
+        }
+
+        public override void Dispose()
+        {
+            _timer.Stop();
+            _timer.Tick -= Timer_Tick;
+            base.Dispose();
         }
     }
 }
